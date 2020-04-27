@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "/usr/local/var/www/resto"
+		},
+		{
+			"path": "/usr/local/var/www/rab"
+		}
+	],
+	"settings": {}
+}
