@@ -3,15 +3,22 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\Product;
 use App\ProductCategory;
+use App\Traits\DataTrait;
+use App\Traits\ImageTrait;
+use File;
 use DataTables;
 use DB;
 use Auth;
 
 class ProductController extends Controller
 {
+    use DataTrait;
+    use ImageTrait;
+
     public function __construct()
     {
         $this->middleware('auth');
@@ -29,8 +36,8 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Product::latest()->get();
-            return $this->showTable($data);
+            $data = Product::with(['ProductCategory'])->orderBy('created_at', 'DESC')->get();
+            return $this->FetchData($data, 'product.edit', 'product-edit', 'product-delete');
         }
         return view('product.index');
     }
@@ -57,26 +64,54 @@ class ProductController extends Controller
         $this->validate($request, [
             'product_name' => 'required',
             'product_sale' => 'required',
-            'cost' => 'required'
+            'product_category' => 'required',
+            'product_cost' => 'required',
+            'file'=> 'file|image|mimes:jpeg,png,jpg|max:300000'
 
         ]);
 
-        DB::beginTransaction();
-        $getCode = DB::table('products')->latest()->sharedLock()->first();
-        #@dd($getCode);
-        if($getCode==null){
-            $request->request->add(['product_code'=> 'PR-000']);
-        }else{
-            $latestCode = $getCode->product_code;
-            $seq        = substr($latestCode, 3);
-            $generate   = $seq+1;
-            $request->request->add(['product_code'=> 'PR-'.sprintf("%03s", $generate)]);
+        if($request->file){
+            $image = $this->UploadImage($request->file, config('app.productImagePath'));
+            if($image==false){
+                \Session::put('error','image upload failure');
+                return redirect()->route('product.create');
+
+            }
         }
-        $input=$request->all();
-        $product = Product::create($input);
-        \Session::put('success','product created successfully.');
-        DB::commit();
-        return redirect()->route('product.index');
+
+        try {
+                DB::beginTransaction();
+                    $getCode = DB::table('products')->latest()->sharedLock()->first();
+                    if($getCode==null){
+                        $request->request->add(['product_code'=> 'PR-0001']);
+                    }else{
+                        $latestCode = $getCode->product_code;
+                        $seq        = substr($latestCode, 3);
+                        $generate   = $seq+1;
+                        $request->request->add(['product_code'=> 'PR-'.sprintf("%04s", $generate)]);
+                    }
+                    if(isset($image)!=false){
+                        $request->request->add(['product_image'=> $image]);
+                    }
+                    $input=$request->all();
+
+                    $input['product_category']=$input['product_category']['0'];
+                    Arr::forget($input, 'file');
+
+                    $product = Product::create($input);
+                DB::commit();
+
+                \Session::put('success','product created successfully.');
+                return redirect()->route('product.index');
+
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                if(isset($image)){
+                    $this->DeleteImage($image, config('app.productImagePath'));
+                }
+                \Session::put('error', 'server failure');
+                return redirect()->route('product.create');
+            }
     }
 
     /**
@@ -98,8 +133,10 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        $store = Product::find($id);
-        return view('product.edit',compact('producr'));
+        $product = Product::find($id);
+        $productCategory = ProductCategory::pluck('name','id')->all();
+        $productCategoryPick = $product->productCategory->pluck('id','name')->all();
+        return view('product.edit',compact('product', 'productCategory', 'productCategoryPick'));
     }
 
     /**
@@ -114,17 +151,48 @@ class ProductController extends Controller
         $this->validate($request, [
             'product_name' => 'required',
             'product_sale' => 'required',
-            'code' => 'required'
+            'product_category' => 'required',
+            'product_cost' => 'required',
+            'file'=> 'file|image|mimes:jpeg,png,jpg|max:300000'
 
         ]);
+        try {
+            $product = product::find($id);
+            if($request->file){
+                $image = $this->UploadImage($request->file, config('app.productImagePath'));
+                if($image==false){
+                    \Session::put('error','image upload failure');
+                    return redirect()->route('product.create');
 
-        $input = $request->all();
-        $product = product::find($id);
-        $product->update($input);
+                }
+            }
 
-        \Session::put('success','product updated successfully.');
+            DB::beginTransaction();
+                if(isset($image)!=false){
+                    $request->request->add(['product_image'=> $image]);
+                    $input=$request->all();
+                    $input['product_category']=$input['product_category']['0'];
+                    Arr::forget($input, 'file');
+                    $product->update($input);
+                }else{
+                    $input=$request->all();
+                    $input['product_category']=$input['product_category']['0'];
+                    Arr::forget($input, 'file');
+                    $product->update($input);
+                }
+            DB::commit();
 
-        return redirect()->route('product.index');
+            \Session::put('success','product updated successfully.');
+            return redirect()->route('product.index');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            if(isset($image)){
+                $this->DeleteImage($image, config('app.productImagePath'));
+            }
+            \Session::put('error', 'server failure');
+            return redirect()->route('product.edit', compact('product'));
+        }
     }
 
     /**
@@ -135,49 +203,34 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        if(Product::find($id)->delete()){
+        $product    = Product::find($id);
+        $deleteFile = $this->DeleteImage($product->product_image, config('app.productImagePath'));
+
+        if($deleteFile == true){
+            Product::find($id)->delete();
             return true;
-        }
+        }else{
+            Product::find($id)->delete();
             return false;
+        }
+
     }
 
-    public function showTable($data)
+    public function deleteExistImageProduct(Request $request)
     {
-        if(Auth::user()->hasPermissionTo('product-edit') && Auth::user()->hasPermissionTo('product-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('product.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if (Auth::user()->hasPermissionTo('product-edit')) {
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('product.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if(Auth::user()->hasPermissionTo('product-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+        $image = $request->post('image');
+        $id    = $request->post('id');
+        $product    = Product::find($id);
+        $deleteFile = $this->DeleteImage($image, config('app.productImagePath'));
+        if($deleteFile == true){
+            $input = ['product_image'=>NULL];
+            $product->update($input);
+            return true;
         }else{
-            return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $btn = '';
-                return $btn;
-            })
-            ->make(true);
+            $input = ['product_image'=>NULL];
+            $product->update($input);
+            return false;
         }
     }
+
 }

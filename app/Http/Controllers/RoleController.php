@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use App\Traits\DataTrait;
 use DB;
 use DataTables;
 use Auth;
@@ -13,6 +14,7 @@ use Auth;
 
 class RoleController extends Controller
 {
+    use DataTrait;
     /**
      * Display a listing of the resource.
      *
@@ -36,7 +38,7 @@ class RoleController extends Controller
     {
         if ($request->ajax()) {
             $data = Role::latest()->get();
-            return $this->showTable($data);
+            return $this->FetchData($data, 'role.edit', 'role-edit', 'role-delete');
         }
         return view('role.index');
     }
@@ -116,43 +118,4 @@ class RoleController extends Controller
             return false;
     }
 
-    public function showTable($data)
-    {
-        if(Auth::user()->hasPermissionTo('role-edit') && Auth::user()->hasPermissionTo('role-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('role.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if (Auth::user()->hasPermissionTo('role-edit')) {
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('role.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if(Auth::user()->hasPermissionTo('role-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else{
-            return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $btn = '';
-                return $btn;
-            })
-            ->make(true);
-        }
-    }
 }

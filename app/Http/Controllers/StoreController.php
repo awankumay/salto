@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Store;
+use App\Traits\DataTrait;
 use DataTables;
 use DB;
 use Auth;
 
 class StoreController extends Controller
 {
+    use DataTrait;
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +31,7 @@ class StoreController extends Controller
     {
         if ($request->ajax()) {
             $data = Store::latest()->get();
-            return $this->showTable($data);
+            return $this->FetchData($data, 'store.edit', 'store-edit', 'store-delete');
         }
         return view('store.index');
     }

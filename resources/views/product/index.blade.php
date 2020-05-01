@@ -17,18 +17,18 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered product-table" style="width:100%">
+            <div class="table table-responsive">
+                <table class="table table-responsive table-hover table-bordered product-table">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Product Code</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Image</th>
+                            <th style="width:5%;">No</th>
+                            <th style="width:15%;">Product Code</th>
+                            <th style="width:20%;">Image</th>
+                            <th style="width:20%;">Name</th>
+                            <th style="width:5%;">Category</th>
                             <th>Type</th>
-                            <th>Description</th>
-                            <th width="100px">Action</th>
+                            <th style="width:25%;">Description</th>
+                            <th style="width:10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,16 +44,37 @@
         let table = $('.product-table').DataTable({
             processing: true,
             serverSide: true,
-            scrollX: true,
             ajax: "{{ route('product.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'product_code', name: 'product_code'},
+                {data: 'product_image',
+                 name: 'product_image',
+                    render:function(row, type, val, meta){
+                        if(val.product_image==null){
+                            if(val.product_category['0'].id==1){
+                                return "<img src=\"" + "food.png"+"\" height=\"50\"/>";
+                            }else{
+                                return "<img src=\"" + "drink.png"+"\" height=\"50\"/>";
+                            }
+                        }else{
+                            return "<img src=\"" + "storage/{{config('app.productImagePath')}}/"+val.product_image+ "\" height=\"50\"/>";
+                        }
+                    },
+                orderable: false,
+                searchable: false},
                 {data: 'product_name', name: 'product_name'},
-                {data: 'product_category', name: 'product_category'},
-                {data: 'image', name: 'image'},
-                {data: 'product_sale', name: 'product_sale'},
-                {data: 'description', name: 'description'},
+                {data: 'product_category.0.name', name: 'product_category'},
+                {data: 'product_sale', name: 'product_sale',
+                    render:function(data) {
+                        if(data==1){
+                            return 'Saleable';
+                        }else{
+                            return 'Herbs';
+                        }
+                    }
+                },
+                {data: 'product_description', name: 'description'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

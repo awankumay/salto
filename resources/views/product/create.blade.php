@@ -27,9 +27,9 @@
                 <div class="col-md-12">
                     <div class="form-group col-md-4">
                         <strong>Image:</strong>
-                        {!! Form::file('product_image', null, array('placeholder' => 'Product name','class' => 'form-control form-control-sm')) !!}
-                        <span class="form-text {{isset($errors->messages()['product_image']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['product_image']) ? $errors->messages()['product_image'][0] .'*' : 'Product image size < 300kb *'}}
+                        {!! Form::file('file', null, array('placeholder' => 'Product image','class' => 'form-control form-control-sm')) !!}
+                        <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Product image size < 300kb *'}}
                         </span>
                     </div>
                 </div>
@@ -39,6 +39,25 @@
                         {!! Form::select('product_category[]', $productCategory, [], array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Please select category')) !!}
                         <span class="form-text {{isset($errors->messages()['product_category']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['product_category']) ? $errors->messages()['product_category'][0] .'*' : 'Please select category *'}}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group col-md-4">
+                        <strong>Saleable:</strong><br>
+                        {!! Form::radio('product_sale', 1, array('class' => 'form-control form-control-sm')) !!} Yes &nbsp;
+                        {!! Form::radio('product_sale', 0, array('class' => 'form-control form-control-sm')) !!} No &nbsp;
+                        <span class="form-text {{isset($errors->messages()['product_sale']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['product_sale']) ? $errors->messages()['product_sale'][0] .'*' : 'Select product type *'}}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group col-md-4">
+                        <strong>Cost:</strong>
+                        {!! Form::number('product_cost', null, array('placeholder' => 'Product Cost','class' => 'form-control form-control-sm')) !!}
+                        <span class="form-text {{isset($errors->messages()['product_cost']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['product_cost']) ? $errors->messages()['product_cost'][0] .'*' : 'Please input product cost *'}}
                         </span>
                     </div>
                 </div>
@@ -54,7 +73,7 @@
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-xs-12 col-sm-12 col-md-6">
                             <button type="submit" class="btn btn-sm btn-success">Save</button>
-                            <a class="btn btn-sm btn-success" href="{{route('store.index')}}">Cancel</a>
+                            <a class="btn btn-sm btn-success" href="{{route('product.index')}}">Cancel</a>
                     </div>
                 </div>
             </div>

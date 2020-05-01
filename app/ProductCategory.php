@@ -10,4 +10,10 @@ class ProductCategory extends Model
     protected $fillable = [
         'name', 'description'
     ];
+    protected $primaryKey = 'id';
+
+    public function Product()
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

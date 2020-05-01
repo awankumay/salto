@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use App\User;
+use App\Traits\DataTrait;
 use Hash;
 use DataTables;
 use DB;
@@ -14,6 +15,7 @@ use Auth;
 
 class UserController extends Controller
 {
+    use DataTrait;
     /**
      * Create a new controller instance.
      *
@@ -37,7 +39,7 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $data = User::latest()->get();
-            return $this->showTable($data);
+            return $this->FetchData($data, 'user.edit', 'user-edit', 'user-delete');
         }
         //\Session::put('error','Item created successfully.');
         return view('user.index');

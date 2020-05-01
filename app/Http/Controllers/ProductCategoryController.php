@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\ProductCategory;
+use App\Traits\DataTrait;
 use DataTables;
 use DB;
 use Auth;
 class ProductCategoryController extends Controller
 {
+    use DataTrait;
     /**
      * Create a new controller instance.
      *
@@ -33,7 +35,7 @@ class ProductCategoryController extends Controller
     {
         if ($request->ajax()) {
             $data = ProductCategory::latest()->get();
-            return $this->showTable($data);
+            return $this->FetchData($data, 'product-category.edit', 'product-category-edit', 'product-category-delete');
         }
         return view('product-category.index');
     }
@@ -85,43 +87,4 @@ class ProductCategoryController extends Controller
             return false;
     }
 
-    public function showTable($data)
-    {
-        if(Auth::user()->hasPermissionTo('product-category-edit') && Auth::user()->hasPermissionTo('product-category-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('product-category.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if (Auth::user()->hasPermissionTo('product-category-edit')) {
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('product-category.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if(Auth::user()->hasPermissionTo('product-category-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else{
-            return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $btn = '';
-                return $btn;
-            })
-            ->make(true);
-        }
-    }
 }
