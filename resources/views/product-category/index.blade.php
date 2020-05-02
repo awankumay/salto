@@ -17,14 +17,15 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered product-category-table" style="width:100%">
+            <div class="table table-responsive">
+                <table class="table table-hover table-responsive table-bordered product-category-table" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th width="100px">Action</th>
+                            <th style="width:5%">No</th>
+                            <th style="width:15%">Name</th>
+                            <th style="width:10%">Image</th>
+                            <th style="width:20%">Description</th>
+                            <th style="width:10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,11 +41,20 @@
         let table = $('.product-category-table').DataTable({
             processing: true,
             serverSide: true,
-            scrollX: true,
             ajax: "{{ route('product-category.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'name', name: 'name'},
+                {data: 'product_category_image',
+                name: 'product_category_image',
+                render:function(row, type, val, meta){
+                            if(val.product_category_image==null){
+                                return "<img src=\"" + "food.png"+"\" height=\"50\"/>";
+                            }else{
+                                return "<img src=\"" + "storage/{{config('app.productCategoryImagePath')}}/"+val.product_category_image+ "\" height=\"50\"/>";
+                            }
+                        },
+                orderable: false, searchable: false},
                 {data: 'description', name: 'description'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]

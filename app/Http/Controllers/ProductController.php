@@ -220,7 +220,7 @@ class ProductController extends Controller
     {
         $image = $request->post('image');
         $id    = $request->post('id');
-        $product    = Product::find($id);
+
         $deleteFile = $this->DeleteImage($image, config('app.productImagePath'));
         if($deleteFile == true){
             $input = ['product_image'=>NULL];

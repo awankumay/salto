@@ -17,14 +17,14 @@
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered user-table" style="width:100%">
+            <div class="table table-responsive">
+                <table class="table table-responsive table-hover table-bordered user-table" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th width="100px">Action</th>
+                            <th style="width:5%;">No</th>
+                            <th style="width:10%;">Name</th>
+                            <th style="width:10%;">Email</th>
+                            <th style="width:5%;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,7 +40,6 @@
         let table = $('.user-table').DataTable({
             processing: true,
             serverSide: true,
-            scrollX: true,
             ajax: "{{ route('user.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},

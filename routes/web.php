@@ -29,4 +29,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('store', 'StoreController');
     Route::resource('product', 'ProductController');
     Route::post('deleteExistImageProduct', 'ProductController@deleteExistImageProduct')->name('deleteExistImageProduct');
+    Route::post('deleteExistImageProductCategory', 'ProductCategoryController@deleteExistImageProductCategory')->name('deleteExistImageProductCategory');
 });

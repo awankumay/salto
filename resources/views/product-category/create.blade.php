@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="card-body">
-            {!! Form::open(array('route' => ['product-category.store'],'method'=>'POST')) !!}
+            {!! Form::open(array('route' => ['product-category.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
             {{ csrf_field() }}
             <div class="row">
                 <div class="col-md-12">
@@ -21,6 +21,15 @@
                         {!! Form::text('name', null, array('placeholder' => 'Product category name','class' => 'form-control form-control-sm')) !!}
                         <span class="form-text {{isset($errors->messages()['name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['name']) ? $errors->messages()['name'][0] .'*' : 'Please input product category name *'}}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group col-md-4">
+                        <strong>Image:</strong>
+                        {!! Form::file('file', null, array('placeholder' => 'Product category image','class' => 'form-control form-control-sm')) !!}
+                        <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Please input product category image *'}}
                         </span>
                     </div>
                 </div>

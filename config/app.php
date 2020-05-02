@@ -54,6 +54,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'productImagePath'=> 'images/products',
+    'productCategoryImagePath'=> 'images/product_categories',
     'asset_url' => env('ASSET_URL', null),
 
     /*
