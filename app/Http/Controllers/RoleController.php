@@ -37,7 +37,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Role::latest()->get();
+            $data = Role::orderBy('name', 'asc')->get();
             return $this->FetchData($data, 'role.edit', 'role-edit', 'role-delete');
         }
         return view('role.index');

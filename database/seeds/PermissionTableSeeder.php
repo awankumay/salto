@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
-
+use Spatie\Permission\Models\Role;
 class PermissionTableSeeder extends Seeder
 {
     /**
@@ -39,5 +39,13 @@ class PermissionTableSeeder extends Seeder
          foreach ($permissions as $permission) {
               Permission::updateOrCreate(['name' => $permission]);
          }
+
+         $role = Role::updateOrCreate(['name' => 'Super Admin']);
+         $permissions = Permission::pluck('id','id')->all();
+         $role->syncPermissions($permissions);
+         Role::updateOrCreate(['name'=> 'Admin'])->givePermissionTo(['product-category-list', 'product-list']);
+         Role::updateOrCreate(['name'=> 'User'])->givePermissionTo(['product-category-list', 'product-list']);
+         Role::updateOrCreate(['name'=> 'Admin Store'])->givePermissionTo(['product-category-list', 'product-list']);
+         Role::updateOrCreate(['name'=> 'User Store'])->givePermissionTo(['product-category-list', 'product-list']);
     }
 }
