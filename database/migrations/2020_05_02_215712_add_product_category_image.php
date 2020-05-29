@@ -15,6 +15,7 @@ class AddProductCategoryImage extends Migration
     {
         Schema::table('product_categories', function (Blueprint $table) {
             $table->string('product_category_image')->nullable();
+            $table->string('author');
         });
     }
 
@@ -27,6 +28,7 @@ class AddProductCategoryImage extends Migration
     {
         Schema::table('product_categories', function (Blueprint $table) {
             $table->dropColumn('product_category_image');
+            $table->string('author');
         });
     }
 }

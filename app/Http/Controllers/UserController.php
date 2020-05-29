@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use App\User;
+use App\Store;
 use App\Traits\DataTrait;
 use Hash;
 use DataTables;
@@ -47,8 +48,9 @@ class UserController extends Controller
 
     public function create()
     {
+        $dataStore = Store::pluck('store_name','store_code')->all();
         $role = Role::pluck('name','name')->all();
-        return view('user.create', compact('role'));
+        return view('user.create', compact('role', 'dataStore'));
     }
 
     public function edit($id)
@@ -65,6 +67,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
+            'phone' => 'required|phone|unique:detail_users,phone',
             'role'=>'required'
         ]);
 

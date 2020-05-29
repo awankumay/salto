@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStockOutTable extends Migration
+class CreateDetailUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,14 @@ class CreateStockOutTable extends Migration
      */
     public function up()
     {
-        Schema::create('stock_out', function (Blueprint $table) {
+        Schema::create('detail_users', function (Blueprint $table) {
             $table->id();
+            $table->integer('users_id');
+            $table->integer('phone')->unique();
+            $table->longText('address')->nullable();
+            $table->string('sex');
+            $table->string('photo')->nullable();
+            $table->integer('user_type');
             $table->timestamps();
         });
     }
@@ -26,6 +32,6 @@ class CreateStockOutTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stock_out');
+        Schema::dropIfExists('detail_users');
     }
 }
