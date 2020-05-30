@@ -6,15 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\PostCategory;
+use App\User;
 use App\Traits\DataTrait;
 use App\Traits\ImageTrait;
+use Spatie\Permission\Models\Role;
 use DataTables;
 use DB;
 use Auth;
 class PostCategoryController extends Controller
 {
     use DataTrait;
-    use ImageTrait;
     /**
      * Create a new controller instance.
      *
