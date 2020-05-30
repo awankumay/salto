@@ -1,15 +1,15 @@
 <?php
 
 Breadcrumbs::register('home', function ($breadcrumbs) {
-     $breadcrumbs->push('HOME', route('home'));
+     $breadcrumbs->push('Beranda', route('home'));
 });
 Breadcrumbs::register('user', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('USER', route('user.index'));
+    $breadcrumbs->push('Pengguna', route('user.index'));
 });
 Breadcrumbs::register('user.create', function ($breadcrumbs) {
     $breadcrumbs->parent('user');
-    $breadcrumbs->push('ADD NEW USER', route('user.create'));
+    $breadcrumbs->push('Tambah Pengguna', route('user.create'));
 });
 Breadcrumbs::register('user.edit', function ($breadcrumbs, $user) {
     $breadcrumbs->parent('user');
@@ -27,41 +27,29 @@ Breadcrumbs::register('role.edit', function ($breadcrumbs, $role) {
     $breadcrumbs->parent('role');
     $breadcrumbs->push($role->name, route('role.edit', $role->id));
 });
-Breadcrumbs::register('store', function ($breadcrumbs) {
+Breadcrumbs::register('post-category', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('store', route('store.index'));
+    $breadcrumbs->push('Kategori Konten', route('post-category.index'));
 });
-Breadcrumbs::register('store.create', function ($breadcrumbs) {
-    $breadcrumbs->parent('store');
-    $breadcrumbs->push('add new store', route('store.create'));
+Breadcrumbs::register('post-category.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('post-category');
+    $breadcrumbs->push('Tambah Kategori Konten', route('post-category.create'));
 });
-Breadcrumbs::register('store.edit', function ($breadcrumbs, $store) {
-    $breadcrumbs->parent('store');
-    $breadcrumbs->push($store->store_name.' ('.$store->store_code.')', route('store.edit', $store->id));
+Breadcrumbs::register('post-category.edit', function ($breadcrumbs, $postCategory) {
+    $breadcrumbs->parent('post-category');
+    $breadcrumbs->push($postCategory->name, route('post-category.edit', $postCategory->id));
 });
-Breadcrumbs::register('product-category', function ($breadcrumbs) {
+Breadcrumbs::register('post', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('product category', route('product-category.index'));
+    $breadcrumbs->push('Konten', route('post.index'));
 });
-Breadcrumbs::register('product-category.create', function ($breadcrumbs) {
-    $breadcrumbs->parent('product-category');
-    $breadcrumbs->push('add new product category', route('product-category.create'));
+Breadcrumbs::register('post.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('post');
+    $breadcrumbs->push('Tambah Konten', route('post.create'));
 });
-Breadcrumbs::register('product-category.edit', function ($breadcrumbs, $productCategory) {
-    $breadcrumbs->parent('product-category');
-    $breadcrumbs->push($productCategory->name, route('product-category.edit', $productCategory->id));
-});
-Breadcrumbs::register('product', function ($breadcrumbs) {
-    $breadcrumbs->parent('home');
-    $breadcrumbs->push('product', route('product.index'));
-});
-Breadcrumbs::register('product.create', function ($breadcrumbs) {
-    $breadcrumbs->parent('product');
-    $breadcrumbs->push('add new product', route('product.create'));
-});
-Breadcrumbs::register('product.edit', function ($breadcrumbs, $product) {
-    $breadcrumbs->parent('product');
-    $breadcrumbs->push($product->name, route('product.edit', $product->id));
+Breadcrumbs::register('post.edit', function ($breadcrumbs, $post) {
+    $breadcrumbs->parent('post');
+    $breadcrumbs->push($post->name, route('post.edit', $post->id));
 });
 
 

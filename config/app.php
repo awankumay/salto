@@ -53,8 +53,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    'productImagePath'=> 'images/products',
-    'productCategoryImagePath'=> 'images/product_categories',
+    'productImagePath'=> 'images/konten',
     'asset_url' => env('ASSET_URL', null),
 
     /*
@@ -68,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
 
     /*
     |--------------------------------------------------------------------------

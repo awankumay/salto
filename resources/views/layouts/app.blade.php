@@ -42,9 +42,9 @@
             <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion toggled" id="accordionSidebar">
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('home')}}">
                     <div class="sidebar-brand-icon">
-                        <i class="fas fa-utensils"></i>
+                        <i class="fas fa-donate"></i>
                     </div>
-                    <div class="sidebar-brand-text mx-3">Resto</div>
+                    <div class="sidebar-brand-text mx-3">Donate</div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <li class="nav-item active">
@@ -54,37 +54,36 @@
                 </li>
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
-                    Privilages
+                    Hak Akses
                 </div>
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                         <i class="fas fa-fw fa-user-circle"></i>
-                        <span>Master Privilages</span>
+                        <span>Pengaturan Hak Akses</span>
                     </a>
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('role-list')) <a class="collapse-item" href="{{route('role.index')}}">Roles</a> @endif
-                        @if(auth()->user()->hasPermissionTo('user-list')) <a class="collapse-item" href="{{route('user.index')}}">Users</a> @endif
+                        @if(auth()->user()->hasPermissionTo('role-list')) <a class="collapse-item" href="{{route('role.index')}}">Hak Akses</a> @endif
+                        @if(auth()->user()->hasPermissionTo('user-list')) <a class="collapse-item" href="{{route('user.index')}}">Pengguna</a> @endif
 
                         </div>
                     </div>
                 </li>
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
-                    Requirement
+                    Konten
                 </div>
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#supplier" aria-expanded="true" aria-controls="supplier">
-                        <i class="fas fa-fw fa-user-circle"></i>
-                        <span>Master Data</span>
+                        <i class="fas fa-newspaper"></i>
+                        <span>Kelola Konten</span>
                     </a>
                     <div id="supplier" class="collapse" aria-labelledby="supplier" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('product-category-list'))<a class="collapse-item" href="{{route('product-category.index')}}">Product Category</a>@endif
-                        @if(auth()->user()->hasPermissionTo('product-list'))<a class="collapse-item" href="{{route('product.index')}}">Product</a>@endif
-                        @if(auth()->user()->hasPermissionTo('store-list'))<a class="collapse-item" href="{{route('store.index')}}">Store</a>@endif
+                        @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
+                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('post.index')}}">Konten</a>@endif
                         </div>
                     </div>
                 </li>
@@ -175,7 +174,7 @@
                 <footer class="sticky-footer" style="background:#f8f9fc;">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span> © nopeTech. </span>
+                            <span> © Donate. </span>
                         </div>
                     </div>
                 </footer>

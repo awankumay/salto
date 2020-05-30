@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-success text-white">{{ __('Resto.') }}</div>
+                <div class="card-header bg-success text-white">{{ __('Donate.') }}</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
@@ -73,7 +73,7 @@
 <footer class="sticky-footer bg-white">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright © NOPE</span>
+            <span>Copyright © Donate</span>
         </div>
     </div>
 </footer>

@@ -23,11 +23,9 @@ Route::get('/', function () {
 Auth::routes();
 Route::group(['middleware' => ['auth']], function() {
     Route::get('/home', 'HomeController@index')->name('home');
-    Route::resource('user', 'UserController');
-    Route::resource('product-category', 'ProductCategoryController');
     Route::resource('role', 'RoleController');
-    Route::resource('store', 'StoreController');
-    Route::resource('product', 'ProductController');
-    Route::post('deleteExistImageProduct', 'ProductController@deleteExistImageProduct')->name('deleteExistImageProduct');
-    Route::post('deleteExistImageProductCategory', 'ProductCategoryController@deleteExistImageProductCategory')->name('deleteExistImageProductCategory');
+    Route::resource('user', 'UserController');
+    Route::resource('post-category', 'PostCategoryController');
+    Route::resource('post', 'PostController');
+    Route::post('deleteExistImagePost', 'PostController@deleteExistImagePost')->name('deleteExistImagePost');
 });

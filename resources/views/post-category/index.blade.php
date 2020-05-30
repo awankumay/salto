@@ -3,30 +3,28 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('store') }}
+        {{ Breadcrumbs::render('post-category') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Table Store</div>
+                <div class="p-2">Kategori Konten</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('store-create'))
-                        <a href="{{route('store.create')}}" class="btn btn-success btn-sm text-white btn-add">Add Store</a>
+                    @if(auth()->user()->hasPermissionTo('post-category-create'))
+                        <a href="{{route('post-category.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Kategori</a>
                     @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered store-table" style="width:100%">
+            <div class="table table-responsive">
+                <table class="table table-hover table-responsive table-bordered post-category-table" style="width:100%">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Store Code</th>
-                            <th>Name</th>
-                            <th>Phone</th>
-                            <th>Address</th>
-                            <th width="100px">Action</th>
+                            <th style="width:5%">No</th>
+                            <th style="width:15%">Kategori</th>
+                            <th style="width:25%">Deskripsi</th>
+                            <th style="width:10%"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,54 +37,51 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        let table = $('.store-table').DataTable({
+        var table = $('.post-category-table').DataTable({
             processing: true,
             serverSide: true,
-            scrollX: true,
-            ajax: "{{ route('store.index') }}",
+            ajax: "{{ route('post-category.index') }}",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                {data: 'store_code', name: 'store_code'},
-                {data: 'store_name', name: 'store_name'},
-                {data: 'phone_number', name: 'phone_number'},
-                {data: 'address', name: 'address'},
+                {data: 'name', name: 'name'},
+                {data: 'description', name: 'description'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'store/'+id;
+        let deleteUrl = 'post-category/'+id;
         let token ="{{csrf_token()}}";
         swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this data!",
+                title: "Ingin menghapus data ini?",
+                text: "Data ini tidak dapat dikembalikan jika telah terhapus",
                 icon: "warning",
                 buttons: true
             }).then((willDelete) => {
                     if (willDelete) {
-                        $(document).ajaxSend(function() {
-                            $("#overlay").fadeIn(300);　
-                        });
                         $.ajax({
                             url: deleteUrl,
                             type: 'DELETE',
+                            beforeSend:function () {
+                                $("#overlay").fadeIn(300);
+                            },　
                             data: {
                             "_token": token,
                             },
                             success:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Success, product category deleted successfully");
+                                    toastr.success("Sukses, data berhasil dihapus");
 			                    },500);
                                 let i = row_index.parentNode.parentNode.rowIndex;
-                                let table = $('.store-table').DataTable();
-                                table.row(i).remove().draw();
+                                let table = $('.post-category-table').DataTable();
+                                table.draw();
                             },
                             error:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Error, product category deleted successfully");
+                                    toastr.error("Gagal, data gagal dihapus");
 			                    },500);
                             }
                         });
