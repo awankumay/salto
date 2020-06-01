@@ -17,7 +17,8 @@
                 <div class="col-md-12">
                     <div class="form-group col-md-4">
                         <strong>Nama:</strong>
-                        {!! Form::text('name', null, array('placeholder' => 'Nama Kategori','class' => 'form-control form-control-sm')) !!}
+                        @php isset($errors->messages()['name']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::text('name', null, array('placeholder' => 'Nama Kategori','class' => 'form-control form-control-sm '.$x.'')) !!}
                         <span class="form-text {{isset($errors->messages()['name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['name']) ? $errors->messages()['name'][0] .'*' : 'Nama kategori wajib diisi *'}}
                         </span>
@@ -28,7 +29,8 @@
                 <div class="col-md-12">
                     <div class="form-group col-md-4">
                         <strong>Deskripsi:</strong>
-                        {!! Form::textarea('description', null, array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm', 'placeholder'=>'Deskripsi Kategori')) !!}
+                        @php isset($errors->messages()['description']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::textarea('description', null, array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Deskripsi Kategori')) !!}
                         <span class="form-text {{isset($errors->messages()['description']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['description']) ? $errors->messages()['description'][0] .'*' : 'Deskripsi tidak wajid diisi'}}
                         </span>
