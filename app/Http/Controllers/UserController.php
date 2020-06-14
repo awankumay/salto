@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use App\User;
 use App\Store;
 use App\Traits\DataTrait;
+use App\Traits\ImageTrait;
 use Hash;
 use DataTables;
 use DB;
@@ -17,6 +18,7 @@ use Auth;
 class UserController extends Controller
 {
     use DataTrait;
+    use ImageTrait;
     /**
      * Create a new controller instance.
      *
@@ -48,17 +50,16 @@ class UserController extends Controller
 
     public function create()
     {
-        $dataStore = Store::pluck('store_name','store_code')->all();
         $role = Role::pluck('name','name')->all();
-        return view('user.create', compact('role', 'dataStore'));
+        return view('user.create', compact('role'));
     }
 
     public function edit($id)
     {
         $user = User::find($id);
-        $roles = Role::pluck('name','name')->all();
+        $role = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-        return view('user.edit', compact('user', 'roles', 'userRole'));
+        return view('user.edit', compact('user', 'role', 'userRole'));
     }
 
     public function store(Request $request)
@@ -67,20 +68,47 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
-            'phone' => 'required|phone|unique:detail_users,phone',
-            'role'=>'required'
+            'phone' => 'required|numeric|unique:users,phone',
+            'role'=>'required',
+            'sex'=>'required'
         ]);
 
+        if($request->file){
 
-        $input = $request->all();
-        $input['password'] = Hash::make($input['password']);
+            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            if($image==false){
+                \Session::flash('error','image upload failure');
+                return redirect()->route('user.create');
 
-        $user = User::create($input);
-        $user->assignRole($request->input('role'));
+            }
+        }
 
-        \Session::put('success','User created successfully.');
+        try {
 
-        return redirect()->route('user.index');
+            DB::beginTransaction();
+                if(isset($image)){
+                    if($image!=false){
+                        $request->request->add(['photo'=> $image]);
+                    }
+                }
+                $input = $request->all();
+                $input['password'] = Hash::make($input['password']);
+                $user = User::create($input);
+                $user->assignRole($request->input('role'));
+            DB::commit();
+
+            \Session::flash('success','User berhasil ditambah.');
+
+            return redirect()->route('user.index');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+                if($image!=false){
+                    $this->DeleteImage($image, config('app.userImagePath'));
+                }
+            \Session::flash('error','Terjadi kesalahan server');
+            return redirect()->route('user.create');
+        }
+
     }
 
     public function update(Request $request, $id)
@@ -89,73 +117,91 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
-            'role' => 'required'
+            'phone' => 'required|numeric|unique:users,phone,'.$id,
+            'role'=>'required',
+            'sex'=>'required'
         ]);
 
 
-        $input = $request->all();
 
-        if(!empty($input['password'])){
-            $input['password'] = Hash::make($input['password']);
-        }else{
-           Arr::forget($input, array('password', 'confirm-password'));
+        if($request->file){
+
+            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            if($image==false){
+                \Session::flash('error','image upload failure');
+                return redirect()->route('user.index');
+
+            }
         }
+        try {
+            if(isset($image)){
+                if($image!=false){
+                    $request->request->add(['photo'=> $image]);
+                }
+            }
+            $input = $request->all();
 
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id',$id)->delete();
-        $user->assignRole($request->input('role'));
+            if(!empty($input['password'])){
+                $input['password'] = Hash::make($input['password']);
+            }else{
+               Arr::forget($input, array('password', 'confirm-password'));
+            }
+            DB::beginTransaction();
+                $user = User::find($id);
+                $user->update($input);
+            DB::table('model_has_roles')->where('model_id',$id)->delete();
+                $user->assignRole($request->input('role'));
+            DB::commit();
 
-        \Session::put('success','User updated successfully.');
+            \Session::flash('success','User updated successfully.');
 
-        return redirect()->route('user.index');
+            return redirect()->route('user.index');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+                if($image!=false){
+                    $this->DeleteImage($image, config('app.userImagePath'));
+                }
+            \Session::flash('error','Terjadi kesalahan server');
+            return redirect()->route('user.index');
+        }
     }
 
     public function destroy($id)
     {
-        if(User::find($id)->delete()){
+        $user = User::find($id);
+        try {
+            DB::beginTransaction();
+                $this->DeleteImage($user->photo, config('app.userImagePath'));
+                $user->delete();
+            DB::commit();
             return true;
-        }
+        } catch (\Throwable $th) {
+            DB::rollback();
             return false;
+        }
+
     }
 
-    public function showTable($data)
+    public function deleteExistImageUser(Request $request)
     {
-        if(Auth::user()->hasPermissionTo('user-edit') && Auth::user()->hasPermissionTo('user-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('user.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a> <a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if (Auth::user()->hasPermissionTo('user-edit')) {
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href='.route('user.edit', $row).' class="action-table text-success text-sm"><i class="fas fa-edit"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else if(Auth::user()->hasPermissionTo('user-delete')){
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $btn = '<a href="javascript:void(0)" onclick="deleteRecord('.$row->id.',this)" class="action-table text-danger text-sm"><i class="fas fa-trash"></i></a>';
-                    return $btn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }else{
-            return Datatables::of($data)
-            ->addIndexColumn()
-            ->addColumn('action', function($row){
-                $btn = '';
-                return $btn;
-            })
-            ->make(true);
+        $image = $request->post('image');
+        $id    = $request->post('id');
+
+        $user = User::find($id);
+        try {
+            $deleteFile = $this->DeleteImage($image, config('app.userImagePath'));
+            DB::beginTransaction();
+                if($deleteFile == true){
+                    $input = ['photo'=>NULL];
+                    $user->update($input);
+                }
+            DB::commit();
+            return true;
+        } catch (\Throwable $th) {
+                $input = ['photo'=>NULL];
+                $user->update($input);
+            DB::rollback();
+            return false;
         }
     }
 }

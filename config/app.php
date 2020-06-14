@@ -54,6 +54,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
     'productImagePath'=> 'images/konten',
+    'userImagePath'=> 'images/user',
     'asset_url' => env('ASSET_URL', null),
 
     /*
@@ -80,7 +81,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => 'id',
 
     /*
     |--------------------------------------------------------------------------

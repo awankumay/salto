@@ -27,5 +27,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('user', 'UserController');
     Route::resource('post-category', 'PostCategoryController');
     Route::resource('post', 'PostController');
-    Route::post('deleteExistImagePost', 'PostController@deleteExistImagePost')->name('deleteExistImagePost');
+    Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
 });
