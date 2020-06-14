@@ -78,9 +78,18 @@
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
                             <strong>Nomor Telepon:</strong>
-                            {!! Form::text('phone', null, array('placeholder' => 'Nomor telepon','class' => 'form-control form-control-sm')) !!}
+                            {!! Form::number('phone', null, array('placeholder' => 'Nomor telepon','class' => 'form-control form-control-sm')) !!}
                             <span class="form-text {{isset($errors->messages()['phone']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['phone']) ? $errors->messages()['phone'][0] .'*' : 'Nomor telepon wajib diisi *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Whatsapp:</strong>
+                            {!! Form::number('whatsapp', null, array('placeholder' => 'Whatsapp','class' => 'form-control form-control-sm')) !!}
+                            <span class="form-text {{isset($errors->messages()['whatsapp']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['whatsapp']) ? $errors->messages()['whatsapp'][0]  : 'Whatsapp tidak wajib diisi '}}
                             </span>
                         </div>
                     </div>
@@ -117,6 +126,16 @@
                             {!! Form::select('role[]', $role, $userRole, array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Hak akses pengguna')) !!}
                             <span class="form-text {{isset($errors->messages()['role']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['role']) ? $errors->messages()['role'][0] .'*' : 'Pilih salah satu *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Status:</strong><br>
+                            {!! Form::radio('status', '1', array('class' => 'form-control form-control-sm')) !!} Active &nbsp;
+                            {!! Form::radio('status', '2', array('class' => 'form-control form-control-sm')) !!} Not Active &nbsp;
+                            <span class="form-text {{isset($errors->messages()['status']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['status']) ? $errors->messages()['status'][0] .'*' : 'Pilih salah satu *'}}
                             </span>
                         </div>
                     </div>

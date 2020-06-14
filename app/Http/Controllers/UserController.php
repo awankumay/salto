@@ -69,8 +69,10 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone',
+            'whatsapp' => 'numeric|unique:users,whatsapp',
             'role'=>'required',
-            'sex'=>'required'
+            'sex'=>'required',
+            'status'=>'required'
         ]);
 
         if($request->file){
@@ -118,8 +120,10 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone,'.$id,
+            'whatsapp' => 'numeric|unique:users,whatsapp,'.$id,
             'role'=>'required',
-            'sex'=>'required'
+            'sex'=>'required',
+            'status'=>'required'
         ]);
 
 

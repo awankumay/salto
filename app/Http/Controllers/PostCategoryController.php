@@ -69,12 +69,12 @@ class PostCategoryController extends Controller
                 $input=$request->all();
                 PostCategory::create($input);
             DB::commit();
-            \Session::put('success','Kategori konten berhasil ditambah.');
+            \Session::flash('success','Kategori konten berhasil ditambah.');
             return redirect()->route('post-category.index');
 
         }catch (\Throwable $th) {
             DB::rollBack();
-            \Session::put('error','Terjadi kesalahan server');
+            \Session::flash('error','Terjadi kesalahan server');
             return redirect()->route('post-category.create');
         }
     }
@@ -108,11 +108,11 @@ class PostCategoryController extends Controller
                 $postCategory->update($input);
 
             DB::commit();
-            \Session::put('success','Kategori konten berhasil diperbarui.');
+            \Session::flash('success','Kategori konten berhasil diperbarui.');
             return redirect()->route('post-category.index');
         } catch (\Throwable $th) {
             DB::rollBack();
-            \Session::put('error','Terjadi kesalahan server'. $th);
+            \Session::flash('error','Terjadi kesalahan server'. $th);
             return redirect()->route('post-category.edit');
         }
     }
