@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\PostCategory;
 use App\User;
-use App\Traits\DataTrait;
+use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
 use DataTables;
@@ -15,7 +15,7 @@ use DB;
 use Auth;
 class PostCategoryController extends Controller
 {
-    use DataTrait;
+    use ActionTable;
     /**
      * Create a new controller instance.
      *
@@ -38,8 +38,16 @@ class PostCategoryController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = PostCategory::latest()->get();
-            return $this->FetchData($data, 'post-category.edit', 'post-category-edit', 'post-category-delete');
+            $columns = array(
+                0=>'id',
+                1=>'name',
+                2=>'description',
+                3=>'created_at',
+                4=>'updated_at',
+                5=>'user_created',
+            );
+            $model  = New PostCategory();
+            return $this->ActionTable($columns, $model, $request, 'post-category.edit', 'post-category-edit', 'post-category-delete');
         }
         return view('post-category.index');
     }
@@ -81,24 +89,9 @@ class PostCategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        if($request->post('name')==null || $request->post('name')==''){
-            $this->validate($request,
-                             ['name' => 'required'],
-                             ['name.required' => 'Nama kategori wajib diisi']
-                            );
-        }else if($request->post('old_name')!=$request->post('name')){
-            $this->validate($request,
-                             ['name' => 'required|unique:post_categories,name'],
-                             ['name.required' => 'Nama kategori wajib diisi',
-                              'name.unique' => 'Nama kategori telah digunakan'
-                             ]
-                            );
-        }else{
-            $this->validate($request,
-                             ['name' => 'required'],
-                             ['name.required' => 'Nama kategori wajib diisi']
-                            );
-        }
+        $this->validate($request,
+                            ['name' => 'required|unique:post_categories,name,'.$id],
+                        );
         try {
             $postCategory = PostCategory::find($id);
             DB::beginTransaction();

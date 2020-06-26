@@ -22,10 +22,13 @@ Route::get('/', function () {
 
 Auth::routes();
 Route::group(['middleware' => ['auth']], function() {
-    Route::get('/home', 'HomeController@index')->name('home');
-    Route::resource('role', 'RoleController');
-    Route::resource('user', 'UserController');
-    Route::resource('post-category', 'PostCategoryController');
-    Route::resource('post', 'PostController');
-    Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/home', 'HomeController@index')->name('home');
+        Route::resource('role', 'RoleController');
+        Route::resource('user', 'UserController');
+        Route::resource('post-category', 'PostCategoryController');
+        Route::resource('content', 'ContentController');
+        Route::resource('tags', 'TagsController');
+        Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
+    });
 });

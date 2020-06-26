@@ -8,23 +8,32 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Table User</div>
+                <div class="p-2"> <i class="fa fa-user fa-lg" aria-hidden="true"></i> Pengguna</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('user-create'))
-                        <a href="{{route('user.create')}}" class="btn btn-success btn-sm text-white btn-add">Add User</a>
+                        <a href="{{route('user.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Pengguna</a>
                     @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table table-responsive">
-                <table class="table table-responsive table-hover table-bordered user-table" style="width:100%">
+                <table class="table display nowrap user-table" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width:5%;">No</th>
-                            <th style="width:10%;">Name</th>
-                            <th style="width:10%;">Email</th>
-                            <th style="width:5%;">Action</th>
+                            <th>ID</th>
+                            <th>Nama</th>
+                            <th>Email</th>
+                            <th>Telepon</th>
+                            <th>Whatsapp</th>
+                            <th>Jk</th>
+                            <th>Status</th>
+                            <th>Foto</th>
+                            <th>Alamat</th>
+                            <th>Create</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,13 +49,61 @@
         let table = $('.user-table').DataTable({
             processing: true,
             serverSide: true,
+            rowReorder: {
+                selector: 'td:nth-child(2)'
+            },
+            responsive: true,
             ajax: "{{ route('user.index') }}",
             columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
                 {data: 'email', name: 'email'},
+                {data: 'phone', name: 'phone'},
+                {data: 'whatsapp', name: 'whatsapp'},
+                {data: 'sex', name: 'sex',
+                    render:function(data){
+                        if(data==1){
+                            return '<i class="fa fa-male fa-2x" aria-hidden="true"></i>';
+                        }else{
+                            return '<i class="fa fa-female fa-2x" aria-hidden="true"></i>';
+                        }
+                    }
+                },
+                {data: 'status', name: 'status',
+                    render:function(row, type, val, meta){
+                        if(val.status==1){
+                            return '<span class="badge badge-success">Active</span>';
+                        }else{
+                            return '<span class="badge badge-warning">Not Active</span>';
+                        }
+                    }
+                },
+                {data: 'photo', name: 'photo',
+                    render:function(row, type, val, meta){
+                        if(val.photo){
+                            return "<img src=\"" + "/storage/{{config('app.userImagePath')}}/"+val.photo+ "\" height=\"50\"/>";
+                        }else{
+                            return "<img src=\"" + "/profile.png"+"\" height=\"50\"/>";
+                        }
+                    }
+                },
+                {data: 'address', name: 'address'},
+                {data: 'created_at', name: 'created_at'},
+                {data: 'updated_at', name: 'updated_at'},
+                {data: 'deleted_at', name: 'deleted_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
+        });
+        $(".dataTables_filter input")
+        .unbind()
+        .bind("input", function(e) {
+            if(this.value.length >= 3 || e.keyCode == 13) {
+                table.search(this.value).draw();
+            }
+            if(this.value == "") {
+                table.search("").draw();
+            }
+            return;
         });
     });
 
@@ -54,8 +111,8 @@
         let deleteUrl = 'user/'+id;
         let token ="{{csrf_token()}}";
         swal({
-                title: "Are you sure?",
-                text: "Once deleted, you will not be able to recover this data!",
+                title: "Ingin menghapus data ini?",
+                text: "Data ini tidak dapat dikembalikan jika telah terhapus",
                 icon: "warning",
                 buttons: true
             }).then((willDelete) => {
@@ -72,7 +129,7 @@
                             success:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Success, User deleted successfully");
+                                    toastr.success("Sukses, Data berhasil dihapus");
 			                    },500);
                                 let i = row_index.parentNode.parentNode.rowIndex;
                                 let table = $('.user-table').DataTable();
@@ -81,7 +138,7 @@
                             error:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Error, User deleted successfully");
+                                    toastr.error("Error, Data gagal dihapus");
 			                    },500);
                             }
                         });

@@ -22,8 +22,6 @@
                         <span class="form-text {{isset($errors->messages()['name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['name']) ? $errors->messages()['name'][0] .'*' : 'Nama kategori wajib diisi *'}}
                         </span>
-                        {!! Form::hidden('old_name', $postCategory->name, array('placeholder' => 'Nama Kategori','class' => 'form-control form-control-sm')) !!}
-
                     </div>
                 </div>
                 <div class="col-md-12">
@@ -38,8 +36,8 @@
                 </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-xs-12 col-sm-12 col-md-6">
-                            <button type="submit" class="btn btn-sm btn-success">Save</button>
-                            <a class="btn btn-sm btn-success" href="{{route('post-category.index')}}">Cancel</a>
+                            <button type="submit" class="btn btn-sm btn-success">Simpan</button>
+                            <a class="btn btn-sm btn-success" href="{{route('post-category.index')}}">Kembali</a>
                     </div>
                 </div>
             </div>

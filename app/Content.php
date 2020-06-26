@@ -1,0 +1,56 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Content extends Model
+{
+    protected $table = 'posts';
+    protected $fillable = [
+        'title',
+        'slug',
+        'meta_title',
+        'meta_description',
+        'excerpt',
+        'content',
+        'headline',
+        'status',
+        'photo',
+        'post_categories_id',
+        'author',
+        'user_created',
+        'user_updated',
+        'date_published'
+    ];
+
+    public function GetCount()
+    {
+        return Content::count();
+    }
+
+    public function GetCurrentData($start, $limit, $order, $dir)
+    {
+        $data = Content::offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->get();
+        return $data;
+    }
+
+    public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
+    {
+        $data = Content::where('title','LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->get();
+        return $data;
+    }
+
+    public function GetCountDataFilter($search){
+        $data = Content::where('title','LIKE',"%{$search}%")
+                            ->count();
+        return $data;
+    }
+}

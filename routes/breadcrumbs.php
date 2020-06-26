@@ -39,17 +39,29 @@ Breadcrumbs::register('post-category.edit', function ($breadcrumbs, $postCategor
     $breadcrumbs->parent('post-category');
     $breadcrumbs->push($postCategory->name, route('post-category.edit', $postCategory->id));
 });
+Breadcrumbs::register('tags', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Tags', route('tags.index'));
+});
+Breadcrumbs::register('tags.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('tags');
+    $breadcrumbs->push('Tambah Tags', route('tags.create'));
+});
+Breadcrumbs::register('tags.edit', function ($breadcrumbs, $tags) {
+    $breadcrumbs->parent('tags');
+    $breadcrumbs->push($tags->name, route('tags.edit', $tags->id));
+});
 Breadcrumbs::register('post', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Konten', route('post.index'));
+    $breadcrumbs->push('Konten', route('content.index'));
 });
-Breadcrumbs::register('post.create', function ($breadcrumbs) {
+Breadcrumbs::register('content.create', function ($breadcrumbs) {
     $breadcrumbs->parent('post');
-    $breadcrumbs->push('Tambah Konten', route('post.create'));
+    $breadcrumbs->push('Tambah Konten', route('content.create'));
 });
-Breadcrumbs::register('post.edit', function ($breadcrumbs, $post) {
+Breadcrumbs::register('content.edit', function ($breadcrumbs, $post) {
     $breadcrumbs->parent('post');
-    $breadcrumbs->push($post->name, route('post.edit', $post->id));
+    $breadcrumbs->push($post->name, route('content.edit', $post->id));
 });
 
 

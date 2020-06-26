@@ -55,6 +55,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
     'productImagePath'=> 'images/konten',
     'userImagePath'=> 'images/user',
+    'postImagePath'=> 'images/post',
     'asset_url' => env('ASSET_URL', null),
 
     /*

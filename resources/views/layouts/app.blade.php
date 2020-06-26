@@ -25,6 +25,9 @@
     <link href="{{URL::asset('css/toastr.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
 
+    <link rel="stylesheet" href="{{URL::asset('css/rowReorder.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
+
     <style>
 
     </style>
@@ -44,7 +47,7 @@
                     <div class="sidebar-brand-icon">
                         <i class="fas fa-donate"></i>
                     </div>
-                    <div class="sidebar-brand-text mx-3">Donate</div>
+                    <div class="sidebar-brand-text mx-3">MyValour</div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <li class="nav-item active">
@@ -82,8 +85,9 @@
                     <div id="supplier" class="collapse" aria-labelledby="supplier" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
+                        @if(auth()->user()->hasPermissionTo('tags-list'))<a class="collapse-item" href="{{route('tags.index')}}">Tags</a>@endif
                         @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
-                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('post.index')}}">Konten</a>@endif
+                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
                         </div>
                     </div>
                 </li>
@@ -174,7 +178,7 @@
                 <footer class="sticky-footer" style="background:#f8f9fc;">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span> © Donate. </span>
+                            <span> © MyValour. </span>
                         </div>
                     </div>
                 </footer>
@@ -214,13 +218,36 @@
     <script src="{{URL::asset('js/sb-admin-2.min.js')}}"></script>
     <script src="{{URL::asset('vendor/chart.js/Chart.min.js')}}"></script>
     <script src="{{URL::asset('vendor/select2/js/select2.min.js')}}"></script>
-    <script src="{{URL::asset('js//toastr.min.js')}}"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
+    <script src="{{URL::asset('js/toastr.min.js')}}"></script>
+    <script src="{{URL::asset('js/sweetalert.min.js')}}"></script>
+    <script src="{{URL::asset('js/dataTables.rowReorder.min.js')}}"></script>
+    <script src="{{URL::asset('js/dataTables.responsive.min.js')}}"></script>
 
     <script>
 
+$('.breadcrumb li a').each(function(){
 
+var breadWidth = $(this).width();
+
+if($(this).parent('li').hasClass('active') || $(this).parent('li').hasClass('first')){
+
+
+
+} else {
+
+    $(this).css('width', 75 + 'px');
+
+    $(this).mouseover(function(){
+        $(this).css('width', breadWidth + 'px');
+    });
+
+    $(this).mouseout(function(){
+        $(this).css('width', 75 + 'px');
+    });
+}
+
+
+});
     @if(Session::has('success'))
             toastr.success("{{ Session::get('success') }}");
     @endif

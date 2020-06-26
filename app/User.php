@@ -39,4 +39,43 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function PostCategory(){
+    	return $this->hasMany(PostCategory::class, 'author', 'id');
+    }
+    public function GetCount()
+    {
+        return User::count();
+    }
+
+    public function GetCurrentData($start, $limit, $order, $dir)
+    {
+        $data = User::offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->get();
+        return $data;
+    }
+
+    public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
+    {
+        $data = User::where('name','LIKE',"%{$search}%")
+                            ->orWhere('phone', 'LIKE',"%{$search}%")
+                            ->orWhere('whatsapp', 'LIKE',"%{$search}%")
+                            ->orWhere('email', 'LIKE',"%{$search}%")
+                            ->offset($start)
+                            ->limit($limit)
+                            ->orderBy($order,$dir)
+                            ->get();
+        return $data;
+    }
+
+    public function GetCountDataFilter($search){
+        $data = User::where('name','LIKE',"%{$search}%")
+                            ->orWhere('phone', 'LIKE',"%{$search}%")
+                            ->orWhere('whatsapp', 'LIKE',"%{$search}%")
+                            ->orWhere('email', 'LIKE',"%{$search}%")
+                            ->count();
+        return $data;
+    }
 }

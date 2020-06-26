@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
-use App\User;
+use Illuminate\Support\Str;
+use App\Content;
+use App\PostCategory;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Hash;
@@ -14,7 +16,7 @@ use DB;
 use Spatie\Permission\Models\Role;
 use Auth;
 
-class UserController extends Controller
+class ContentController extends Controller
 {
     use ActionTable;
     use ImageTrait;
@@ -26,10 +28,10 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:user-list');
-        $this->middleware('permission:user-create', ['only' => ['create','store']]);
-        $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:post-list');
+        $this->middleware('permission:post-create', ['only' => ['create','store']]);
+        $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:post-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -42,28 +44,25 @@ class UserController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'name',
-                2=>'email',
-                3=>'phone',
-                4=>'whatsapp',
-                5=>'address',
-                6=>'sex',
-                7=>'status',
-                8=>'photo',
-                9=>'created_at',
-                10=>'updated_at',
-                11=>'deleted_at'
+                1=>'title',
+                2=>'excerpt',
+                3=>'content',
+                4=>'headline',
+                5=>'status',
+                6=>'user_created',
+                7=>'created_at',
+                8=>'updated_at'
             );
-            $model  = New User();
-            return $this->ActionTable($columns, $model, $request, 'user.edit', 'user-edit', 'user-delete');
+            $model  = New Content();
+            return $this->ActionTable($columns, $model, $request, 'content.edit', 'post-edit', 'post-delete');
         }
-        return view('user.index');
+        return view('content.index');
     }
 
     public function create()
     {
-        $role = Role::pluck('name','name')->all();
-        return view('user.create', compact('role'));
+        $postCategory = PostCategory::pluck('name','id')->all();
+        return view('content.create', compact('postCategory'));
     }
 
     public function edit($id)
@@ -71,33 +70,34 @@ class UserController extends Controller
         $user = User::find($id);
         $role = Role::pluck('name','name')->all();
         $userRole = $user->roles->pluck('name','name')->all();
-        return view('user.edit', compact('user', 'role', 'userRole'));
+        return view('content.edit', compact('user', 'role', 'userRole'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'phone' => 'required|numeric|unique:users,phone',
-            'whatsapp' => 'numeric|unique:users,whatsapp',
-            'role'=>'required',
-            'sex'=>'required',
-            'status'=>'required'
+            'title' => 'required|unique:posts,title',
+            'meta_title' => 'required',
+            'meta_description' => 'required',
+            'excerpt' => 'required',
+            'post_categories_id' => 'required',
+            'content' => 'required',
+            'headline' => 'required',
+            'status' => 'required'
         ]);
 
+        $slug = Str::slug($request->title, '-');
         if($request->file){
 
-            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            $image = $this->UploadImage($request->file, config('app.postImagePath'));
             if($image==false){
-                \Session::flash('error','image upload failure');
-                return redirect()->route('user.create');
+                \Session::flash('error', 'image upload failure');
+                return redirect()->route('content.create');
 
             }
         }
 
-        try {
+       try {
 
             DB::beginTransaction();
                 if(isset($image)){
@@ -105,22 +105,25 @@ class UserController extends Controller
                         $request->request->add(['photo'=> $image]);
                     }
                 }
+                $request->request->add(['slug'=> $slug]);
+                $request->request->add(['author'=> Auth::user()->id]);
+                $request->request->add(['user_created'=> Auth::user()->name]);
+                $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                $input['password'] = Hash::make($input['password']);
-                $user = User::create($input);
-                $user->assignRole($request->input('role'));
+
+                $post = Content::create($input);
+
+
             DB::commit();
-
-            \Session::flash('success','User berhasil ditambah.');
-
-            return redirect()->route('user.index');
+            \Session::flash('success','data berhasil ditambah.');
+            return redirect()->route('content.index');
         } catch (\Throwable $th) {
             DB::rollBack();
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.userImagePath'));
+                    $this->DeleteImage($image, config('app.postImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('user.create');
+            return redirect()->route('content.create');
         }
 
     }
@@ -184,11 +187,11 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user = User::find($id);
+        $content = Content::find($id);
         try {
             DB::beginTransaction();
-                $this->DeleteImage($user->photo, config('app.userImagePath'));
-                $user->delete();
+                $this->DeleteImage($content->photo, config('app.postImagePath'));
+                $content->delete();
             DB::commit();
             return true;
         } catch (\Throwable $th) {
@@ -203,10 +206,9 @@ class UserController extends Controller
         $image = $request->post('image');
         $id    = $request->post('id');
 
-        $user = User::where('id', $id)->where('photo', $image)->first();
-
+        $user = Content::find($id);
         try {
-            $deleteFile = $this->DeleteImage($user->photo, config('app.userImagePath'));
+            $deleteFile = $this->DeleteImage($image, config('app.postImagePath'));
             DB::beginTransaction();
                 if($deleteFile == true){
                     $input = ['photo'=>NULL];
@@ -215,6 +217,8 @@ class UserController extends Controller
             DB::commit();
             return true;
         } catch (\Throwable $th) {
+                $input = ['photo'=>NULL];
+                $user->update($input);
             DB::rollback();
             return false;
         }

@@ -3,37 +3,34 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-class PostCategory extends Model
+class Tags extends Model
 {
-    protected $table = 'post_categories';
+    protected $table = 'tags';
     protected $fillable = [
-        'name', 'description', 'author', 'user_created', 'user_updated'
+        'name', 'user_created', 'user_updated', 'author'
     ];
     protected $primaryKey = 'id';
 
-    public function Author()
-    {
-    	return $this->belongsTo(User::class, 'author', 'id');
-    }
+    /*public function Tags(){
+    	return $this->belongsTo(Post::class, 'id', 'id_tags');
+    }*/
 
     public function GetCount()
     {
-        return PostCategory::count();
+        return Tags::count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir)
     {
-        $data = PostCategory::offset($start)
+        $data = Tags::offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
         return $data;
     }
 
-    public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
-    {
-        $data = PostCategory::where('description','LIKE',"%{$search}%")
-                                ->orWhere('name', 'LIKE',"%{$search}%")
+    public function GetCurrentDataFilter($start, $limit, $order, $dir, $search){
+        $data = Tags::where('name','LIKE',"%{$search}%")
                                 ->offset($start)
                                 ->limit($limit)
                                 ->orderBy($order,$dir)
@@ -42,8 +39,7 @@ class PostCategory extends Model
     }
 
     public function GetCountDataFilter($search){
-        $data = PostCategory::where('description','LIKE',"%{$search}%")
-                                ->orWhere('name', 'LIKE',"%{$search}%")
+        $data = Tags::where('name','LIKE',"%{$search}%")
                                 ->count();
         return $data;
     }

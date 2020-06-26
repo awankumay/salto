@@ -35,7 +35,7 @@ class AddDetailToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['phone', 'photo', 'address', 'sex', 'status', 'user_type', 'description', 'tagline']);
+            $table->dropColumn(['phone', 'photo', 'whatsapp', 'address', 'sex', 'status', 'user_type', 'description', 'tagline']);
             $table->dropSoftDeletes();
         });
     }

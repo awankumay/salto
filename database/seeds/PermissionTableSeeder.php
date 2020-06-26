@@ -33,6 +33,10 @@ class PermissionTableSeeder extends Seeder
             'user-create',
             'user-edit',
             'user-delete',
+            'tags-list',
+            'tags-create',
+            'tags-edit',
+            'tags-delete',
          ];
 
 

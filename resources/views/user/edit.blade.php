@@ -180,7 +180,7 @@
                             $("#overlay").fadeIn(300);　
                         });
                         $.ajax({
-                            url: "{{url('/')}}/"+deleteUrl,
+                            url: "{{url('/')}}/dashboard/"+deleteUrl,
                             type: 'POST',
                             data: params,
                             success:function(){
