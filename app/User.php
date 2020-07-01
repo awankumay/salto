@@ -43,6 +43,11 @@ class User extends Authenticatable
     public function PostCategory(){
     	return $this->hasMany(PostCategory::class, 'author', 'id');
     }
+
+    public function Content(){
+    	return $this->hasMany(Content::class, 'author', 'id');
+    }
+
     public function GetCount()
     {
         return User::count();

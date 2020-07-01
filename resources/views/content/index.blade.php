@@ -3,7 +3,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('post') }}
+        {{ Breadcrumbs::render('content') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
@@ -23,10 +23,10 @@
                         <tr>
                             <th style="width:5%;">ID</th>
                             <th style="width:15%;">Judul</th>
-                            <th style="width:20%;">Ringkasan</th>
-                            <th style="width:5%;">Content</th>
                             <th style="width:5%;">Headline</th>
                             <th style="width:25%;">Status</th>
+                            <th style="width:20%;">Ringkasan</th>
+                            <th style="width:5%;">Content</th>
                             <th style="width:25%;">Author</th>
                             <th style="width:25%;">Create</th>
                             <th style="width:25%;">Update</th>
@@ -46,19 +46,50 @@
         let table = $('.post-table').DataTable({
             processing: true,
             serverSide: true,
+            rowReorder: {
+                selector: 'td:nth-child(2)'
+            },
+            responsive: true,
             ajax: "{{ route('content.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'title', name: 'title'},
+                {data: 'headline', name: 'headline',
+                    render:function(data){
+                            if(data==1){
+                                return '<span class="badge badge-success">Yes</span>';
+                            }else{
+                                return '<span class="badge badge-warning">No</span>';
+                            }
+                        }
+                },
+                {data: 'status', name: 'status',
+                    render:function(data){
+                            if(data==1){
+                                return '<span class="badge badge-success">Active</span>';
+                            }else{
+                                return '<span class="badge badge-warning">Pending</span>';
+                            }
+                        }
+                },
                 {data: 'excerpt', name: 'excerpt'},
                 {data: 'content', name: 'content'},
-                {data: 'headline', name: 'headline'},
-                {data: 'status', name: 'status'},
                 {data: 'user_created', name: 'user_created'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
+        });
+        $(".dataTables_filter input")
+        .unbind()
+        .bind("input", function(e) {
+            if(this.value.length >= 3 || e.keyCode == 13) {
+                table.search(this.value).draw();
+            }
+            if(this.value == "") {
+                table.search("").draw();
+            }
+            return;
         });
     });
 

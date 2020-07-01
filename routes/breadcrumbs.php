@@ -51,17 +51,17 @@ Breadcrumbs::register('tags.edit', function ($breadcrumbs, $tags) {
     $breadcrumbs->parent('tags');
     $breadcrumbs->push($tags->name, route('tags.edit', $tags->id));
 });
-Breadcrumbs::register('post', function ($breadcrumbs) {
+Breadcrumbs::register('content', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
     $breadcrumbs->push('Konten', route('content.index'));
 });
 Breadcrumbs::register('content.create', function ($breadcrumbs) {
-    $breadcrumbs->parent('post');
+    $breadcrumbs->parent('content');
     $breadcrumbs->push('Tambah Konten', route('content.create'));
 });
-Breadcrumbs::register('content.edit', function ($breadcrumbs, $post) {
-    $breadcrumbs->parent('post');
-    $breadcrumbs->push($post->name, route('content.edit', $post->id));
+Breadcrumbs::register('content.edit', function ($breadcrumbs, $content) {
+    $breadcrumbs->parent('content');
+    $breadcrumbs->push($content->title, route('content.edit', $content->id));
 });
 
 

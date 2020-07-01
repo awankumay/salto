@@ -21,7 +21,7 @@ class CreatePostTable extends Migration
             $table->string('meta_description');
             $table->string('excerpt');
             $table->integer('post_categories_id');
-            $table->longText('tags_id')->nullable();
+            $table->longText('tags')->nullable();
             $table->longText('content');
             $table->string('photo')->nullable();
             $table->integer('headline');

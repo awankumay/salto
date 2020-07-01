@@ -82,6 +82,7 @@ class UserController extends Controller
             'password' => 'required|same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone',
             'whatsapp' => 'numeric|unique:users,whatsapp',
+            'file' => 'required|mimes:jpeg,bmp,png|size:100',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'
@@ -133,21 +134,21 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone,'.$id,
             'whatsapp' => 'numeric|unique:users,whatsapp,'.$id,
+            'file' => 'required|mimes:jpeg,bmp,png|max:100',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'
         ]);
 
 
-
+        $user = User::find($id);
         if($request->file){
-
             $image = $this->UploadImage($request->file, config('app.userImagePath'));
             if($image==false){
                 \Session::flash('error','image upload failure');
                 return redirect()->route('user.index');
-
             }
+            $this->DeleteImage($user->photo, config('app.userImagePath'));
         }
         try {
             if(isset($image)){
@@ -163,7 +164,6 @@ class UserController extends Controller
                Arr::forget($input, array('password', 'confirm-password'));
             }
             DB::beginTransaction();
-                $user = User::find($id);
                 $user->update($input);
             DB::table('model_has_roles')->where('model_id',$id)->delete();
                 $user->assignRole($request->input('role'));

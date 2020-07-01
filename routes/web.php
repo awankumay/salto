@@ -19,7 +19,9 @@ Route::get('/', function () {
     }
     return view('auth.login');
 });
-
+Route::get('summer', function () {
+    return view('summernote');
+});
 Auth::routes();
 Route::group(['middleware' => ['auth']], function() {
     Route::prefix('dashboard')->group(function () {
@@ -30,5 +32,6 @@ Route::group(['middleware' => ['auth']], function() {
         Route::resource('content', 'ContentController');
         Route::resource('tags', 'TagsController');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
+        Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
     });
 });

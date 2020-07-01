@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Traits;
+use Illuminate\Support\Str;
 use Auth;
 
 trait ActionTable
@@ -37,6 +38,14 @@ trait ActionTable
                         $nestedData['updated_at'] = $val->updated_at ? date('d-m-Y H:i',strtotime($val->updated_at)) : '';
                     }else if($columns[$i]=='deleted_at'){
                         $nestedData['deleted_at'] = $val->deleted_at ? date('d-m-Y H:i',strtotime($val->deleted_at)) : '';
+                    }else if($columns[$i]=='excerpt'){
+                        $nestedData['excerpt'] = Str::limit($val->excerpt, 30);
+                    }
+                    else if($columns[$i]=='content'){
+                        $nestedData['content'] = Str::limit($val->content, 30);
+                    }
+                    else if($columns[$i]=='title'){
+                        $nestedData['title'] = Str::limit($val->title, 20);
                     }
                     else{
                         $nestedData[$columns[$i]] = $dataModel[$key][$columns[$i]];

@@ -18,11 +18,21 @@ class Content extends Model
         'status',
         'photo',
         'post_categories_id',
+        'tags',
         'author',
         'user_created',
         'user_updated',
         'date_published'
     ];
+
+    public function Author()
+    {
+    	return $this->belongsTo(User::class, 'author', 'id');
+    }
+
+    public function PostCategory(){
+    	return $this->hasOne(PostCategory::class, 'id', 'post_categories_id');
+    }
 
     public function GetCount()
     {

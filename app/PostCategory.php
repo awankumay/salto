@@ -16,6 +16,11 @@ class PostCategory extends Model
     	return $this->belongsTo(User::class, 'author', 'id');
     }
 
+    public function Content()
+    {
+    	return $this->belongsTo(Content::class, 'post_categories_id', 'id');
+    }
+
     public function GetCount()
     {
         return PostCategory::count();

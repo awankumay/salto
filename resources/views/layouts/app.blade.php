@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" ng-app="app">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,16 +24,19 @@
     <link href="{{URL::asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
     <link href="{{URL::asset('css/toastr.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
-
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <link rel="stylesheet" href="{{URL::asset('css/rowReorder.dataTables.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/summernote-bs4.min.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/select2.min.css')}}">
 
     <style>
 
     </style>
 </head>
 <body>
-    <div id="app">
+    <div id="app" ng-app="app">
         @guest
         @else
         <div id="overlay">
@@ -207,14 +210,11 @@
         @endguest
     </div>
     <script src="{{URL::asset('vendor/jquery/jquery.min.js')}}"></script>
-
     <script src="{{URL::asset('vendor/jquery/jquery-2.1.3.min.js')}}"></script>
     <script src="{{URL::asset('vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
     <script src="{{URL::asset('vendor/datatables/jquery.dataTables.min.js')}}"></script>
     <script src="{{URL::asset('vendor/datatables/dataTables.bootstrap4.min.js')}}"></script>
-
     <script src="{{URL::asset('vendor/jquery-easing/jquery.easing.min.js')}}"></script>
-
     <script src="{{URL::asset('js/sb-admin-2.min.js')}}"></script>
     <script src="{{URL::asset('vendor/chart.js/Chart.min.js')}}"></script>
     <script src="{{URL::asset('vendor/select2/js/select2.min.js')}}"></script>
@@ -222,9 +222,12 @@
     <script src="{{URL::asset('js/sweetalert.min.js')}}"></script>
     <script src="{{URL::asset('js/dataTables.rowReorder.min.js')}}"></script>
     <script src="{{URL::asset('js/dataTables.responsive.min.js')}}"></script>
+    <script src="{{URL::asset('summernote/summernote-bs4.min.js')}}"></script>
+    <script src="{{URL::asset('js/summernote-cleaner.js')}}"></script>
+    <script src="{{URL::asset('js/my-app.js')}}"></script>
+    <script src="{{URL::asset('js/select2.min.js')}}"></script>
 
     <script>
-
 $('.breadcrumb li a').each(function(){
 
 var breadWidth = $(this).width();
