@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAuctionHistoriesTable extends Migration
+class AddFundTargetStatus extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateAuctionHistoriesTable extends Migration
      */
     public function up()
     {
-        Schema::create('auction_histories', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('auction_id');
-            $table->bigInteger('user_id');
-            $table->longText('note');
-            $table->timestamps();
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->bigInteger('set_fund_target')->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateAuctionHistoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('auction_histories');
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->dropColumn(['set_fund_target']);
+        });
     }
 }

@@ -15,19 +15,19 @@ class CreateWithdrawTransactionsTable extends Migration
     {
         Schema::create('withdraw_transactions', function (Blueprint $table) {
             $table->id();
-            $table->integer('withdraw_transactions_type')->comment('1:campaign, 2:auction');
-            $table->integer('user_id');
-            $table->integer('beneficiary_account');
+            $table->bigInteger('withdraw_transactions_type')->comment('1:campaign, 2:auction');
+            $table->bigInteger('user_id');
+            $table->bigInteger('beneficiary_account');
             $table->string('beneficiary_account_issuer');
             $table->string('beneficiary_account_name');
-            $table->integer('auction_id')->nullable();
-            $table->integer('campaign_id')->nullable();
+            $table->bigInteger('auction_id')->nullable();
+            $table->bigInteger('campaign_id')->nullable();
             $table->string('user_created');
-            $table->integer('unique_id');
-            $table->integer('reff_id')->nullable();
-            $table->integer('amount');
+            $table->bigInteger('unique_id');
+            $table->bigInteger('reff_id')->nullable();
+            $table->bigInteger('amount');
             $table->longText('note')->nullable();
-            $table->integer('sender_account');
+            $table->bigInteger('sender_account');
             $table->string('sender_account_issuer');
             $table->string('sender_account_name');
             $table->timestamp('date_created');

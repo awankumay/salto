@@ -16,12 +16,12 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->integer('transaction_type')->comment('1:campaign, 2:auction, 3:campaign barang');
-            $table->integer('unique_id');
-            $table->integer('reff_id')->nullable();
-            $table->integer('amount')->default(0);
-            $table->integer('unique_amount')->default(0);
-            $table->integer('total_amount')->default(0);
-            $table->integer('sender_account')->nullable();
+            $table->bigInteger('unique_id');
+            $table->bigInteger('reff_id')->nullable();
+            $table->bigInteger('amount')->default(0);
+            $table->bigInteger('unique_amount')->default(0);
+            $table->bigInteger('total_amount')->default(0);
+            $table->bigInteger('sender_account')->nullable();
             $table->string('sender_account_issuer')->nullable();
             $table->string('sender_account_name')->nullable();
             $table->longText('note')->nullable();

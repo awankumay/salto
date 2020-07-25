@@ -12,7 +12,7 @@ class PermissionTableSeeder extends Seeder
      */
     public function run()
     {
-        $permissions = [
+         $permissions = [
             'product-category-list',
             'product-category-create',
             'product-category-edit',
@@ -37,8 +37,19 @@ class PermissionTableSeeder extends Seeder
             'tags-create',
             'tags-edit',
             'tags-delete',
+            'campaign-list',
+            'campaign-create',
+            'campaign-edit',
+            'campaign-delete',
+            'auction-list',
+            'auction-create',
+            'auction-edit',
+            'auction-delete',
+            'transaction-list',
+            'transaction-create',
+            'transaction-edit',
+            'transaction-delete',
          ];
-
 
          foreach ($permissions as $permission) {
               Permission::updateOrCreate(['name' => $permission]);

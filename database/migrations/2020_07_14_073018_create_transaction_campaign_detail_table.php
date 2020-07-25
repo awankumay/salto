@@ -16,15 +16,15 @@ class CreateTransactionCampaignDetailTable extends Migration
     {
         Schema::create('transaction_campaign_detail', function (Blueprint $table) {
             $table->id();
-            $table->integer('transaction_id');
-            $table->integer('campaign_id');
+            $table->bigInteger('transaction_id');
+            $table->bigInteger('campaign_id');
             $table->string('title');
             $table->string('user_created');
-            $table->integer('user_id');
+            $table->bigInteger('user_id');
             $table->string('customer_id')->nullable();
             $table->string('customer_name')->nullable();
-            $table->integer('customer_phone')->nullable();
-            $table->integer('customer_whatsapp')->nullable();
+            $table->bigInteger('customer_phone')->nullable();
+            $table->bigInteger('customer_whatsapp')->nullable();
             $table->string('customer_email')->nullable();
             $table->timestamp('date_created');
             $table->timestamp('latest_updated');

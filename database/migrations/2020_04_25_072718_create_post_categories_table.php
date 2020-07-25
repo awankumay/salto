@@ -17,7 +17,7 @@ class CreatePostCategoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->longText('description')->nullable();
-            $table->integer('author');
+            $table->bigInteger('author');
             $table->string('user_created');
             $table->string('user_updated')->nullable();
             $table->timestamps();

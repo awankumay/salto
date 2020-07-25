@@ -15,9 +15,8 @@ class CreateCampaignHistoriesTable extends Migration
     {
         Schema::create('campaign_histories', function (Blueprint $table) {
             $table->id();
-            $table->integer('campaign_id');
-            $table->integer('user_id');
-            $table->integer('transaction_withdraw_id')->nullable();
+            $table->bigInteger('campaign_id');
+            $table->bigInteger('user_id');
             $table->longText('note');
             $table->timestamps();
         });

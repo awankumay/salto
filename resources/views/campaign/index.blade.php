@@ -3,22 +3,22 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('content') }}
+        {{ Breadcrumbs::render('campaign') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Konten</div>
+                <div class="p-2">Campaign</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('post-create'))
-                        <a href="{{route('content.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Konten</a>
+                    @if(auth()->user()->hasPermissionTo('campaign-create'))
+                        <a href="{{route('campaign.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Campaign</a>
                     @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table table-responsive">
-                <table class="table display nowrap post-table" style="widht:100%;">
+                <table class="table display nowrap campaign-table" style="widht:100%;">
                     <thead>
                         <tr>
                             <th style="width:5%;">ID</th>
@@ -43,14 +43,14 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        let table = $('.post-table').DataTable({
+        let table = $('.campaign-table').DataTable({
             processing: true,
             serverSide: true,
             rowReorder: {
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('content.index') }}",
+            ajax: "{{ route('campaign.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'title', name: 'title'},
@@ -94,7 +94,7 @@
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'content/'+id;
+        let deleteUrl = 'campaign/'+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Are you sure?",
@@ -115,16 +115,16 @@
                             success:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Berhasil, Konten berhasil dihapus");
+                                    toastr.success("Berhasil, Campaign berhasil dihapus");
 			                    },500);
                                 let i = row_index.parentNode.parentNode.rowIndex;
-                                let table = $('.post-table').DataTable();
+                                let table = $('.campaign-table').DataTable();
                                 table.row(i).remove().draw();
                             },
                             error:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Gagal, Konten tidak berhasil dihapus");
+                                    toastr.error("Gagal, Campaign tidak berhasil dihapus");
 			                    },500);
                             }
                         });

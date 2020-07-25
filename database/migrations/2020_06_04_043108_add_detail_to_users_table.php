@@ -14,8 +14,8 @@ class AddDetailToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('phone');
-            $table->string('whatsapp')->nullable();
+            $table->bigInteger('phone');
+            $table->bigInteger('whatsapp')->nullable();
             $table->longText('address')->nullable();
             $table->longText('description')->nullable();
             $table->longText('tagline')->nullable();

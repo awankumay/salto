@@ -1,32 +1,31 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('content.create') }}
+        {{ Breadcrumbs::render('campaign.create') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Tambah konten baru</div>
+                <div class="p-2">Tambah campaign baru</div>
                 <div class="p-2">
-                    <a class="btn btn-sm btn-success float-right" href="{{route('content.index')}}">Kembali</a></div>
+                    <a class="btn btn-sm btn-success float-right" href="{{route('campaign.index')}}">Kembali</a></div>
             </div>
         </div>
         <div class="card-body">
-            {!! Form::open(array('route' => ['content.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
+            {!! Form::open(array('route' => ['campaign.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
             <div class="row">
                 <div class="col-lg-8 col-sm-12 col-md-12">
                     <div class="form-group col-md-12">
-                        <strong>Judul  </strong>{{-- <i class="text-help text-danger">(sisa karakter <%= 100-title.length %>)</i> --}}
-                        {!! Form::text('title', null, array('placeholder' => 'Judul', 'ng-trim'=>'false', 'maxlength'=>'100', /* 'ng-model'=>'title', */ 'id'=>'title', 'class' => 'form-control form-control-sm editable', 'maxlength'=>'100')) !!}
+                        <strong>Judul  </strong>
+                        {!! Form::text('title', null, array('placeholder' => 'Judul', 'ng-trim'=>'false', 'maxlength'=>'100', 'id'=>'title', 'class' => 'form-control form-control-sm editable')) !!}
                         <span class="form-text {{isset($errors->messages()['title']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['title']) ? $errors->messages()['title'][0] .'*' : 'Judul wajib diisi *'}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Ringkasan:</strong> {{-- <i class="text-help text-danger">(sisa karakter <%= 250-excerpt.length %>)</i> --}}
-                        {!! Form::textarea('excerpt', null, array('rows' => 4, 'ng-model'=>'excerpt', 'maxlength'=>'250', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Ringkasan')) !!}
+                        <strong>Ringkasan:</strong>
+                        {!! Form::textarea('excerpt', null, array('rows' => 3, 'maxlength'=>'250', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Ringkasan')) !!}
                         <span class="form-text {{isset($errors->messages()['excerpt']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['excerpt']) ? $errors->messages()['excerpt'][0] .'*' : 'Ringkasan wajib disii *'}}
                         </span>
@@ -39,11 +38,40 @@
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Tags:</strong>
-                        {!! Form::select('tags[]', $tags, [], array('class' => 'form-control form-control-sm tagging', 'multiple', 'placeholder'=>'Pilih Tags')) !!}
-                        <span class="form-text {{isset($errors->messages()['tags']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['tags']) ? $errors->messages()['tags'][0] .'' : 'Pilih tags'}}
-                        </span>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <strong>Mulai:</strong><br>
+                                {!! Form::date('date_started', null, array('id'=>'date_started', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['date_started']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['date_started']) ? $errors->messages()['date_started'][0] .'*' : 'Tanggal mulai wajib diisi *'}}
+                            </div>
+                            <div class="form-group col-md-6">
+                                <strong>Selesai:</strong><br>
+                                {!! Form::date('date_ended', null, array('id'=>'date_ended', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['date_ended']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['date_ended']) ? $errors->messages()['date_ended'][0] .'*' : 'Tanggal selesai wajib diisi *'}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <strong>Batasi kebutuhan dana:</strong><br>
+                                {!! Form::radio('set_fund_target', 1, array('class' => 'form-control form-control-sm set_fund_target')) !!} Ya &nbsp;
+                                {!! Form::radio('set_fund_target', 2, array('class' => 'form-control form-control-sm set_fund_target')) !!} Tidak &nbsp;
+                                <span class="form-text {{isset($errors->messages()['set_fund_target']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                    {{isset($errors->messages()['set_fund_target']) ? $errors->messages()['set_fund_target'][0] .'*' : 'pilih salah satu *'}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <strong>Kebutuhan dana  </strong>
+                                {!! Form::text('fund_target', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'fund_target', 'class' => 'form-control form-control-sm')) !!}
+                                {!! Form::hidden('fund_target_value', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'fund_target_value', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['fund_target']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['fund_target']) ? $errors->messages()['fund_target'][0] .'*' : 'Kebutuhan dana wajib diisi *'}}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-12 col-sm-12">
@@ -56,16 +84,9 @@
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Kategori:</strong>
-                        {!! Form::select('post_categories_id', $postCategory, [], array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Pilih kategori')) !!}
-                        <span class="form-text {{isset($errors->messages()['post_categories_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['post_categories_id']) ? $errors->messages()['post_categories_id'][0] .'*' : 'Pilih salah satu *'}}
-                        </span>
-                    </div>
-                    <div class="form-group col-md-12">
                         <strong>Status:</strong><br>
                         {!! Form::radio('status', 1, array('class' => 'form-control form-control-sm')) !!} Aktif &nbsp;
-                        {!! Form::radio('status', 0, array('class' => 'form-control form-control-sm')) !!} Tidak Aktif &nbsp;
+                        {!! Form::radio('status', 2, array('class' => 'form-control form-control-sm')) !!} Tidak Aktif &nbsp;
                         <span class="form-text {{isset($errors->messages()['status']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['status']) ? $errors->messages()['status'][0] .'*' : 'Pilih salah satu *'}}
                         </span>
@@ -73,24 +94,56 @@
                     <div class="form-group col-md-12">
                         <strong>Headline:</strong><br>
                         {!! Form::radio('headline', 1, array('class' => 'form-control form-control-sm')) !!} Ya &nbsp;
-                        {!! Form::radio('headline', 0, array('class' => 'form-control form-control-sm')) !!} Tidak &nbsp;
+                        {!! Form::radio('headline', 2, array('class' => 'form-control form-control-sm')) !!} Tidak &nbsp;
                         <span class="form-text {{isset($errors->messages()['headline']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['headline']) ? $errors->messages()['headline'][0] .'*' : 'pilih salah satu *'}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Meta Title</strong> {{-- <i class="text-help text-danger">(sisa karakter <%= 150-meta_description.length %>)</i> --}}
-                        {!! Form::textarea('meta_title', null, array('rows' => 2, 'ng-model'=>'meta_title', 'maxlength'=>'150', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Title')) !!}
+                        <strong>Tags:</strong>
+                        {!! Form::select('tags[]', $tags, [], array('class' => 'form-control form-control-sm tagging', 'multiple')) !!}
+                        <span class="form-text {{isset($errors->messages()['tags']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['tags']) ? $errors->messages()['tags'][0] .'' : 'Pilih tags'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <strong>Meta Title</strong>
+                        {!! Form::textarea('meta_title', null, array('rows' => 2, 'maxlength'=>'120', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Title')) !!}
                         <span class="form-text {{isset($errors->messages()['meta_title']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['meta_title']) ? $errors->messages()['meta_title'][0] .'*' : 'Meta title wajib diisi *'}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Meta Deskripsi</strong> {{-- <i class="text-help text-danger">(sisa karakter <%= 150-meta_description.length %>)</i> --}}
-                        {!! Form::textarea('meta_description', null, array('rows' => 4, 'ng-model'=>'meta_description', 'maxlength'=>'150', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Deskripsi')) !!}
+                        <strong>Meta Deskripsi</strong>
+                        {!! Form::textarea('meta_description', null, array('rows' => 4, 'maxlength'=>'200', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Deskripsi')) !!}
                         <span class="form-text {{isset($errors->messages()['meta_description']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['meta_description']) ? $errors->messages()['meta_description'][0] .'*' : 'Meta deskripsi wajib diisi *'}}
                         </span>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <strong>Pilih Akun penerima</strong><br>
+                                {!! Form::select('beneficiary_account_issuer[]', $beneficiary_account_issuer, [], array('class' => 'form-control form-control-sm tagging', 'single', 'placeholder'=>'Pilih Akun')) !!}
+                                <span class="form-text {{isset($errors->messages()['beneficiary_account_issuer']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['beneficiary_account_issuer']) ? $errors->messages()['beneficiary_account_issuer'][0] .'' : 'Pilih Akun * '}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <strong>No.Akun Penerima</strong><br>
+                                {!! Form::number('beneficiary_account', null, array('placeholder' => 'No Akun', 'ng-trim'=>'false', 'maxlength'=>'20', 'id'=>'beneficiary_account', 'class' => 'form-control form-control-sm editable')) !!}
+                                <span class="form-text {{isset($errors->messages()['beneficiary_account']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['beneficiary_account']) ? $errors->messages()['beneficiary_account'][0] .'*' : 'No Rek wajib diisi *'}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-12">
+                                <strong>Nama Akun penerima</strong><br>
+                                {!! Form::text('beneficiary_account_name', null, array('placeholder' => 'Nama Akun', 'ng-trim'=>'false', 'maxlength'=>'50', 'id'=>'beneficiary_account_name', 'class' => 'form-control form-control-sm editable')) !!}
+                                <span class="form-text {{isset($errors->messages()['beneficiary_account_name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['beneficiary_account_name']) ? $errors->messages()['beneficiary_account_name'][0] .'*' : 'Nama akun wajib diisi *'}}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-12">
@@ -106,6 +159,22 @@
 @push('scripts')
 <script type="text/javascript">
 $(document).ready(function() {
+    $('#fund_target').number( true, 0);
+    $('#fund_target').on('keyup',function(){
+        var val = $('#fund_target').val();
+        $('#fund_target_value').val(val);
+	});
+    $('input:radio[name="set_fund_target"]').change(
+    function(){
+        if (this.checked && this.value == '2') {
+            $("#fund_target").prop("disabled", true);
+            $('#fund_target_value').val();
+            $('#fund_target').val();
+        }else{
+            $("#fund_target").prop("disabled", false);
+        }
+    });
+
     $('.tagging').select2();
     setTimeout(() => {
         $('#summernote').summernote({
@@ -161,7 +230,6 @@ $(document).ready(function() {
             }
         });
     }, 200);
-
 });
 </script>
 @endpush

@@ -15,12 +15,12 @@ class CreateAuctionLogsTable extends Migration
     {
         Schema::create('auction_logs', function (Blueprint $table) {
             $table->id();
-            $table->integer('auction_id');
-            $table->integer('user_id');
-            $table->integer('user_name');
-            $table->integer('amount');
-            $table->integer('customer_id');
-            $table->integer('customer_name');
+            $table->bigInteger('auction_id');
+            $table->bigInteger('user_id');
+            $table->string('user_name');
+            $table->bigInteger('amount');
+            $table->bigInteger('customer_id');
+            $table->string('customer_name');
             $table->timestamps();
         });
     }

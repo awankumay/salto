@@ -26,7 +26,7 @@ class CreatePostTable extends Migration
             $table->string('photo')->nullable();
             $table->integer('headline');
             $table->integer('status');
-            $table->integer('author');
+            $table->bigInteger('author');
             $table->string('user_created');
             $table->string('user_updated')->nullable();
             $table->timestamp('date_published')->nullable();

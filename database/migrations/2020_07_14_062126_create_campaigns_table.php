@@ -25,14 +25,14 @@ class CreateCampaignsTable extends Migration
             $table->string('photo')->nullable();
             $table->smallInteger('headline')->default(2);
             $table->smallInteger('status')->default(2);
-            $table->integer('user_id');
+            $table->bigInteger('user_id');
             $table->string('user_created');
             $table->string('user_updated')->nullable();
             $table->timestamp('date_published')->nullable();
             $table->timestamp('date_started')->nullable();
             $table->timestamp('date_ended')->nullable();
-            $table->integer('fund_target')->nullable();
-            $table->integer('beneficiary_account');
+            $table->bigInteger('fund_target')->nullable();
+            $table->bigInteger('beneficiary_account');
             $table->string('beneficiary_account_issuer');
             $table->string('beneficiary_account_name');
             $table->timestamps();

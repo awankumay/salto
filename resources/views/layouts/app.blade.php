@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/summernote-bs4.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/bootstrap-datetimepicker.min.css')}}">
 
     <style>
 
@@ -83,7 +84,7 @@
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#supplier" aria-expanded="true" aria-controls="supplier">
                         <i class="fas fa-newspaper"></i>
-                        <span>Kelola Konten</span>
+                        <span>Konten</span>
                     </a>
                     <div id="supplier" class="collapse" aria-labelledby="supplier" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
@@ -91,6 +92,22 @@
                         @if(auth()->user()->hasPermissionTo('tags-list'))<a class="collapse-item" href="{{route('tags.index')}}">Tags</a>@endif
                         @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
+                        </div>
+                    </div>
+                </li>
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
+                    Campaign
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#campaign" aria-expanded="true" aria-controls="campaign">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Campaign</span>
+                    </a>
+                    <div id="campaign" class="collapse" aria-labelledby="campaign" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Menu</h6>
+                        @if(auth()->user()->hasPermissionTo('campaign-list'))<a class="collapse-item" href="{{route('campaign.index')}}">Campaign</a>@endif
                         </div>
                     </div>
                 </li>
@@ -226,31 +243,31 @@
     <script src="{{URL::asset('js/summernote-cleaner.js')}}"></script>
     <script src="{{URL::asset('js/my-app.js')}}"></script>
     <script src="{{URL::asset('js/select2.min.js')}}"></script>
+    <script src="{{URL::asset('js/bootstrap-datetimepicker.min.js')}}"></script>
+    <script src="{{URL::asset('js/jquery.number.js')}}"></script>
 
     <script>
-$('.breadcrumb li a').each(function(){
+    $('.breadcrumb li a').each(function(){
 
-var breadWidth = $(this).width();
+    var breadWidth = $(this).width();
 
-if($(this).parent('li').hasClass('active') || $(this).parent('li').hasClass('first')){
+    if($(this).parent('li').hasClass('active') || $(this).parent('li').hasClass('first')){
 
+    } else {
 
-
-} else {
-
-    $(this).css('width', 75 + 'px');
-
-    $(this).mouseover(function(){
-        $(this).css('width', breadWidth + 'px');
-    });
-
-    $(this).mouseout(function(){
         $(this).css('width', 75 + 'px');
+
+        $(this).mouseover(function(){
+            $(this).css('width', breadWidth + 'px');
+        });
+
+        $(this).mouseout(function(){
+            $(this).css('width', 75 + 'px');
+        });
+    }
+
+
     });
-}
-
-
-});
     @if(Session::has('success'))
             toastr.success("{{ Session::get('success') }}");
     @endif

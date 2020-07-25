@@ -63,7 +63,18 @@ Breadcrumbs::register('content.edit', function ($breadcrumbs, $content) {
     $breadcrumbs->parent('content');
     $breadcrumbs->push($content->title, route('content.edit', $content->id));
 });
-
+Breadcrumbs::register('campaign', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Campaign', route('campaign.index'));
+});
+Breadcrumbs::register('campaign.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('campaign');
+    $breadcrumbs->push('Tambah Campaign', route('campaign.create'));
+});
+Breadcrumbs::register('campaign.edit', function ($breadcrumbs, $campaign) {
+    $breadcrumbs->parent('campaign');
+    $breadcrumbs->push($campaign->title, route('campaign.edit', $campaign->id));
+});
 
 
 ?>
