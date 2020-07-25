@@ -75,6 +75,30 @@ Breadcrumbs::register('campaign.edit', function ($breadcrumbs, $campaign) {
     $breadcrumbs->parent('campaign');
     $breadcrumbs->push($campaign->title, route('campaign.edit', $campaign->id));
 });
+Breadcrumbs::register('auction', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Auction', route('auction.index'));
+});
+Breadcrumbs::register('auction.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('auction');
+    $breadcrumbs->push('Tambah Auction', route('auction.create'));
+});
+Breadcrumbs::register('auction.edit', function ($breadcrumbs, $auction) {
+    $breadcrumbs->parent('auction');
+    $breadcrumbs->push($auction->title, route('auction.edit', $auction->id));
+});
+Breadcrumbs::register('product-category', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Produk kategori', route('product-category.index'));
+});
+Breadcrumbs::register('product-category.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('product-category');
+    $breadcrumbs->push('Tambah produk kategori', route('product-category.create'));
+});
+Breadcrumbs::register('product-category.edit', function ($breadcrumbs, $productCategory) {
+    $breadcrumbs->parent('product-category');
+    $breadcrumbs->push($productCategory->name, route('product-category.edit', $productCategory->id));
+});
 
 
 ?>

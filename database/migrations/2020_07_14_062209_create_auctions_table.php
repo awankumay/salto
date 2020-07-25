@@ -37,6 +37,7 @@ class CreateAuctionsTable extends Migration
             $table->integer('buy_now')->nullable();
             $table->bigInteger('price_buy_now')->nullable();
             $table->bigInteger('start_price')->nullable();
+            $table->bigInteger('multiple_bid')->nullable();
             $table->integer('rate_donation')->nullable();
             $table->bigInteger('beneficiary_account');
             $table->string('beneficiary_account_issuer');

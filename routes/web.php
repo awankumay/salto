@@ -26,8 +26,10 @@ Route::group(['middleware' => ['auth']], function() {
         Route::resource('role', 'RoleController');
         Route::resource('user', 'UserController');
         Route::resource('post-category', 'PostCategoryController');
+        Route::resource('product-category', 'ProductCategoryController');
         Route::resource('content', 'ContentController');
         Route::resource('campaign', 'CampaignController');
+        Route::resource('auction', 'AuctionController');
         Route::resource('tags', 'TagsController');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');

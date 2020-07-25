@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use App\Campaign;
+use App\Auction;
+use App\ProductCategory;
 use App\Tags;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
@@ -17,7 +18,7 @@ use Spatie\Permission\Models\Role;
 use Auth;
 use Carbon\Carbon;
 
-class CampaignController extends Controller
+class AuctionController extends Controller
 {
     use ActionTable;
     use ImageTrait;
@@ -29,10 +30,10 @@ class CampaignController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:campaign-list');
-        $this->middleware('permission:campaign-create', ['only' => ['create','store']]);
-        $this->middleware('permission:campaign-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:campaign-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:auction-list');
+        $this->middleware('permission:auction-create', ['only' => ['create','store']]);
+        $this->middleware('permission:auction-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:auction-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -46,18 +47,19 @@ class CampaignController extends Controller
             $columns = array(
                 0=>'id',
                 1=>'title',
-                2=>'excerpt',
-                3=>'content',
-                4=>'headline',
-                5=>'status',
-                6=>'user_created',
-                7=>'created_at',
-                8=>'updated_at'
+                2=>'headline',
+                3=>'status',
+                4=>'start_price',
+                5=>'buy_now',
+                6=>'price_buy_now',
+                7=>'user_created',
+                8=>'date_published',
+                9=>'created_at',
             );
-            $model  = New Campaign();
-            return $this->ActionTable($columns, $model, $request, 'campaign.edit', 'campaign-edit', 'campaign-delete');
+            $model  = New Auction();
+            return $this->ActionTable($columns, $model, $request, 'auction.edit', 'auction-edit', 'auction-delete');
         }
-        return view('campaign.index');
+        return view('auction.index');
     }
 
     public function create()
@@ -70,13 +72,12 @@ class CampaignController extends Controller
         );
         $beneficiary_account_issuer = $_bank;
         $tags = Tags::pluck('name','name')->all();
-        return view('campaign.create', compact('tags', 'beneficiary_account_issuer'));
+        $product_categories = ProductCategory::pluck('name','id')->all();
+        return view('auction.create', compact('tags', 'beneficiary_account_issuer', 'product_categories'));
     }
 
     public function edit($id)
     {
-        //$content = Campaign::with('PostCategory')->where('id', $id)->get();
-        //@dd($content);
         $_bank = array(
             'BCA'=>'BCA',
             'BNI'=>'BNI',
@@ -85,27 +86,34 @@ class CampaignController extends Controller
         );
         $beneficiary_account_issuer = $_bank;
         $tags = Tags::pluck('name','name')->all();
-        $campaign = Campaign::find($id);
-        $dateStarted = strtotime($campaign->date_started);
-        $dateEnded = strtotime($campaign->date_ended);
-        $campaign->date_started = date('Y-m-d', $dateStarted);
-        $campaign->date_ended = date('Y-m-d', $dateEnded);
-        $selectTags = !empty($campaign->tags) ? explode(',',$campaign->tags) : '';
-        $selectBeneficiary = !empty($campaign->beneficiary_account_issuer) ? explode(',',$campaign->beneficiary_account_issuer) : '';
-        return view('campaign.edit', compact('campaign', 'tags', 'selectTags', 'selectBeneficiary', 'beneficiary_account_issuer'));
+        $auction = Auction::find($id);
+        $dateStarted = strtotime($auction->date_started);
+        $dateEnded = strtotime($auction->date_ended);
+        $auction->date_started = date('Y-m-d', $dateStarted);
+        $auction->date_ended = date('Y-m-d', $dateEnded);
+        $selectTags = !empty($auction->tags) ? explode(',',$auction->tags) : '';
+        $selectBeneficiary = !empty($auction->beneficiary_account_issuer) ? explode(',',$auction->beneficiary_account_issuer) : '';
+        return view('auction.edit', compact('auction', 'tags', 'selectTags', 'selectBeneficiary', 'beneficiary_account_issuer'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required|unique:posts,title',
+            'title' => 'required|unique:auction,title',
             'meta_title' => 'required',
             'meta_description' => 'required',
             'excerpt' => 'required',
             'content' => 'required',
             'headline' => 'required',
             'status' => 'required',
-            'set_fund_target'=> 'required',
+            'product_name'=>'required',
+            'product_categories_id'=>'required',
+            'product_categories_name'=>'required',
+            'buy_now'=> 'required|bool',
+            'price_buy_now'=> 'exclude_if:buy_now,0|required|numeric|min:1',
+            'price_buy_now.min'=>'Harga wajib diisi',
+            'start_price'=>'required',
+            'rate_donation'=>'required',
             'beneficiary_account'=>'required',
             'beneficiary_account_issuer'=>'required',
             'beneficiary_account_name'=>'required',
@@ -123,7 +131,7 @@ class CampaignController extends Controller
             list($type, $data) = explode(';', $data);
             list(, $data)      = explode(',', $data);
             $data = base64_decode($data);
-            $image_name= '/storage/'.config('app.campaignImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s')).$k.'.png';
+            $image_name= '/storage/'.config('app.auctionImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s')).$k.'.png';
             $path = public_path() . $image_name;
             file_put_contents($path, $data);
             $img->removeAttribute('src');
@@ -135,10 +143,10 @@ class CampaignController extends Controller
         $slug = Str::slug($request->title, '-');
         if($request->file){
 
-            $image = $this->UploadImage($request->file, config('app.campaignImagePath'));
+            $image = $this->UploadImage($request->file, config('app.auctionImagePath'));
             if($image==false){
                 \Session::flash('error', 'image upload failure');
-                return redirect()->route('campaign.create');
+                return redirect()->route('auction.create');
 
             }
         }
@@ -156,27 +164,29 @@ class CampaignController extends Controller
                 $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content', 'tags', 'fund_target', 'beneficiary_account_issuer'));
+                Arr::forget($input, array('content', 'tags', 'price_buy_now', 'start_price', 'beneficiary_account_issuer', 'rate_donation'));
                 $input['content']=$detail;
-                $input['fund_target']=$input['fund_target_value'];
+                $input['price_buy_now']=$input['price_buy_now_value'];
+                $input['start_price']=$input['start_price_value'];
                 $input['tags']= $request->input('tags') ? implode(',',$request->input('tags')) : '';
                 $input['beneficiary_account_issuer']= $request->input('beneficiary_account_issuer') ? implode(',',$request->input('beneficiary_account_issuer')) : '';
+                $input['rate_donation']= $request->input('rate_donation') ? implode(',',$request->input('rate_donation')) : '';
                 if($input['status']==1){
                     $input['date_published']=date('Y-m-d H:i:s');
                 }
-                Campaign::create($input);
+                Auction::create($input);
 
 
             DB::commit();
             \Session::flash('success','data berhasil ditambah.');
-            return redirect()->route('campaign.index');
+            return redirect()->route('auction.index');
         } catch (\Throwable $th) {
             DB::rollBack();
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.campaignImagePath'));
+                    $this->DeleteImage($image, config('app.auctionImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server pada proses input');
-            return redirect()->route('campaign.create');
+            return redirect()->route('auction.create');
         }
 
     }
@@ -184,20 +194,26 @@ class CampaignController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'title' => 'required|unique:posts,title,'.$id,
+            'title' => 'required|unique:auction,title,'.$id,
             'meta_title' => 'required',
             'meta_description' => 'required',
             'excerpt' => 'required',
             'content' => 'required',
             'headline' => 'required',
             'status' => 'required',
-            'set_fund_target'=> 'required',
+            'product_name'=>'required',
+            'product_categories_id'=>'required',
+            'product_categories_name'=>'required',
+            'buy_now'=> 'required|bool',
+            'price_buy_now'=> 'exclude_if:buy_now,false|required',
+            'start_price'=>'required',
+            'rate_donation'=>'required',
             'beneficiary_account'=>'required',
             'beneficiary_account_issuer'=>'required',
             'beneficiary_account_name'=>'required',
             'date_started'=>'required',
             'date_ended'=>'required',
-            'file' => 'mimes:jpeg,bmp,png|max:100'
+            'file' => 'required|mimes:jpeg,bmp,png|max:200'
         ]);
         $detail=$request->input('content');
         libxml_use_internal_errors(true);
@@ -212,7 +228,7 @@ class CampaignController extends Controller
                     list($type, $data) = explode(';', $data);
                     list(, $data)      = explode(',', $data);
                     $data = base64_decode($data);
-                    $image_name= '/storage/'.config('app.campaignImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s.u')).$k.'.png';
+                    $image_name= '/storage/'.config('app.auctionImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s.u')).$k.'.png';
                     $path = public_path() . $image_name;
                     file_put_contents($path, $data);
                     $img->removeAttribute('src');
@@ -225,22 +241,22 @@ class CampaignController extends Controller
         $slug = Str::slug($request->title, '-');
         if($request->file){
 
-            $image = $this->UploadImage($request->file, config('app.campaignImagePath'));
+            $image = $this->UploadImage($request->file, config('app.auctionImagePath'));
             if($image==false){
                 \Session::flash('error', 'image upload failure');
-                return redirect()->route('campaign.index');
+                return redirect()->route('auction.index');
             }
         }
 
        try {
 
             DB::beginTransaction();
-            $campaign = Campaign::find($id);
+            $auction = Auction::find($id);
 
                 if(isset($image)){
                     if($image!=false){
                         $request->request->add(['photo'=> $image]);
-                        $this->DeleteImage($campaign->file, config('app.campaignImagePath'));
+                        $this->DeleteImage($auction->file, config('app.auctionImagePath'));
                     }
                 }
                 $request->request->add(['slug'=> $slug]);
@@ -257,28 +273,28 @@ class CampaignController extends Controller
                     $input['date_published']=date('Y-m-d H:i:s');
                 }
 
-                $campaign->update($input);
+                $auction->update($input);
 
             DB::commit();
             \Session::flash('success','Data berhasil diubah.');
-            return redirect()->route('campaign.index');
+            return redirect()->route('auction.index');
         } catch (\Throwable $th) {
             DB::rollBack();
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.campaignImagePath'));
+                    $this->DeleteImage($image, config('app.auctionImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('campaign.index');
+            return redirect()->route('auction.index');
         }
     }
 
     public function destroy($id)
     {
-        $campaign = Campaign::find($id);
+        $auction = Auction::find($id);
         try {
             DB::beginTransaction();
-                $this->DeleteImage($campaign->photo, config('app.campaignImagePath'));
-                $campaign->delete();
+                $this->DeleteImage($auction->photo, config('app.auctionImagePath'));
+                $auction->delete();
             DB::commit();
             return true;
         } catch (\Throwable $th) {
@@ -288,24 +304,24 @@ class CampaignController extends Controller
 
     }
 
-    public function deleteExistImageCampaign(Request $request)
+    public function deleteExistImageAuction(Request $request)
     {
         $image = $request->post('image');
         $id    = $request->post('id');
 
-        $campaign = Campaign::find($id);
+        $auction = Auction::find($id);
         try {
-            $deleteFile = $this->DeleteImage($image, config('app.campaignImagePath'));
+            $deleteFile = $this->DeleteImage($image, config('app.auctionImagePath'));
             DB::beginTransaction();
                 if($deleteFile == true){
                     $input = ['photo'=>NULL];
-                    $campaign->update($input);
+                    $auction->update($input);
                 }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
                 $input = ['photo'=>NULL];
-                $campaign->update($input);
+                $auction->update($input);
             DB::rollback();
             return false;
         }

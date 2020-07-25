@@ -79,6 +79,22 @@
                 </li>
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
+                    Produk
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#product" aria-expanded="true" aria-controls="product">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Produk</span>
+                    </a>
+                    <div id="product" class="collapse" aria-labelledby="product" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Menu</h6>
+                        @if(auth()->user()->hasPermissionTo('product-category-list'))<a class="collapse-item" href="{{route('product-category.index')}}">Kategori</a>@endif
+                        </div>
+                    </div>
+                </li>
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
                     Konten
                 </div>
                 <li class="nav-item">
@@ -108,6 +124,7 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
                         @if(auth()->user()->hasPermissionTo('campaign-list'))<a class="collapse-item" href="{{route('campaign.index')}}">Campaign</a>@endif
+                        @if(auth()->user()->hasPermissionTo('auction-list'))<a class="collapse-item" href="{{route('auction.index')}}">Auction</a>@endif
                         </div>
                     </div>
                 </li>
