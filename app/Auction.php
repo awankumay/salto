@@ -30,6 +30,7 @@ class Auction extends Model
         'buy_now',
         'price_buy_now',
         'start_price',
+        'multiple_bid',
         'rate_donation',
         'beneficiary_account',
         'beneficiary_account_issuer',
@@ -39,6 +40,10 @@ class Auction extends Model
     public function Author()
     {
     	return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function ProductCategory(){
+    	return $this->hasOne(ProductCategory::class, 'id', 'product_categories_id');
     }
 
     public function GetCount()

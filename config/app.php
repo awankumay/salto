@@ -57,6 +57,7 @@ return [
     'userImagePath'=> 'images/user',
     'postImagePath'=> 'images/post',
     'campaignImagePath'=> 'images/campaign',
+    'auctionImagePath'=> 'images/auction',
     'asset_url' => env('ASSET_URL', null),
 
     /*

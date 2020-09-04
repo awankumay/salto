@@ -16,7 +16,7 @@ class ProductCategory extends Model
     	return $this->belongsTo(User::class, 'author', 'id');
     }
 
-    public function Content()
+    public function Auction()
     {
     	return $this->belongsTo(Auction::class, 'product_categories_id', 'id');
     }

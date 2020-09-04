@@ -3,23 +3,23 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('campaign.edit', $campaign) }}
+        {{ Breadcrumbs::render('auction.edit', $auction) }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Ubah Campaign</div>
+                <div class="p-2">Ubah Auction</div>
                 <div class="p-2">
-                    <a class="btn btn-sm btn-success float-right" href="{{route('campaign.index')}}">Kembali</a></div>
+                    <a class="btn btn-sm btn-success float-right" href="{{route('auction.index')}}">Kembali</a></div>
             </div>
         </div>
         <div class="card-body">
-            {!! Form::model($campaign, ['method' => 'PATCH', 'route' => ['campaign.update', $campaign->id], 'enctype' => 'multipart/form-data']) !!}
+            {!! Form::model($auction, ['method' => 'PATCH', 'route' => ['auction.update', $auction->id], 'enctype' => 'multipart/form-data']) !!}
             <div class="row">
                 <div class="col-lg-8 col-sm-12 col-md-12">
                     <div class="form-group col-md-12">
                         <strong>Judul  </strong>
-                        {!! Form::text('title', null, array('placeholder' => 'Judul', 'ng-trim'=>'false', 'maxlength'=>'100', 'id'=>'title', 'class' => 'form-control form-control-sm editable', 'maxlength'=>'100')) !!}
+                        {!! Form::text('title', null, array('placeholder' => 'Judul', 'ng-trim'=>'false', 'maxlength'=>'100', 'id'=>'title', 'class' => 'form-control form-control-sm editable')) !!}
                         <span class="form-text {{isset($errors->messages()['title']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['title']) ? $errors->messages()['title'][0] .'*' : 'Judul wajib diisi *'}}
                         </span>
@@ -29,6 +29,20 @@
                         {!! Form::textarea('excerpt', null, array('rows' => 3, 'maxlength'=>'250', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Ringkasan')) !!}
                         <span class="form-text {{isset($errors->messages()['excerpt']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['excerpt']) ? $errors->messages()['excerpt'][0] .'*' : 'Ringkasan wajib disii *'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <strong>Nama Produk:</strong>
+                        {!! Form::text('product_name', null, array('placeholder' => 'Nama Produk', 'ng-trim'=>'false', 'maxlength'=>'100', 'id'=>'product_name', 'class' => 'form-control form-control-sm editable')) !!}
+                        <span class="form-text {{isset($errors->messages()['product_name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['product_name']) ? $errors->messages()['product_name'][0] .'*' : 'Judul wajib diisi *'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <strong>Produk Kategori:</strong>
+                        {!! Form::select('product_categories_id[]', $product_categories, $selectProductCategories, array('class' => 'form-control form-control-sm product_category', 'single')) !!}
+                        <span class="form-text {{isset($errors->messages()['product_categories_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['product_categories_id']) ? $errors->messages()['product_categories_id'][0] .'' : 'Pilih Produk Kategori * '}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
@@ -42,8 +56,7 @@
                         <div class="row">
                             <div class="form-group col-md-6">
                                 <strong>Mulai:</strong><br>
-                                {!! Form::date('date_started', null, array('id'=>'date_started', 'class' => 'form-control form-control-sm'
-                                )) !!}
+                                {!! Form::date('date_started', null, array('id'=>'date_started', 'class' => 'form-control form-control-sm')) !!}
                                 <span class="form-text {{isset($errors->messages()['date_started']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['date_started']) ? $errors->messages()['date_started'][0] .'*' : 'Tanggal mulai wajib diisi *'}}
                             </div>
@@ -58,19 +71,46 @@
                     <div class="form-group col-md-12">
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <strong>Batasi kebutuhan dana:</strong><br>
-                                {!! Form::radio('set_fund_target', 1, array('class' => 'form-control form-control-sm set_fund_target')) !!} Ya &nbsp;
-                                {!! Form::radio('set_fund_target', 2, array('class' => 'form-control form-control-sm set_fund_target')) !!} Tidak &nbsp;
-                                <span class="form-text {{isset($errors->messages()['set_fund_target']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                                    {{isset($errors->messages()['set_fund_target']) ? $errors->messages()['set_fund_target'][0] .'*' : 'pilih salah satu *'}}
+                                <strong>Opsi Buy Now:</strong><br>
+                                {!! Form::radio('buy_now', 0, array('class' => 'form-control form-control-sm buy_now')) !!} Tidak &nbsp;
+                                {!! Form::radio('buy_now', 1, array('class' => 'form-control form-control-sm buy_now')) !!} Ya &nbsp;
+                                <span class="form-text {{isset($errors->messages()['buy_now']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                    {{isset($errors->messages()['buy_now']) ? $errors->messages()['buy_now'][0] .'*' : 'pilih salah satu *'}}
                                 </span>
                             </div>
                             <div class="form-group col-md-6">
-                                <strong>Kebutuhan dana  </strong>{{-- <i class="text-help text-danger">(sisa karakter <%= 100-title.length %>)</i> --}}
-                                {!! Form::text('fund_target', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'fund_target', 'class' => 'form-control form-control-sm')) !!}
-                                {!! Form::hidden('fund_target_value', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'fund_target_value', 'class' => 'form-control form-control-sm')) !!}
-                                <span class="form-text {{isset($errors->messages()['fund_target']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                                {{isset($errors->messages()['fund_target']) ? $errors->messages()['fund_target'][0] .'*' : 'Kebutuhan dana wajib diisi *'}}
+                                <strong>Harga Buy Now  </strong>
+                                {!! Form::text('price_buy_now', $auction->price_buy_now ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'price_buy_now', 'class' => 'form-control form-control-sm')) !!}
+                                {!! Form::hidden('price_buy_now_value', $auction->price_buy_now ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'price_buy_now_value', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['price_buy_now_value']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                    {{isset($errors->messages()['price_buy_now_value']) ? $errors->messages()['price_buy_now_value'][0] .'*' : 'Harga buy now wajib diisi*'}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <strong>Open Bid  </strong>
+                                {!! Form::text('open_bid', $auction->start_price ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'open_bid', 'class' => 'form-control form-control-sm')) !!}
+                                {!! Form::hidden('start_price_value', $auction->start_price ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'start_price_value', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['open_bid']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['open_bid']) ? $errors->messages()['open_bid'][0] .'*' : 'Open bid wajib diisi*'}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <strong>Kelipatan bid  </strong>
+                                {!! Form::text('multiple_bid', $auction->multiple_bid ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'multiple_bid', 'class' => 'form-control form-control-sm')) !!}
+                                {!! Form::hidden('multiple_bid_value', $auction->multiple_bid ?? null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'multiple_bid_value', 'class' => 'form-control form-control-sm')) !!}
+                                <span class="form-text {{isset($errors->messages()['multiple_bid']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['multiple_bid']) ? $errors->messages()['multiple_bid'][0] .'*' : 'Kelipatan bid wajib diisi*'}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <strong>Rate donasi dari bid</strong>
+                                {!! Form::select('rate_donation[]', $donationRate, $selectRate, array('class' => 'form-control form-control-sm tagging', 'single', 'placeholder'=>'Pilih rate donasi')) !!}
+                                <span class="form-text {{isset($errors->messages()['rate_donation']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['rate_donation']) ? $errors->messages()['rate_donation'][0] .'' : 'Pilih rate donasi * '}}
                                 </span>
                             </div>
                         </div>
@@ -81,7 +121,7 @@
                         <strong>Foto Utama</strong>
                         <input type="file" name="file" onchange="angular.element(this).scope().SelectFile(event)">
                         <div class="mt-1"><img ng-src="<%= PreviewImage %>" ng-if="PreviewImage != null" alt="" style="height:200px;width:200px" /></div>
-                        @if($campaign->photo)<div ng-if="PreviewImage == null"> <img src="{{URL::to('/')}}/storage/{{config('app.campaignImagePath')}}/{{$campaign->photo}}" class="img img-fluid" style="width:200px;height:200px;"/><span style="cursor: pointer;color:red;" onclick="deleteExist('{{$campaign->photo}}', '{{$campaign->id}}')"> x </span> </div>@endif
+                        @if($auction->photo)<div ng-if="PreviewImage == null"> <img src="{{URL::to('/')}}/storage/{{config('app.auctionImagePath')}}/{{$auction->photo}}" class="img img-fluid" style="width:200px;height:200px;"/><span style="cursor: pointer;color:red;" onclick="deleteExist('{{$auction->photo}}', '{{$auction->id}}')"> x </span> </div>@endif
                         <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                         {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 100kb *'}}
                         </span>
@@ -162,7 +202,7 @@
 @push('scripts')
 <script type="text/javascript">
 function deleteExist(fileName, id) {
-    let deleteUrl = 'deleteExistImageCampaign';
+    let deleteUrl = 'deleteExistImageAuction';
     let token ="{{csrf_token()}}";
     let params = {
         'image':fileName, 'id':id, "_token": token,
@@ -197,28 +237,49 @@ function deleteExist(fileName, id) {
     });
 }
 $(document).ready(function() {
-    var existSet = $('input:radio[name="set_fund_target"]:checked').val();
-    if(existSet==2){
-        $("#fund_target").prop("disabled", true);
-        $('#fund_target_value').val(0);
-        $('#fund_target').val(0);
-    }
-    $('#fund_target').number( true, 0);
-    $('#fund_target').on('keyup',function(){
-        var val = $('#fund_target').val();
-        $('#fund_target_value').val(val);
+    $('#price_buy_now').number( true, 0);
+    $('#price_buy_now').on('keyup',function(){
+        var priceBuy = $('#price_buy_now').val();
+        $('#price_buy_now_value').val(priceBuy);
 	});
-    $('input:radio[name="set_fund_target"]').change(
+
+    $('#open_bid').number( true, 0);
+    $('#open_bid').on('keyup',function(){
+        var openBid = $('#open_bid').val();
+        $('#start_price_value').val(openBid);
+	});
+
+    $('#multiple_bid').number( true, 0);
+    $('#multiple_bid').on('keyup',function(){
+        var multipleBid = $('#multiple_bid').val();
+        $('#multiple_bid_value').val(multipleBid);
+	});
+    var getBuyNow = $("input:radio[name='buy_now']:checked").val();
+    if(getBuyNow==1){
+        $("#price_buy_now").prop("disabled", false);
+      /*   $('#price_buy_now_value').val('');
+        $('#price_buy_now').val(''); */
+    }else{
+        $("#price_buy_now").prop("disabled", true);
+        $('#price_buy_now_value').val(0);
+        $('#price_buy_now').val(0);
+    }
+
+    $('input:radio[name="buy_now"]').change(
     function(){
-        if (this.checked && this.value == '2') {
-            $("#fund_target").prop("disabled", true);
-            $('#fund_target_value').val(0);
-            $('#fund_target').val(0);
+        if (this.checked && this.value == '0') {
+            $("#price_buy_now").prop("disabled", true);
+            $('#price_buy_now_value').val(0);
+            $('#price_buy_now').val(0);
         }else{
-            $("#fund_target").prop("disabled", false);
+            $("#price_buy_now").prop("disabled", false);
+ /*            $('#price_buy_now_value').val('');
+            $('#price_buy_now').val(''); */
         }
     });
+
     $('.tagging').select2();
+    $('.product_category').select2();
     setTimeout(() => {
         $('#summernote').summernote({
             toolbar:[

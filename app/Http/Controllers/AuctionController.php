@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Auction;
+use App\PostCategory;
 use App\ProductCategory;
 use App\Tags;
 use App\Traits\ActionTable;
@@ -64,27 +65,18 @@ class AuctionController extends Controller
 
     public function create()
     {
-        $_bank = array(
-            'BCA'=>'BCA',
-            'BNI'=>'BNI',
-            'BRI'=>'BRI',
-            'MANDIRI'=>'MANDIRI'
-        );
-        $beneficiary_account_issuer = $_bank;
+        $donationRate = $this->getDonationRate();
+        $beneficiary_account_issuer = $this->getBank();
         $tags = Tags::pluck('name','name')->all();
         $product_categories = ProductCategory::pluck('name','id')->all();
-        return view('auction.create', compact('tags', 'beneficiary_account_issuer', 'product_categories'));
+        return view('auction.create', compact('tags', 'beneficiary_account_issuer', 'product_categories', 'donationRate'));
     }
 
     public function edit($id)
     {
-        $_bank = array(
-            'BCA'=>'BCA',
-            'BNI'=>'BNI',
-            'BRI'=>'BRI',
-            'MANDIRI'=>'MANDIRI'
-        );
-        $beneficiary_account_issuer = $_bank;
+        $donationRate = $this->getDonationRate();
+        $product_categories = ProductCategory::pluck('name','id')->all();
+        $beneficiary_account_issuer = $this->getBank();
         $tags = Tags::pluck('name','name')->all();
         $auction = Auction::find($id);
         $dateStarted = strtotime($auction->date_started);
@@ -92,14 +84,17 @@ class AuctionController extends Controller
         $auction->date_started = date('Y-m-d', $dateStarted);
         $auction->date_ended = date('Y-m-d', $dateEnded);
         $selectTags = !empty($auction->tags) ? explode(',',$auction->tags) : '';
+        $selectRate = !empty($auction->rate_donation) ? explode(',',$auction->rate_donation) : '';
         $selectBeneficiary = !empty($auction->beneficiary_account_issuer) ? explode(',',$auction->beneficiary_account_issuer) : '';
-        return view('auction.edit', compact('auction', 'tags', 'selectTags', 'selectBeneficiary', 'beneficiary_account_issuer'));
+        $selectProductCategories = !empty($auction->product_categories_id) ? explode(',',$auction->product_categories_id) : '';
+        return view('auction.edit', compact('auction', 'tags', 'selectTags', 'selectBeneficiary', 'selectProductCategories', 'selectRate', 'beneficiary_account_issuer', 'donationRate', 'product_categories'));
     }
 
     public function store(Request $request)
     {
+        #@dd($request);
         $this->validate($request, [
-            'title' => 'required|unique:auction,title',
+            'title' => 'required|unique:auctions,title',
             'meta_title' => 'required',
             'meta_description' => 'required',
             'excerpt' => 'required',
@@ -108,11 +103,12 @@ class AuctionController extends Controller
             'status' => 'required',
             'product_name'=>'required',
             'product_categories_id'=>'required',
-            'product_categories_name'=>'required',
             'buy_now'=> 'required|bool',
-            'price_buy_now'=> 'exclude_if:buy_now,0|required|numeric|min:1',
-            'price_buy_now.min'=>'Harga wajib diisi',
-            'start_price'=>'required',
+            'price_buy_now_value'=> 'exclude_if:buy_now,0|required|numeric|min:1',
+            'price_buy_now_value.min'=>'Harga wajib diisi',
+            'price_buy_now_value.required'=>'Harga wajib diisi',
+            'start_price_value'=>'required',
+            'multiple_bid_value'=>'required',
             'rate_donation'=>'required',
             'beneficiary_account'=>'required',
             'beneficiary_account_issuer'=>'required',
@@ -164,16 +160,23 @@ class AuctionController extends Controller
                 $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content', 'tags', 'price_buy_now', 'start_price', 'beneficiary_account_issuer', 'rate_donation'));
+                Arr::forget($input, array('content', 'tags', 'price_buy_now', 'start_price', 'beneficiary_account_issuer', 'product_categories_id', 'rate_donation'));
                 $input['content']=$detail;
                 $input['price_buy_now']=$input['price_buy_now_value'];
                 $input['start_price']=$input['start_price_value'];
+                $input['multiple_bid']=$input['multiple_bid_value'];
                 $input['tags']= $request->input('tags') ? implode(',',$request->input('tags')) : '';
                 $input['beneficiary_account_issuer']= $request->input('beneficiary_account_issuer') ? implode(',',$request->input('beneficiary_account_issuer')) : '';
+                $input['product_categories_id']= $request->input('product_categories_id') ? implode(',',$request->input('product_categories_id')) : '';
                 $input['rate_donation']= $request->input('rate_donation') ? implode(',',$request->input('rate_donation')) : '';
+                $productCategory=ProductCategory::where('id', $input['product_categories_id'])->first();
+                if(!empty($productCategory)){
+                    $input['product_categories_name']=$productCategory->name;
+                }
                 if($input['status']==1){
                     $input['date_published']=date('Y-m-d H:i:s');
                 }
+
                 Auction::create($input);
 
 
@@ -181,6 +184,7 @@ class AuctionController extends Controller
             \Session::flash('success','data berhasil ditambah.');
             return redirect()->route('auction.index');
         } catch (\Throwable $th) {
+            @dd($th);
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.auctionImagePath'));
@@ -194,7 +198,7 @@ class AuctionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'title' => 'required|unique:auction,title,'.$id,
+            'title' => 'required|unique:auctions,title,'.$id,
             'meta_title' => 'required',
             'meta_description' => 'required',
             'excerpt' => 'required',
@@ -203,17 +207,18 @@ class AuctionController extends Controller
             'status' => 'required',
             'product_name'=>'required',
             'product_categories_id'=>'required',
-            'product_categories_name'=>'required',
             'buy_now'=> 'required|bool',
-            'price_buy_now'=> 'exclude_if:buy_now,false|required',
-            'start_price'=>'required',
+            'price_buy_now_value'=> 'exclude_if:buy_now,0|required|numeric|min:1',
+            'price_buy_now_value.min'=>'Harga wajib diisi',
+            'start_price_value'=>'required',
+            'multiple_bid_value'=>'required',
             'rate_donation'=>'required',
             'beneficiary_account'=>'required',
             'beneficiary_account_issuer'=>'required',
             'beneficiary_account_name'=>'required',
             'date_started'=>'required',
             'date_ended'=>'required',
-            'file' => 'required|mimes:jpeg,bmp,png|max:200'
+            'file' => 'mimes:jpeg,bmp,png|max:200'
         ]);
         $detail=$request->input('content');
         libxml_use_internal_errors(true);
@@ -264,11 +269,19 @@ class AuctionController extends Controller
                 $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content', 'tags', 'fund_target', 'beneficiary_account_issuer'));
+                Arr::forget($input, array('content', 'tags', 'price_buy_now', 'start_price', 'beneficiary_account_issuer', 'product_categories_id', 'rate_donation'));
                 $input['content']=$detail;
-                $input['fund_target']=$input['fund_target_value'];
+                $input['price_buy_now']=$input['price_buy_now_value'];
+                $input['start_price']=$input['start_price_value'];
+                $input['multiple_bid']=$input['multiple_bid_value'];
                 $input['tags']= $request->input('tags') ? implode(',',$request->input('tags')) : '';
                 $input['beneficiary_account_issuer']= $request->input('beneficiary_account_issuer') ? implode(',',$request->input('beneficiary_account_issuer')) : '';
+                $input['product_categories_id']= $request->input('product_categories_id') ? implode(',',$request->input('product_categories_id')) : '';
+                $input['rate_donation']= $request->input('rate_donation') ? implode(',',$request->input('rate_donation')) : '';
+                $productCategory=ProductCategory::where('id', $input['product_categories_id'])->first();
+                if(!empty($productCategory)){
+                    $input['product_categories_name']=$productCategory->name;
+                }
                 if($input['status']==1){
                     $input['date_published']=date('Y-m-d H:i:s');
                 }
@@ -337,5 +350,29 @@ class AuctionController extends Controller
             return false;
         }
 
+    }
+
+    public function getBank(){
+        return array(
+            'BCA'=>'BCA',
+            'BNI'=>'BNI',
+            'BRI'=>'BRI',
+            'MANDIRI'=>'MANDIRI'
+        );
+    }
+
+    public function getDonationRate(){
+        return array(
+            '10'=>'10%',
+            '20'=>'20%',
+            '30'=>'30%',
+            '40'=>'40%',
+            '50'=>'50%',
+            '60'=>'60%',
+            '70'=>'70%',
+            '80'=>'80%',
+            '90'=>'90%',
+            '100'=>'100%'
+        );
     }
 }

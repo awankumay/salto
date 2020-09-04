@@ -31,6 +31,13 @@
                         </span>
                     </div>
                     <div class="form-group col-md-12">
+                        <strong>Nama Produk:</strong>
+                        {!! Form::text('product_name', null, array('placeholder' => 'Nama Produk', 'ng-trim'=>'false', 'maxlength'=>'100', 'id'=>'product_name', 'class' => 'form-control form-control-sm editable')) !!}
+                        <span class="form-text {{isset($errors->messages()['product_name']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['product_name']) ? $errors->messages()['product_name'][0] .'*' : 'Judul wajib diisi *'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12">
                         <strong>Produk Kategori:</strong>
                         {!! Form::select('product_categories_id[]', $product_categories, [], array('class' => 'form-control form-control-sm product_category', 'single')) !!}
                         <span class="form-text {{isset($errors->messages()['product_categories_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
@@ -74,15 +81,15 @@
                                 <strong>Harga Buy Now  </strong>
                                 {!! Form::text('price_buy_now', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'price_buy_now', 'class' => 'form-control form-control-sm')) !!}
                                 {!! Form::hidden('price_buy_now_value', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'price_buy_now_value', 'class' => 'form-control form-control-sm')) !!}
-                                <span class="form-text {{isset($errors->messages()['price_buy_now']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                                {{isset($errors->messages()['price_buy_now']) ? $errors->messages()['price_buy_now'][0] .'*' : 'Harga buy now wajib diisi*'}}
+                                <span class="form-text {{isset($errors->messages()['price_buy_now_value']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                    {{isset($errors->messages()['price_buy_now_value']) ? $errors->messages()['price_buy_now_value'][0] .'*' : 'Harga buy now wajib diisi*'}}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div class="form-group col-md-12">
                         <div class="row">
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <strong>Open Bid  </strong>
                                 {!! Form::text('open_bid', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'open_bid', 'class' => 'form-control form-control-sm')) !!}
                                 {!! Form::hidden('start_price_value', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'start_price_value', 'class' => 'form-control form-control-sm')) !!}
@@ -90,12 +97,19 @@
                                 {{isset($errors->messages()['open_bid']) ? $errors->messages()['open_bid'][0] .'*' : 'Open bid wajib diisi*'}}
                                 </span>
                             </div>
-                            <div class="form-group col-md-6">
+                            <div class="form-group col-md-4">
                                 <strong>Kelipatan bid  </strong>
                                 {!! Form::text('multiple_bid', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'multiple_bid', 'class' => 'form-control form-control-sm')) !!}
                                 {!! Form::hidden('multiple_bid_value', null, array('placeholder' => '', 'ng-trim'=>'false', 'id'=>'multiple_bid_value', 'class' => 'form-control form-control-sm')) !!}
                                 <span class="form-text {{isset($errors->messages()['multiple_bid']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['multiple_bid']) ? $errors->messages()['multiple_bid'][0] .'*' : 'Kelipatan bid wajib diisi*'}}
+                                </span>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <strong>Rate donasi dari bid</strong>
+                                {!! Form::select('rate_donation[]', $donationRate, [], array('class' => 'form-control form-control-sm tagging', 'single', 'placeholder'=>'Pilih rate donasi')) !!}
+                                <span class="form-text {{isset($errors->messages()['rate_donation']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['rate_donation']) ? $errors->messages()['rate_donation'][0] .'' : 'Pilih rate donasi * '}}
                                 </span>
                             </div>
                         </div>
@@ -107,7 +121,7 @@
                         <input type="file" name="file" onchange="angular.element(this).scope().SelectFile(event)">
                         <div class="mt-1"><img ng-src="<%= PreviewImage %>" ng-if="PreviewImage != null" alt="" style="height:200px;width:200px" /></div>
                         <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 100kb *'}}
+                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 200kb *'}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
@@ -188,27 +202,27 @@
 $(document).ready(function() {
     $('#price_buy_now').number( true, 0);
     $('#price_buy_now').on('keyup',function(){
-        var val = $('#price_buy_now').val();
-        $('#price_buy_now_value').val(val);
+        var priceBuy = $('#price_buy_now').val();
+        $('#price_buy_now_value').val(priceBuy);
 	});
 
     $('#open_bid').number( true, 0);
     $('#open_bid').on('keyup',function(){
-        var val = $('#open_bid').val();
-        $('#start_price_value').val(val);
+        var openBid = $('#open_bid').val();
+        $('#start_price_value').val(openBid);
 	});
 
     $('#multiple_bid').number( true, 0);
     $('#multiple_bid').on('keyup',function(){
-        var val = $('#multiple_bid').val();
-        $('#multiple_bid_value').val(val);
+        var multipleBid = $('#multiple_bid').val();
+        $('#multiple_bid_value').val(multipleBid);
 	});
     //$("input[type=radio][name='q22']:checked").val()
     var getBuyNow = $("input:radio[name='buy_now']:checked").val();
     if(getBuyNow==1){
         $("#price_buy_now").prop("disabled", false);
-        $('#price_buy_now_value').val('');
-        $('#price_buy_now').val('');
+       /*  $('#price_buy_now_value').val('');
+        $('#price_buy_now').val(''); */
     }else{
         $("#price_buy_now").prop("disabled", true);
         $('#price_buy_now_value').val(0);
