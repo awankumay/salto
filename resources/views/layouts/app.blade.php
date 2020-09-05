@@ -112,23 +112,6 @@
                     </div>
                 </li>
                 <hr class="sidebar-divider">
-                <div class="sidebar-heading">
-                    Campaign
-                </div>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#campaign" aria-expanded="true" aria-controls="campaign">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Campaign</span>
-                    </a>
-                    <div id="campaign" class="collapse" aria-labelledby="campaign" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('campaign-list'))<a class="collapse-item" href="{{route('campaign.index')}}">Campaign</a>@endif
-                        @if(auth()->user()->hasPermissionTo('auction-list'))<a class="collapse-item" href="{{route('auction.index')}}">Auction</a>@endif
-                        </div>
-                    </div>
-                </li>
-                <hr class="sidebar-divider">
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 </div>

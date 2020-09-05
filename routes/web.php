@@ -20,7 +20,7 @@ Route::get('/', function () {
     return view('auth.login');
 });
 Auth::routes();
-Route::group(['middleware' => ['auth']], function() {
+Route::group(['middleware' => ['auth:web']], function(){
     Route::prefix('dashboard')->group(function () {
         Route::get('/home', 'HomeController@index')->name('home');
         Route::resource('role', 'RoleController');
