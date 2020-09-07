@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('post-category', 'PostCategoryController');
         Route::resource('product-category', 'ProductCategoryController');
         Route::resource('content', 'ContentController');
+        Route::resource('convict', 'ConvictController');
         Route::resource('campaign', 'CampaignController');
         Route::resource('auction', 'AuctionController');
         Route::resource('tags', 'TagsController');

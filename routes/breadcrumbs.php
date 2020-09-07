@@ -99,6 +99,18 @@ Breadcrumbs::register('product-category.edit', function ($breadcrumbs, $productC
     $breadcrumbs->parent('product-category');
     $breadcrumbs->push($productCategory->name, route('product-category.edit', $productCategory->id));
 });
+Breadcrumbs::register('convict', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Tahanan', route('convict.index'));
+});
+Breadcrumbs::register('convict.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('convict');
+    $breadcrumbs->push('Tambah Tahanan', route('convict.create'));
+});
+Breadcrumbs::register('convict.edit', function ($breadcrumbs, $convict) {
+    $breadcrumbs->parent('convict');
+    $breadcrumbs->push($convict->title, route('convict.edit', $convict->id));
+});
 
 
 ?>

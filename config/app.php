@@ -53,9 +53,11 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    'productImagePath'=> 'images/konten',
+    'productImagePath'=> 'images/product',
     'userImagePath'=> 'images/user',
     'postImagePath'=> 'images/post',
+    'convictImagePath'=> 'images/convict',
+    'documentImagePath'=> 'images/document',
     'campaignImagePath'=> 'images/campaign',
     'auctionImagePath'=> 'images/auction',
     'asset_url' => env('ASSET_URL', null),
