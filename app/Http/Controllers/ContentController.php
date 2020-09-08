@@ -76,7 +76,7 @@ class ContentController extends Controller
         $tags = Tags::pluck('name','name')->all();
         $content = Content::find($id);
         $selectTags = !empty($content->tags) ? explode(',',$content->tags) : '';
-        $selectCategory =$content->PostCategory->pluck('id', 'name');
+        $selectCategory =$content->post_categories_id;
         return view('content.edit', compact('content', 'postCategory', 'selectCategory', 'tags', 'selectTags'));
     }
 

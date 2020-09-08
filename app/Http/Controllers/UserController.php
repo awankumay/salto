@@ -133,6 +133,7 @@ class UserController extends Controller
 
             return redirect()->route('user.index');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.userImagePath'));
@@ -193,6 +194,7 @@ class UserController extends Controller
 
             return redirect()->route('user.index');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.userImagePath'));
