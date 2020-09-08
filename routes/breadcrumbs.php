@@ -109,7 +109,7 @@ Breadcrumbs::register('convict.create', function ($breadcrumbs) {
 });
 Breadcrumbs::register('convict.edit', function ($breadcrumbs, $convict) {
     $breadcrumbs->parent('convict');
-    $breadcrumbs->push($convict->title, route('convict.edit', $convict->id));
+    $breadcrumbs->push($convict->name, route('convict.edit', $convict->id));
 });
 
 

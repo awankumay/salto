@@ -47,9 +47,9 @@ class ConvictController extends Controller
                 1=>'name',
                 2=>'type_convict',
                 3=>'violation',
-                5=>'lockup',
-                7=>'created_at',
-                8=>'updated_at'
+                4=>'lockup',
+                5=>'created_at',
+                6=>'updated_at'
             );
             $model  = New Convict();
             return $this->ActionTable($columns, $model, $request, 'convict.edit', 'convict-edit', 'convict-delete');
@@ -73,7 +73,8 @@ class ConvictController extends Controller
     {
         $type_convict = ['1'=>'Tahanan Baru', '2'=>'Narapidana'];
         $convict = Convict::find($id);
-        return view('content.edit', compact('convict', 'type_convict'));
+        $select_type = $convict->convict_type;
+        return view('convict.edit', compact('convict', 'type_convict', 'select_type'));
     }
 
     public function store(Request $request)
@@ -152,9 +153,12 @@ class ConvictController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|unique:convicts,name,'.$id,
+            'type_convict' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:300',
             'file_2' => 'nullable|mimes:jpeg,bmp,png,jpg,pdf|max:500'
-        ]);
+            ],
+            ['type_convict.required'=>'pilih kategori'],
+        );
 
         if($request->file){
 
@@ -205,7 +209,7 @@ class ConvictController extends Controller
                     $this->DeleteImage($image, config('app.convictImagePath'));
                 }
                 if($document!=false){
-                    $this->DeleteImage($document, config('app.convictImagePath'));
+                    $this->DeleteImage($document, config('app.documentImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
             return redirect()->route('convict.create');

@@ -82,7 +82,7 @@ class UserController extends Controller
             'password' => 'required|same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone',
             'whatsapp' => 'numeric|unique:users,whatsapp',
-            'file' => 'required|mimes:jpeg,bmp,png|max:100',
+            'file' => 'nullable|mimes:jpeg,bmp,png|max:100',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'
@@ -134,7 +134,7 @@ class UserController extends Controller
             'password' => 'same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone,'.$id,
             'whatsapp' => 'numeric|unique:users,whatsapp,'.$id,
-            'file' => 'required|mimes:jpeg,bmp,png|max:100',
+            'file' => 'nullable|mimes:jpeg,bmp,png|max:100',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'

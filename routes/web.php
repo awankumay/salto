@@ -36,5 +36,6 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
         Route::post('deleteExistImageCampaign', 'CampaignController@deleteExistImageCampaign')->name('deleteExistImageCampaign');
         Route::post('deleteExistImageAuction', 'AuctionController@deleteExistImageAuction')->name('deleteExistImageAuction');
+        Route::post('deleteExistImageConvict', 'ConvictController@deleteExistImageConvict')->name('deleteExistImageConvict');
     });
 });
