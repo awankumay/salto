@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use App\User;
+use App\UserConvicts;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Hash;
@@ -78,6 +79,7 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'identity' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone',
@@ -107,9 +109,24 @@ class UserController extends Controller
                     }
                 }
                 $input = $request->all();
+                $napi_1 = $input['napi_1'];
+                $napi_2 = $input['napi_2'];
+                Arr::forget($input, array('napi_1', 'napi_2'));
                 $input['password'] = Hash::make($input['password']);
                 $user = User::create($input);
                 $user->assignRole($request->input('role'));
+                if(!empty($napi_1)){
+                    $userHasConvicts = New UserConvicts();
+                    $userHasConvicts->convicts_id=$napi_1;
+                    $userHasConvicts->users_id=$user->id;
+                    $userHasConvicts->save();
+                }
+                if(!empty($napi_2)){
+                    $userHasConvicts = New UserConvicts();
+                    $userHasConvicts->convicts_id=$napi_2;
+                    $userHasConvicts->users_id=$user->id;
+                    $userHasConvicts->save();
+                }
             DB::commit();
 
             \Session::flash('success','User berhasil ditambah.');
@@ -130,6 +147,7 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'identity' => 'required',
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone,'.$id,
@@ -157,7 +175,9 @@ class UserController extends Controller
                 }
             }
             $input = $request->all();
-
+            $napi_1 = $input['napi_1'];
+            $napi_2 = $input['napi_2'];
+            Arr::forget($input, array('napi_1', 'napi_2'));
             if(!empty($input['password'])){
                 $input['password'] = Hash::make($input['password']);
             }else{

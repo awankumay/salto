@@ -33,6 +33,15 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
+                            <strong>Identitas:</strong>
+                            {!! Form::text('identity', null, array('placeholder' => 'Identitas','class' => 'form-control form-control-sm')) !!}
+                            <span class="form-text {{isset($errors->messages()['identity']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['identity']) ? $errors->messages()['identity'][0] .'*' : 'Identitas pengguna wajib diisi *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
                             <strong>Email:</strong>
                             {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control form-control-sm')) !!}
                             <span class="form-text {{isset($errors->messages()['email']) ? 'text-danger text-help' : 'text-muted text-help'}}">
@@ -131,6 +140,22 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
+                            <strong>Napi 1 :</strong>
+                            <select class="napi-1-select form-control form-control-sm" name="napi_1">
+                                <option value="">- pilih napi  -</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Napi 2 :</strong>
+                            <select class="napi-2-select form-control form-control-sm" name="napi_2">
+                                <option value="">- pilih napi  -</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
                             <strong>Status:</strong><br>
                             {!! Form::radio('status', '1', array('class' => 'form-control form-control-sm')) !!} Active &nbsp;
                             {!! Form::radio('status', '2', array('class' => 'form-control form-control-sm')) !!} Not Active &nbsp;
@@ -161,4 +186,56 @@
             {!! Form::close() !!}
     </div>
 </div>
+@push('scripts')
+<script type="text/javascript">
+    $(function(){
+       $('.napi-1-select').select2({
+           minimumInputLength: 3,
+           allowClear: true,
+           placeholder: 'masukkan nama napi',
+           ajax: {
+              dataType: 'json',
+              url: '/dashboard/convict/getnapi',
+              delay: 800,
+              data: function(params) {
+                return {
+                  search: params.term
+                }
+              },
+              processResults: function (data, page) {
+              return {
+                results: data
+              };
+            },
+          }
+      }).on('napi-1-select:select', function (evt) {
+         var data = $(".napi-1-select option:selected").text();
+      });
+    });
+    $(function(){
+       $('.napi-2-select').select2({
+           minimumInputLength: 3,
+           allowClear: true,
+           placeholder: 'masukkan nama napi',
+           ajax: {
+              dataType: 'json',
+              url: '/dashboard/convict/getnapi',
+              delay: 800,
+              data: function(params) {
+                return {
+                  search: params.term
+                }
+              },
+              processResults: function (data, page) {
+              return {
+                results: data
+              };
+            },
+          }
+      }).on('napi-2-select:select', function (evt) {
+         var data = $(".napi-2-select option:selected").text();
+      });
+    });
+</script>
+@endpush
 @endsection

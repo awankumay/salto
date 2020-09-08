@@ -32,10 +32,13 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('campaign', 'CampaignController');
         Route::resource('auction', 'AuctionController');
         Route::resource('tags', 'TagsController');
+        Route::resource('product', 'ProductController');
+        Route::get('getnapi', 'ConvictController@getnapi')->name('getnapi');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
         Route::post('deleteExistImageCampaign', 'CampaignController@deleteExistImageCampaign')->name('deleteExistImageCampaign');
         Route::post('deleteExistImageAuction', 'AuctionController@deleteExistImageAuction')->name('deleteExistImageAuction');
         Route::post('deleteExistImageConvict', 'ConvictController@deleteExistImageConvict')->name('deleteExistImageConvict');
+        Route::post('deleteExistImageProduct', 'ProductController@deleteExistImageProduct')->name('deleteExistImageProduct');
     });
 });

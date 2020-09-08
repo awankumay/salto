@@ -3,29 +3,28 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('convict') }}
+        {{ Breadcrumbs::render('product') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Tahanan</div>
+                <div class="p-2">Produk</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('convict-create'))
-                        <a href="{{route('convict.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Tahanan</a>
+                    @if(auth()->user()->hasPermissionTo('product-create'))
+                        <a href="{{route('product.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Product</a>
                     @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table table-responsive">
-                <table class="table display nowrap convict-table" style="widht:100%;">
+                <table class="table display nowrap product-table" style="widht:100%;">
                     <thead>
                         <tr>
                             <th style="width:5%;">ID</th>
                             <th style="width:15%;">Nama</th>
-                            <th style="width:15%;">Status</th>
-                            <th style="width:25%;">Pelanggaran</th>
-                            <th style="width:20%;">Kamar</th>
+                            <th style="width:15%;">Tipe</th>
+                            <th style="width:25%;">Harga</th>
                             <th style="width:25%;">Dibuat</th>
                             <th style="width:25%;">Diubah</th>
                             <th style="width:10%">Action</th>
@@ -41,28 +40,27 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        let table = $('.convict-table').DataTable({
+        let table = $('.product-table').DataTable({
             processing: true,
             serverSide: true,
             rowReorder: {
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('convict.index') }}",
+            ajax: "{{ route('product.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
-                {data: 'type_convict', name: 'type_convict',
+                {data: 'type', name: 'type',
                     render:function(data){
                             if(data==1){
-                                return '<span class="badge badge-success">Tahanan Baru</span>';
+                                return '<span class="badge badge-success">Ecommerce</span>';
                             }else{
-                                return '<span class="badge badge-warning">Narapidana</span>';
+                                return '<span class="badge badge-warning">Logistic</span>';
                             }
                         }
                 },
-                {data: 'violation', name: 'violation'},
-                {data: 'lockup', name: 'lockup'},
+                {data: 'price', name: 'price'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
@@ -82,7 +80,7 @@
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'convict/'+id;
+        let deleteUrl = 'product/'+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Are you sure?",
@@ -103,16 +101,16 @@
                             success:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Berhasil, Tahanan berhasil dihapus");
+                                    toastr.success("Berhasil, produk berhasil dihapus");
 			                    },500);
                                 let i = row_index.parentNode.parentNode.rowIndex;
-                                let table = $('.convict-table').DataTable();
+                                let table = $('.product-table').DataTable();
                                 table.row(i).remove().draw();
                             },
                             error:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Gagal, Tahanan tidak berhasil dihapus");
+                                    toastr.error("Gagal, produk tidak berhasil dihapus");
 			                    },500);
                             }
                         });

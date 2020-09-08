@@ -67,7 +67,7 @@ class PostCategoryController extends Controller
     {
         $this->validate($request,
                         ['name' => 'required|unique:post_categories,name'],
-                        ['name.required'=> 'Nama kategori wajib diisi', 'name.unique'=> 'Nama kategori telah digunakan'],
+                        ['name.required'=> 'Nama kategori wajib diisi', 'name.unique'=> 'Nama kategori telah digunakan']    
                         );
         try {
             DB::beginTransaction();

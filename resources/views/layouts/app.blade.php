@@ -106,6 +106,7 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
                         @if(auth()->user()->hasPermissionTo('product-category-list'))<a class="collapse-item" href="{{route('product-category.index')}}">Kategori</a>@endif
+                        @if(auth()->user()->hasPermissionTo('product-list'))<a class="collapse-item" href="{{route('product.index')}}">Produk</a>@endif
                         </div>
                     </div>
                 </li>

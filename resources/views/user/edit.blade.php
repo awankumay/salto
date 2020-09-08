@@ -139,6 +139,22 @@
                             </span>
                         </div>
                     </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Napi 1 :</strong>
+                            <select class="napi-1-select form-control form-control-sm" name="napi_1">
+                                <option value="">- pilih napi  -</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Napi 2 :</strong>
+                            <select class="napi-2-select form-control form-control-sm" name="napi_2">
+                                <option value="">- pilih napi  -</option>
+                            </select>
+                        </div>
+                    </div>
                    {{--- <div class="col-md-12">
                         <div class="form-group col-md-12">
                             {!! Form::radio('privileges', 1, array('class' => 'form-control form-control-sm')) !!} Website &nbsp;
@@ -162,6 +178,56 @@
     </div>
 </div>
 @push('scripts')
+<script type="text/javascript">
+    $(function(){
+       $('.napi-1-select').select2({
+           minimumInputLength: 3,
+           allowClear: true,
+           placeholder: 'masukkan nama napi',
+           ajax: {
+              dataType: 'json',
+              url: '/dashboard/convict/getnapi',
+              delay: 800,
+              data: function(params) {
+                return {
+                  search: params.term
+                }
+              },
+              processResults: function (data, page) {
+              return {
+                results: data
+              };
+            },
+          }
+      }).on('napi-1-select:select', function (evt) {
+         var data = $(".napi-1-select option:selected").text();
+      });
+    });
+    $(function(){
+       $('.napi-2-select').select2({
+           minimumInputLength: 3,
+           allowClear: true,
+           placeholder: 'masukkan nama napi',
+           ajax: {
+              dataType: 'json',
+              url: '/dashboard/convict/getnapi',
+              delay: 800,
+              data: function(params) {
+                return {
+                  search: params.term
+                }
+              },
+              processResults: function (data, page) {
+              return {
+                results: data
+              };
+            },
+          }
+      }).on('napi-2-select:select', function (evt) {
+         var data = $(".napi-2-select option:selected").text();
+      });
+    });
+</script>
 <script type="text/javascript">
     function deleteExist(fileName, id) {
         let deleteUrl = 'deleteExistImageUser';

@@ -165,7 +165,7 @@ class ConvictController extends Controller
             $image = $this->UploadImage($request->file, config('app.convictImagePath'));
             if($image==false){
                 \Session::flash('error', 'data upload failure');
-                return redirect()->route('content.create');
+                return redirect()->route('convict.create');
             }
         }
 
@@ -242,7 +242,8 @@ class ConvictController extends Controller
         $image = $request->post('image');
         $document = $request->post('document');
         $id    = $request->post('id');
-
+        $deleteFile = false;
+        $deleteFile2 = false;
         $convict = Convict::find($id);
         try {
             if(!empty($image)){
@@ -252,11 +253,11 @@ class ConvictController extends Controller
                 $deleteFile2 = $this->DeleteImage($document, config('app.documentImagePath'));
             }
             DB::beginTransaction();
-                if($deleteFile == true){
+                if($deleteFile == true || !empty($image)){
                     $input = ['photo'=>NULL];
                     $convict->update($input);
                 }
-                if($deleteFile2 == true){
+                if($deleteFile2 == true || !empty($document)){
                     $input = ['document'=>NULL];
                     $convict->update($input);
                 }
@@ -286,5 +287,40 @@ class ConvictController extends Controller
             return false;
         }
 
+    }
+
+    public function show(Request $request)
+    {
+        $search=$request->get('search');
+        $cekNapi = DB::table('user_has_convicts')
+                ->select('convicts_id')
+                ->groupBy('convicts_id')
+                ->havingRaw('COUNT(convicts_id) > ?', [1])
+                ->get();
+        $notAvailNapi = [];
+        if(!empty($cekNapi)){
+            foreach ($notAvailNapi as $key => $x) {
+                $notAvailNapi[]=$x;
+            }
+            $getNapi = DB::table('convicts')
+                    ->where('name', 'like', "%$search%")
+                    ->whereNotIn('id', $notAvailNapi)
+                    ->get();
+        }
+
+        if(empty($getNapi)){
+            $getNapi = DB::table('convicts')->where('name', 'like', "%$search%")->get();
+        }
+        
+        if (!empty($getNapi)) {
+            $list = array();
+            foreach ($getNapi as $key => $row) {
+                $list[$key]['id'] = $row->id;
+                $list[$key]['text'] = $row->name; 
+            }
+            echo json_encode($list);
+        } else {
+            echo "hasil kosong";
+        }
     }
 }

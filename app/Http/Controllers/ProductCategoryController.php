@@ -67,7 +67,7 @@ class ProductCategoryController extends Controller
     {
         $this->validate($request,
                         ['name' => 'required|unique:product_categories,name'],
-                        ['name.required'=> 'Nama produk wajib diisi', 'name.unique'=> 'Nama produk telah digunakan'],
+                        ['name.required'=> 'Nama produk wajib diisi', 'name.unique'=> 'Nama produk telah digunakan']
                         );
         try {
             DB::beginTransaction();

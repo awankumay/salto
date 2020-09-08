@@ -111,6 +111,18 @@ Breadcrumbs::register('convict.edit', function ($breadcrumbs, $convict) {
     $breadcrumbs->parent('convict');
     $breadcrumbs->push($convict->name, route('convict.edit', $convict->id));
 });
+Breadcrumbs::register('product', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Produk', route('product.index'));
+});
+Breadcrumbs::register('product.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('product');
+    $breadcrumbs->push('Tambah produk', route('product.create'));
+});
+Breadcrumbs::register('product.edit', function ($breadcrumbs, $product) {
+    $breadcrumbs->parent('product');
+    $breadcrumbs->push($product->name, route('product.edit', $product->id));
+});
 
 
 ?>
