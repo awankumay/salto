@@ -46,13 +46,14 @@ class LookController extends BaseController
             '/storage/images/slider/slider-2.png',
             '/storage/images/slider/slider-3.png',
             ];
-            $datapage = \App\Content::where('post_categories_id', 1)->get();
+            $datapage = \App\Content::where('post_categories_id', 1)->where('status', 1)->get();
         
-        }else if($request->page=='informasi_layanan'){
+        }else if($request->page=='informasi'){
             $image = ['/storage/images/slider/slider-1.png',
             '/storage/images/slider/slider-2.png',
             '/storage/images/slider/slider-3.png',
             ];
+            $datapage = \App\Content::where('post_categories_id', 3)->where('status', 1)->get();
         }else if($request->page=='pengaduan'){
             $image = ['/storage/images/slider/slider-1.png',
             '/storage/images/slider/slider-2.png',
