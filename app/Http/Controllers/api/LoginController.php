@@ -47,7 +47,8 @@ class LoginController extends BaseController
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
             $user = Auth::user(); 
             $success['name'] =  $user->name;
-            $success['role'] = $roles = $user->roles()->pluck('name');
+            $success['role'] =  $user->roles()->pluck('name');
+            $success['user_id'] = $user->id;
             if($success['role']['0']!='Pengunjung'){
                 return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
             }

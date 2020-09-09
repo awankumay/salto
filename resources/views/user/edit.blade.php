@@ -32,6 +32,15 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
+                            <strong>Identitas:</strong>
+                            {!! Form::text('identity', null, array('placeholder' => 'Identitas','class' => 'form-control form-control-sm')) !!}
+                            <span class="form-text {{isset($errors->messages()['identity']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['identity']) ? $errors->messages()['identity'][0] .'*' : 'Identitas pengguna wajib diisi *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
                             <strong>Email:</strong>
                             {!! Form::text('email', null, array('placeholder' => 'Email','class' => 'form-control form-control-sm')) !!}
                             <span class="form-text {{isset($errors->messages()['email']) ? 'text-danger text-help' : 'text-muted text-help'}}">

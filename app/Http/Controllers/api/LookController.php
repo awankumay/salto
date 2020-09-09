@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Content;
+use App\SurveyIkm;
 use Illuminate\Support\Facades\Auth;
 use Validator;
    
@@ -68,6 +69,26 @@ class LookController extends BaseController
         $success['slider']=$image;
         $success['datapage']=$datapage;
         return $this->sendResponse($success, 'User login successfully.');
+    }
+
+    public function surveyikm(Request $request)
+    {
+        $surveyIkm = New SurveyIkm();
+        if(!empty($request->user_id) && !empty($request->rating)){
+            $surveyIkm->users_id=$request->user_id;
+            $surveyIkm->rating=$request->rating;
+            $success=false;
+            if($surveyIkm->save()){
+                $success=true;
+                return $this->sendResponse($success, 'Terima kasih telah mengisi survey');
+            }else{
+                $success=false;
+                return $this->sendResponseFalse($success, 'Terjadi kesalahan server');
+            }
+
+        }
+        $success=false;
+        return $this->sendResponseFalse($success, 'Parameter tidak ada');
     }
     
 }
