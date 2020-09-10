@@ -84,12 +84,13 @@
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tahanan" aria-expanded="true" aria-controls="tahanan">
                         <i class="fas fa-fw fa-user-circle"></i>
-                        <span>Tahanan</span>
+                        <span>Tahanan & Pengunjung</span>
                     </a>
                     <div id="tahanan" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
                         @if(auth()->user()->hasPermissionTo('convict-list')) <a class="collapse-item" href="{{route('convict.index')}}">Tahanan</a> @endif
+                        @if(auth()->user()->hasPermissionTo('visitor-list')) <a class="collapse-item" href="{{route('visitor.index')}}">Daftar Pengunjung</a> @endif
                         </div>
                     </div>
                 </li>

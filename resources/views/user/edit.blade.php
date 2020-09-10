@@ -152,15 +152,17 @@
                         <div class="form-group col-md-12">
                             <strong>Napi 1 :</strong>
                             <select class="napi-1-select form-control form-control-sm" name="napi_1">
+                            @if($nm_napi_1)<option value="{{$nm_napi_1->id}}" selected>{{$nm_napi_1->name}}</option>@endif
                                 <option value="">- pilih napi  -</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
-                            <strong>Napi 2 :</strong>
+                            <strong>Napi 2 :  </strong>
                             <select class="napi-2-select form-control form-control-sm" name="napi_2">
-                                <option value="">- pilih napi  -</option>
+                            @if($nm_napi_2)<option value="{{$nm_napi_2->id}}" selected>{{$nm_napi_2->name}}</option>@endif
+                            <option value="">- pilih napi  -</option>
                             </select>
                         </div>
                     </div>

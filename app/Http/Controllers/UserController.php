@@ -71,8 +71,23 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $role = Role::pluck('name','name')->all();
+        $getNapi =  UserConvicts::where('users_id', $id)->get();
+        $nm_napi_1=null;
+        $nm_napi_2=null;
+        if(!empty($getNapi)){
+            $napi = count($getNapi);
+            if($napi==1){
+                $napi_1=$getNapi[0]->convicts_id;
+                $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
+            }else{
+                $napi_1=$getNapi[0]->convicts_id;
+                $napi_2=$getNapi[1]->convicts_id;
+                $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
+                $nm_napi_2 = \App\Convict::where('id', $napi_2)->first();
+            }
+        }
         $userRole = $user->roles->pluck('name','name')->all();
-        return view('user.edit', compact('user', 'role', 'userRole'));
+        return view('user.edit', compact('user', 'role', 'userRole', 'nm_napi_1', 'nm_napi_2'));
     }
 
     public function store(Request $request)
@@ -178,6 +193,7 @@ class UserController extends Controller
             $input = $request->all();
             $napi_1 = $input['napi_1'];
             $napi_2 = $input['napi_2'];
+    
             Arr::forget($input, array('napi_1', 'napi_2'));
             if(!empty($input['password'])){
                 $input['password'] = Hash::make($input['password']);
@@ -185,6 +201,21 @@ class UserController extends Controller
                Arr::forget($input, array('password', 'confirm-password'));
             }
             DB::beginTransaction();
+            if(!empty($napi_1) || !empty($napi_2)){
+                \App\UserConvicts::where('users_id', $id)->delete();
+                if(!empty($napi_1)){
+                    $userHasConvicts = New UserConvicts();
+                    $userHasConvicts->convicts_id=$napi_1;
+                    $userHasConvicts->users_id=$user->id;
+                    $userHasConvicts->save();
+                }
+                if(!empty($napi_2)){
+                    $userHasConvicts = New UserConvicts();
+                    $userHasConvicts->convicts_id=$napi_2;
+                    $userHasConvicts->users_id=$user->id;
+                    $userHasConvicts->save();
+                }
+            }
                 $user->update($input);
             DB::table('model_has_roles')->where('model_id',$id)->delete();
                 $user->assignRole($request->input('role'));

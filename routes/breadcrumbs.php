@@ -123,6 +123,18 @@ Breadcrumbs::register('product.edit', function ($breadcrumbs, $product) {
     $breadcrumbs->parent('product');
     $breadcrumbs->push($product->name, route('product.edit', $product->id));
 });
+Breadcrumbs::register('visitor', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Visitor', route('visitor.index'));
+});
+Breadcrumbs::register('visitor.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('visitor');
+    $breadcrumbs->push('Tambah produk', route('visitor.create'));
+});
+Breadcrumbs::register('visitor.edit', function ($breadcrumbs, $visitor) {
+    $breadcrumbs->parent('visitor');
+    $breadcrumbs->push($visitor->name, route('visitor.edit', $visitor->id));
+});
 
 
 ?>
