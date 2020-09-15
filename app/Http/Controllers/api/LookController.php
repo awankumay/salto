@@ -1,7 +1,7 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
@@ -12,7 +12,7 @@ use App\TransHistory;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
-   
+
 class LookController extends BaseController
 {
     /**
@@ -27,7 +27,7 @@ class LookController extends BaseController
     }
 
     public function getData(Request $request){
-        
+
         //$success['link']=url()->current();
         if($request->page=='home'){
             $image = ['/storage/images/slider/slider-1.png',
@@ -51,7 +51,7 @@ class LookController extends BaseController
             '/storage/images/slider/slider-3.png',
             ];
             $datapage = \App\Content::where('post_categories_id', 1)->where('status', 1)->get();
-        
+
         }else if($request->page=='informasi'){
             $image = ['/storage/images/slider/slider-1.png',
             '/storage/images/slider/slider-2.png',
@@ -105,6 +105,7 @@ class LookController extends BaseController
         $success=[];
         $getDate = date_create($request->date);
         $setDate = date_format($getDate, 'Y-m-d');
+
         $cekStatusNapi = \App\Convict::where('id', $request->convict_id)->where('type_convict', 1)->first();
         if(!empty($cekStatusNapi)){
             if(empty($cekStatusNapi->document)){
@@ -112,17 +113,17 @@ class LookController extends BaseController
                 return $this->sendResponse($success, 'mohon maaf surat izin belum ada, silahkan menghubungi operator');
             }
         }
-            $existToday=DB::table('appointments')
+        $existToday=DB::table('appointments')
             ->where('date', $setDate)
             ->where('convicts_id', $request->convict_id)->get();
-            if(!empty($existToday)){
-                $success['available']=false;
-                return $this->sendResponse($success, 'anda sudah memilih jadwal ditanggal ini');
-            } 
+        if(count($existToday)>0){
+            $success['available']=false;
+            return $this->sendResponse($success, 'napi sudah memiliki jadwal ditanggal ini');
+        }
         try {
             DB::beginTransaction();
 
-           
+
            $check=DB::table('appointments')->where('date', $setDate)
                                     ->where('schedule', $request->schedule)
                                     ->sharedLock()->get();
@@ -168,14 +169,16 @@ class LookController extends BaseController
         $id=$request->user_id;
         $specificDate = strtotime($request->date);
         $day = date('l', $specificDate);
-        if($day=='Monday' || $day=='Tuesday' || $day=='Wednesday' || $day=='Thursday'){
+        if($day=='Monday' || $day=='Tuesday' || $day=='Wednesday' || $day=='Thursday' || $day=='Friday'){
+            $success['jadwal']=['9-10', '10-11', '11-12', '12-13', '13-14', '15-16'];
+        }
+        if($day=='Saturday'){
             $success['jadwal']=['9-10', '10-11', '11-12'];
         }
-        if($day=='Friday'){
-            $success['jadwal']=['9-12', '13-15'];
-        }
-        if($day=='Sabtu'){
-            $success['jadwal']=['9-12'];
+        if($day=='Sunday'){
+            $success['jadwal']=[];
+            $success['napi']=[];
+            return $this->sendResponse($success, 'jadwal tidak tersedia dihari minggu');
         }
         $userConvict = DB::table('user_has_convicts')
             ->where('user_has_convicts.users_id', $id)
@@ -200,8 +203,8 @@ class LookController extends BaseController
         return $this->sendResponse($success, 'histori terakhir berkunjung');
     }
 
-    public function product($id)
-    {   
+    public function product($id, $id_user)
+    {
         $data=[];
         $product = DB::table('products')->select('*')->where('type', $id)->where('status', 1)->orderByDesc('products.id_categories')->get();
         foreach ($product as $key => $vals) {
@@ -218,7 +221,7 @@ class LookController extends BaseController
                             );
         }
         $userConvict = DB::table('user_has_convicts')
-            ->where('user_has_convicts.users_id', $id)
+            ->where('user_has_convicts.users_id', $id_user)
             ->leftJoin('convicts', 'user_has_convicts.convicts_id', '=', 'convicts.id')
             ->get();
         $success['napi']=$userConvict;
@@ -235,8 +238,8 @@ class LookController extends BaseController
         //try {
                DB::beginTransaction();
 
-                
-                    for ($i=0; $i < $total_data; $i++) { 
+
+                    for ($i=0; $i < $total_data; $i++) {
                         if($request->formData['qty_'.$i.'']>0 && $request->formData['qty_'.$i.'']!='' && $request->formData['qty_'.$i.'']!=null){
                             $trans = New TransHistory();
                             $trans->users_id        = $request->user_id;
@@ -247,19 +250,19 @@ class LookController extends BaseController
                             $trans->price           = $request->formData['price_'.$i.''];
                             $trans->convicts_id     = $request->convict_id;
                             $trans->status          = 1;
-                            if(!empty($request->visit)){
-                                $trans->id_visit      = $request->visit;
+                            if(!empty($request->visit_id)){
+                                $trans->id_visit      = $request->visit_id;
                             }
                             $trans->save();
-                            DB::commit(); 
-                        } 
+                            DB::commit();
+                        }
                     }
-                
+
                 $success['available']=true;
                 return $this->sendResponse($success, 'berhasil, anda segera dihubungi petugas. no transaksi '.$setIdTrans);
         //} catch (\Throwable $th) {
             //return $this->sendResponseFalse($success, 'terjadi kesalah server');
         //}
     }
-    
+
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Product;
 use App\Visit;
+use App\VisitView;
 use App\ProductCategory;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
@@ -46,15 +47,20 @@ class VisitorController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'visitor_name',
-                2=>'type',
-                3=>'schedule',
-                4=>'date',
-                5=>'no_antrian',
-                6=>'created_at',
-                7=>'updated_at'
+                1=>'username',
+                2=>'phone',
+                3=>'whatsapp',
+                4=>'tgl_hadir',
+                5=>'schedule',
+                6=>'visitor',
+                7=>'no_antrian',
+                8=>'napi',
+                9=>'tipe_napi',
+                10=>'tipe_kunjungan',
+                11=>'created_at',
+                12=>'updated_at'
             );
-            $model  = New Visit();
+            $model  = New VisitView();
             return $this->ActionTable($columns, $model, $request, 'visitor.edit', 'visitor-edit', 'visitor-delete');
         }
         return view('visitor.index');

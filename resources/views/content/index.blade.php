@@ -50,6 +50,8 @@
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
+            columnDefs: [ { type: 'date', 'targets': [3] } ],
+            order: [[ 3, 'desc' ]],
             ajax: "{{ route('content.index') }}",
             columns: [
                 {data: 'id', name: 'id'},

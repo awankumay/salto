@@ -76,10 +76,10 @@ class UserController extends Controller
         $nm_napi_2=null;
         if(!empty($getNapi)){
             $napi = count($getNapi);
-            if($napi==1){
+            if($napi==1 && $napi!=0){
                 $napi_1=$getNapi[0]->convicts_id;
                 $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
-            }else{
+            }else if($napi>1){
                 $napi_1=$getNapi[0]->convicts_id;
                 $napi_2=$getNapi[1]->convicts_id;
                 $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
@@ -193,7 +193,7 @@ class UserController extends Controller
             $input = $request->all();
             $napi_1 = $input['napi_1'];
             $napi_2 = $input['napi_2'];
-    
+
             Arr::forget($input, array('napi_1', 'napi_2'));
             if(!empty($input['password'])){
                 $input['password'] = Hash::make($input['password']);
