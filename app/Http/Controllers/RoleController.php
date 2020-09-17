@@ -72,7 +72,7 @@ class RoleController extends Controller
         $role = Role::create(['name' => $request->input('name')]);
         $role->syncPermissions($request->input('permission'));
 
-        \Session::put('success','role created successfully.');
+        \Session::flash('success','role created successfully.');
 
         return redirect()->route('role.index');
     }
@@ -101,7 +101,7 @@ class RoleController extends Controller
 
         $role->syncPermissions($request->input('permission'));
 
-        \Session::put('success','role updated successfully.');
+        \Session::flash('success','role updated successfully.');
         return redirect()->route('role.index');
     }
     /**

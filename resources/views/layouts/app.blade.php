@@ -108,6 +108,7 @@
                         <h6 class="collapse-header">Menu</h6>
                         @if(auth()->user()->hasPermissionTo('product-category-list'))<a class="collapse-item" href="{{route('product-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('product-list'))<a class="collapse-item" href="{{route('product.index')}}">Produk</a>@endif
+                        @if(auth()->user()->hasPermissionTo('transaction-list'))<a class="collapse-item" href="{{route('transaction.index')}}">Belanja</a>@endif
                         </div>
                     </div>
                 </li>
@@ -123,7 +124,7 @@
                     <div id="supplier" class="collapse" aria-labelledby="supplier" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        
+
                         @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
                         </div>

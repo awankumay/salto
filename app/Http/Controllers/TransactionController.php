@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Product;
+use App\Visit;
+use App\TransactionView;
+use App\Transaction;
 use App\ProductCategory;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
@@ -17,7 +20,7 @@ use Spatie\Permission\Models\Role;
 use Auth;
 use Carbon\Carbon;
 
-class ProductController extends Controller
+class TransactionController extends Controller
 {
     use ActionTable;
     use ImageTrait;
@@ -29,10 +32,10 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:product-list');
-        $this->middleware('permission:product-create', ['only' => ['create','store']]);
-        $this->middleware('permission:product-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:product-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:transaction-list');
+        $this->middleware('permission:transaction-create', ['only' => ['create','store']]);
+        $this->middleware('permission:transaction-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:transaction-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -45,35 +48,33 @@ class ProductController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'name',
-                2=>'photo',
-                3=>'type',
-                4=>'status',
-                5=>'price',
-                6=>'created_at',
-                7=>'updated_at'
+                1=>'userapp',
+                2=>'id_visit',
+                3=>'visitor_name',
+                4=>'created_at',
+                5=>'date_payment',
+                6=>'shop_option',
+                7=>'trans_status',
+                8=>'tqty',
+                9=>'tprice',
             );
-            $model  = New Product();
-            return $this->ActionTable($columns, $model, $request, 'product.edit', 'product-edit', 'product-delete');
+            $model  = New TransactionView();
+            return $this->ActionTable($columns, $model, $request, 'transaction.edit', 'transaction-edit', 'transaction-delete');
         }
-        return view('product.index');
+        return view('transaction.index');
     }
 
     public function create()
     {
-        $productCategory = ProductCategory::pluck('name','id')->all();
-        $typeCategory = ['1'=>'Ecommerce', '2'=>'Logistik'];
-        return view('product.create', compact('productCategory', 'typeCategory'));
     }
 
     public function edit($id)
     {
-        $product = Product::find($id);
-        $productCategory = ProductCategory::pluck('name','id')->all();
-        $typeCategory = ['1'=>'Ecommerce', '2'=>'Logistik'];
-        $idType = $product->type;
-        $idCategory = $product->id_categories;
-        return view('product.edit', compact('product', 'productCategory', 'idCategory', 'typeCategory', 'idType'));
+        $transaction = New Transaction();
+        $transactionHeader = TransactionView::where('id', $id)->first();
+        $detailTransaction = $transaction->getDetails($id);
+        #@dd($transactionHeader);
+        return view('transaction.edit', compact('transactionHeader', 'detailTransaction'));
     }
 
     public function store(Request $request)

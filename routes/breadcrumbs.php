@@ -135,6 +135,18 @@ Breadcrumbs::register('visitor.edit', function ($breadcrumbs, $visitor) {
     $breadcrumbs->parent('visitor');
     $breadcrumbs->push($visitor->name, route('visitor.edit', $visitor->id));
 });
+Breadcrumbs::register('transaction', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Daftar belanja', route('transaction.index'));
+});
+Breadcrumbs::register('transaction.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('transaction');
+    $breadcrumbs->push('Tambah produk', route('transaction.create'));
+});
+Breadcrumbs::register('transaction.edit', function ($breadcrumbs, $transaction) {
+    $breadcrumbs->parent('transaction');
+    $breadcrumbs->push($transaction->id, route('transaction.edit', $transaction->id));
+});
 
 
 ?>

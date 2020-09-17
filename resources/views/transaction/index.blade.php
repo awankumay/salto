@@ -3,35 +3,31 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('visitor') }}
+        {{ Breadcrumbs::render('transaction') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Daftar Kunjungan</div>
+                <div class="p-2">Daftar Belanja</div>
                 <div class="p-2">
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table table-responsive">
-                <table class="table display nowrap visitor-table" style="widht:100%;">
+                <table class="table display nowrap transaction-table" style="widht:100%;">
                     <thead>
                         <tr>
-                            <th style="width:5%;">ID</th>
-                            <th style="width:15%;">User</th>
-                            <th style="width:15%;">Tlp</th>
-                            <th style="width:25%;">WA</th>
-                            <th style="width:25%;">Tgl Kunjungan</th>
-                            <th style="width:25%;">Jadwal</th>
+                            <th style="width:5%;">ID Transaksi</th>
+                            <th style="width:15%;">Pengguna</th>
+                            <th style="width:15%;">ID Kunjungan</th>
                             <th style="width:25%;">Pengunjung</th>
-                            <th style="width:25%;">Antrian</th>
-                            <th style="width:25%;">Napi</th>
+                            <th style="width:25%;">Tgl Transaksi</th>
+                            <th style="width:25%;">Tgl Bayar</th>
                             <th style="width:25%;">Status</th>
-                            <th style="width:25%;">Belanja</th>
-                            <th style="width:25%;">Dibuat</th>
-                            <th style="width:25%;">Diubah</th>
-
+                            <th style="width:25%;">Total Qty</th>
+                            <th style="width:25%;">Total Harga</th>
+                            <th style="width:25%;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,32 +40,27 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        let table = $('.visitor-table').DataTable({
+        let table = $('.transaction-table').DataTable({
             processing: true,
             serverSide: true,
             rowReorder: {
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('visitor.index') }}",
+            ajax: "{{ route('transaction.index') }}",
             columnDefs: [ { type: 'date', 'targets': [4] } ],
             order: [[ 4, 'desc' ]],
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'username', name: 'username'},
-                {data: 'phone', name: 'phone'},
-                {data: 'whatsapp', name: 'whatsapp'},
-                {data: 'tgl_hadir', name: 'tgl_hadir'},
-                {data: 'schedule', name: 'schedule'},
-                {data: 'visitor', name: 'visitor'},
-                {data: 'no_antrian', name: 'no_antrian'},
-                {data: 'napi', name: 'napi'},
-                {data: 'tipe_napi', name: 'tipe_napi'},
-                {data: 'tipe_kunjungan', name: 'tipe_napi'},
+                {data: 'userapp', name: 'userapp'},
+                {data: 'id_visit', name: 'id_visit'},
+                {data: 'visitor_name', name: 'visitor_name'},
                 {data: 'created_at', name: 'created_at'},
-                {data: 'updated_at', name: 'updated_at'},
-
-
+                {data: 'date_payment', name: 'date_payment'},
+                {data: 'trans_status', name: 'trans_status'},
+                {data: 'tqty', name: 'tqty'},
+                {data: 'tprice', name: 'tprice'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
         $(".dataTables_filter input")

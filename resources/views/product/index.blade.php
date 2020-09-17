@@ -24,6 +24,7 @@
                             <th style="width:5%;">ID</th>
                             <th style="width:15%;">Nama</th>
                             <th style="width:15%;">Tipe</th>
+                            <th style="width:25%;">Status</th>
                             <th style="width:25%;">Harga</th>
                             <th style="width:25%;">Dibuat</th>
                             <th style="width:25%;">Diubah</th>
@@ -57,6 +58,15 @@
                                 return '<span class="badge badge-success">Ecommerce</span>';
                             }else{
                                 return '<span class="badge badge-warning">Logistic</span>';
+                            }
+                        }
+                },
+                {data: 'status', name:'status',
+                    render:function(data){
+                            if(data==1){
+                                return '<span class="badge badge-success">Aktif</span>';
+                            }else{
+                                return '<span class="badge badge-warning">Tidak Aktif</span>';
                             }
                         }
                 },

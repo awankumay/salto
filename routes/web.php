@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('tags', 'TagsController');
         Route::resource('product', 'ProductController');
         Route::resource('visitor', 'VisitorController');
+        Route::resource('transaction', 'TransactionController');
         Route::get('getnapi', 'ConvictController@getnapi')->name('getnapi');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
