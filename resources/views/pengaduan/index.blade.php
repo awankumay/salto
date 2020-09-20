@@ -3,31 +3,31 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('transaction') }}
+        {{ Breadcrumbs::render('slider') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Daftar Belanja</div>
+                <div class="p-2">Slider</div>
                 <div class="p-2">
+                    @if(auth()->user()->hasPermissionTo('post-create'))
+                        <a href="{{route('slider.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Slider</a>
+                    @endif
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table table-responsive">
-                <table class="table display nowrap transaction-table" style="widht:100%;">
+                <table class="table display nowrap slider-table" style="widht:100%;">
                     <thead>
                         <tr>
-                            <th style="width:5%;">ID Transaksi</th>
-                            <th style="width:15%;">Pengguna</th>
-                            <th style="width:15%;">ID Kunjungan</th>
-                            <th style="width:25%;">Pengunjung</th>
-                            <th style="width:25%;">Tgl Transaksi</th>
-                            <th style="width:25%;">Tgl Bayar</th>
+                            <th style="width:5%;">ID</th>
+                            <th style="width:25%;">Banner</th>
+                            <th style="width:25%;">Kategori</th>
                             <th style="width:25%;">Status</th>
-                            <th style="width:25%;">Total Qty</th>
-                            <th style="width:25%;">Total Harga</th>
-                            <th style="width:25%;">Action</th>
+                            <th style="width:25%;">Dibuat</th>
+                            <th style="width:25%;">Diubah</th>
+                            <th style="width:10%">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -40,26 +40,33 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        let table = $('.transaction-table').DataTable({
+        let table = $('.slider-table').DataTable({
             processing: true,
             serverSide: true,
             rowReorder: {
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('transaction.index') }}",
-            columnDefs: [ { type: 'date', 'targets': [4] } ],
-            order: [[ 4, 'desc' ]],
+            ajax: "{{ route('slider.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'userapp', name: 'userapp'},
-                {data: 'id_visit', name: 'id_visit'},
-                {data: 'visitor_name', name: 'visitor_name'},
+                {data: 'photo', name: 'photo',
+                    render:function(data){
+                        return "<img src=\"" + "/storage/{{config('app.postImagePath')}}/"+data+ "\" height=\"100\"/>";
+                    }
+                },
+                {data: 'name', name: 'name'},
+                {data: 'status', name:'status',
+                    render:function(data){
+                            if(data==1){
+                                return '<span class="badge badge-success">Aktif</span>';
+                            }else{
+                                return '<span class="badge badge-warning">Tidak Aktif</span>';
+                            }
+                        }
+                },
                 {data: 'created_at', name: 'created_at'},
-                {data: 'date_payment', name: 'date_payment'},
-                {data: 'trans_status', name: 'trans_status', orderable: false, searchable: false},
-                {data: 'tqty', name: 'tqty', orderable: false, searchable: false},
-                {data: 'tprice', name: 'tprice', orderable: false, searchable: false},
+                {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
@@ -77,7 +84,7 @@
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'visitor/'+id;
+        let deleteUrl = 'slider/'+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Are you sure?",
@@ -98,16 +105,16 @@
                             success:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Berhasil, produk berhasil dihapus");
+                                    toastr.success("Berhasil, slider berhasil dihapus");
 			                    },500);
                                 let i = row_index.parentNode.parentNode.rowIndex;
-                                let table = $('.visitor-table').DataTable();
+                                let table = $('.slider-table').DataTable();
                                 table.row(i).remove().draw();
                             },
                             error:function(){
                                 setTimeout(function(){
 				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Gagal, produk tidak berhasil dihapus");
+                                    toastr.error("Gagal, slider tidak berhasil dihapus");
 			                    },500);
                             }
                         });

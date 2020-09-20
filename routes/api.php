@@ -19,6 +19,7 @@ Route::post('surveyikm', 'api\LookController@surveyikm')->name('surveyikm');
 Route::post('schedule', 'api\LookController@getschedule')->name('schedule');
 Route::post('visit', 'api\LookController@visit')->name('visit');
 Route::post('transaction', 'api\LookController@transaction')->name('transaction');
+Route::post('pengaduan', 'api\LookController@pengaduan')->name('pengaduan');
 Route::get('historykunjungan/{id}', 'api\LookController@historykunjungan');
 Route::get('product/{id}/{userid}', 'api\LookController@product');
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){

@@ -24,6 +24,8 @@ class TransactionView extends Model
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
         $data = TransactionView::where('id','LIKE',"%{$search}%")
+                            ->orWhere('visitor_name', 'LIKE', "%{$search}%")
+                            ->orWhere('convict_name', 'LIKE', "%{$search}%")
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -33,6 +35,8 @@ class TransactionView extends Model
 
     public function GetCountDataFilter($search){
         $data = TransactionView::where('id','LIKE',"%{$search}%")
+                            ->orWhere('visitor_name', 'LIKE', "%{$search}%")
+                            ->orWhere('convict_name', 'LIKE', "%{$search}%")
                             ->count();
         return $data;
     }

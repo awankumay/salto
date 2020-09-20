@@ -127,6 +127,24 @@
 
                         @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
+                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('slider.index')}}">Slider</a>@endif
+                        </div>
+                    </div>
+                </li>
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
+                    Pengaduan
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#pengaduan" aria-expanded="true" aria-controls="pengaduan">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Pengaduan</span>
+                    </a>
+                    <div id="pengaduan" class="collapse" aria-labelledby="pengaduan" data-parent="#accordionSidebar">
+                        <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Menu</h6>
+                        @if(auth()->user()->hasPermissionTo('send-report-list'))<a class="collapse-item" href="{{route('rating.index')}}">Survey</a>@endif
+                        @if(auth()->user()->hasPermissionTo('send-report-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan</a>@endif
                         </div>
                     </div>
                 </li>

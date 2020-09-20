@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Product;
-use App\Visit;
+use App\Payment;
 use App\TransactionView;
 use App\Transaction;
 use App\ProductCategory;
@@ -20,7 +20,7 @@ use Spatie\Permission\Models\Role;
 use Auth;
 use Carbon\Carbon;
 
-class TransactionController extends Controller
+class PaymentController extends Controller
 {
     use ActionTable;
     use ImageTrait;
@@ -45,23 +45,6 @@ class TransactionController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->ajax()) {
-            $columns = array(
-                0=>'id',
-                1=>'userapp',
-                2=>'id_visit',
-                3=>'visitor_name',
-                4=>'created_at',
-                5=>'date_payment',
-                6=>'shop_option',
-                7=>'trans_status',
-                8=>'tqty',
-                9=>'tprice',
-            );
-            $model  = New TransactionView();
-            return $this->ActionTable($columns, $model, $request, 'transaction.edit', 'transaction-edit', 'transaction-delete');
-        }
-        return view('transaction.index');
     }
 
     public function create()
@@ -70,11 +53,6 @@ class TransactionController extends Controller
 
     public function edit($id)
     {
-        $transaction = New Transaction();
-        $transactionHeader = TransactionView::where('id', $id)->first();
-        $detailTransaction = $transaction->getDetails($id);
-        #@dd($transactionHeader);
-        return view('transaction.edit', compact('transactionHeader', 'detailTransaction'));
     }
 
     public function store(Request $request)
@@ -85,18 +63,38 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'status' => 'required'
+            'file' => 'required|mimes:jpeg,bmp,png,jpg|max:300',
+            'date_payment'=>'required'
             ]
         );
+        if($request->file){
+            $image = $this->UploadImage($request->file, config('app.documentImagePath'));
+            if($image==false){
+                \Session::flash('error', 'data upload failure');
+                return redirect()->route('transaction.edit', ['transaction'=>$id]);
+            }
+        }
         $transaction = Transaction::where('id_trans', $id)->first();
         $transactionHeader = TransactionView::where('id', $id)->first();
         $detailTransaction = New Transaction();
         $detailTransaction = $detailTransaction->getDetails($id);
        try {
             DB::beginTransaction();
-                $input = $request->all();
-                Transaction::where('id_trans', $id)
-                ->update(['status' => $input['status']]);
+            $payment=Payment::where('id_trans', $id)->first();
+            if(!empty($payment)){
+                $payment->photo=$image;
+                $payment->save();
+                $request->request->add(['status'=> 3]);
+            }else{
+                $payment=New Payment();
+                $payment->photo=$image;
+                $payment->id_trans=$id;
+                $payment->save();
+                $request->request->add(['status'=> 3]);
+            }
+            $input = $request->all();
+            Transaction::where('id_trans', $id)
+            ->update(['status' => $input['status'], 'date_payment'=>$input['date_payment']]);
 
             DB::commit();
             \Session::flash('success','Data berhasil diubah.');
@@ -110,76 +108,33 @@ class TransactionController extends Controller
 
     public function destroy($id)
     {
-        try {
-            Transaction::find($id)->delete();
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
 
     }
 
-    public function deleteItem(Request $request)
-    {
-        try {
-            Transaction::find($request->post('id'))->delete();
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
-
-    }
-
-    public function updatedItem(Request $request)
-    {
-        try {
-            Transaction::where('id', $request->post('id'))
-                ->update(['qty' => $request->post('qty')]);
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
-
-    }
-
-    public function deleteExistImageProduct(Request $request)
+    public function deleteExistImagePayment(Request $request)
     {
         $image = $request->post('image');
-        $document = $request->post('document');
         $id    = $request->post('id');
         $deleteFile = false;
-        $deleteFile2 = false;
-        $product = Product::find($id);
+        $payment = Payment::where('id_trans', $id)->first();
         try {
             if(!empty($image)){
-                $deleteFile = $this->DeleteImage($image, config('app.productImagePath'));
+                $deleteFile = $this->DeleteImage($image, config('app.documentImagePath'));
             }
             DB::beginTransaction();
                 if($deleteFile == true || !empty($image)){
                     $input = ['photo'=>NULL];
-                    $product->update($input);
+                    $payment->update($input);
                 }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
             if($image){
                 $input = ['photo'=>NULL];
-                $product->update($input);
+                $payment->update($input);
             }
             DB::rollback();
             return false;
         }
-    }
-
-    public function checkDataImg($data)
-    {
-        try {
-            list($type, $data) = explode(';', $data);
-            list(, $data)      = explode(',', $data);
-            return true;
-        } catch (\Throwable $th) {
-            return false;
-        }
-
     }
 }

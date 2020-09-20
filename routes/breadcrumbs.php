@@ -147,6 +147,42 @@ Breadcrumbs::register('transaction.edit', function ($breadcrumbs, $transaction) 
     $breadcrumbs->parent('transaction');
     $breadcrumbs->push($transaction->id, route('transaction.edit', $transaction->id));
 });
+Breadcrumbs::register('slider', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Slider', route('slider.index'));
+});
+Breadcrumbs::register('slider.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('slider');
+    $breadcrumbs->push('Tambah Slider', route('slider.create'));
+});
+Breadcrumbs::register('slider.edit', function ($breadcrumbs, $slider) {
+    $breadcrumbs->parent('slider');
+    $breadcrumbs->push($slider->id, route('slider.edit', $slider->id));
+});
+Breadcrumbs::register('rating', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('rating', route('rating.index'));
+});
+Breadcrumbs::register('rating.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('rating');
+    $breadcrumbs->push('Tambah rating', route('rating.create'));
+});
+Breadcrumbs::register('rating.edit', function ($breadcrumbs, $rating) {
+    $breadcrumbs->parent('rating');
+    $breadcrumbs->push($rating->id, route('rating.edit', $rating->id));
+});
+Breadcrumbs::register('pengaduan', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('pengaduan', route('report.index'));
+});
+Breadcrumbs::register('report.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push('Tambah report', route('report.create'));
+});
+Breadcrumbs::register('report.edit', function ($breadcrumbs, $report) {
+    $breadcrumbs->parent('report');
+    $breadcrumbs->push($report->id, route('report.edit', $report->id));
+});
 
 
 ?>

@@ -35,6 +35,10 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('product', 'ProductController');
         Route::resource('visitor', 'VisitorController');
         Route::resource('transaction', 'TransactionController');
+        Route::resource('payment', 'PaymentController');
+        Route::resource('slider', 'SliderController');
+        Route::resource('rating', 'RatingController');
+        Route::resource('report', 'ReportController');
         Route::get('getnapi', 'ConvictController@getnapi')->name('getnapi');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
@@ -42,5 +46,9 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('deleteExistImageAuction', 'AuctionController@deleteExistImageAuction')->name('deleteExistImageAuction');
         Route::post('deleteExistImageConvict', 'ConvictController@deleteExistImageConvict')->name('deleteExistImageConvict');
         Route::post('deleteExistImageProduct', 'ProductController@deleteExistImageProduct')->name('deleteExistImageProduct');
+        Route::post('deleteExistImagePayment', 'PaymentController@deleteExistImagePayment')->name('deleteExistImagePayment');
+        Route::post('deleteExistImageSlider', 'SliderController@deleteExistImageSlider')->name('deleteExistImageSlider');
+        Route::post('deleteItem', 'TransactionController@deleteItem')->name('deleteItem');
+        Route::post('updatedItem', 'TransactionController@updatedItem')->name('updatedItem');
     });
 });
