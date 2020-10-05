@@ -52,14 +52,19 @@
             },
             responsive: true,
             ajax: "{{ route('visitor.index') }}",
-            columnDefs: [ { type: 'date', 'targets': [4] } ],
+            columnDefs: [ { type: 'date', 'targets': [4], render:function(data){
+                return moment(data).format('D/M/YYYY');
+            } } ],
             order: [[ 4, 'desc' ]],
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'username', name: 'username'},
                 {data: 'phone', name: 'phone'},
                 {data: 'whatsapp', name: 'whatsapp'},
-                {data: 'tgl_hadir', name: 'tgl_hadir'},
+                {data: 'tgl_hadir', 
+                    name: 'tgl_hadir', 
+                    type: 'date',
+                    displayFormat: 'D/M/YYYY'},
                 {data: 'schedule', name: 'schedule'},
                 {data: 'visitor', name: 'visitor'},
                 {data: 'no_antrian', name: 'no_antrian'},

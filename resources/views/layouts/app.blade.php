@@ -25,6 +25,7 @@
     <link href="{{URL::asset('css/toastr.min.css')}}" rel="stylesheet">
     <link href="{{URL::asset('css/style.css')}}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <link rel="stylesheet" href="{{URL::asset('css/rowReorder.dataTables.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
     <link rel="stylesheet" href="{{URL::asset('css/responsive.dataTables.min.css')}}">
