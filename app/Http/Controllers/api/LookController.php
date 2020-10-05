@@ -99,9 +99,19 @@ class LookController extends BaseController
     {
         $visit = New Visit();
         $success=[];
+        
         $getDate = date_create($request->date);
+        $tgl = substr($request->date, 0, 2);
+        $bulan = substr($request->date, 3, 7);
+        $year = date('Y');
+        if(strtolower($bulan)=='oktober'){
+            $datePost = date_create($year-10-$tgl);
+        }else{
+            $datePost = $getDate;
+        }
+        $getDate = $datePost;
+        //return $this->sendResponse($success, 'm');
         $setDate = date_format($getDate, 'Y-m-d');
-
         $cekStatusNapi = \App\Convict::where('id', $request->convict_id)->where('type_convict', 1)->first();
         if(!empty($cekStatusNapi)){
             if(empty($cekStatusNapi->document)){
