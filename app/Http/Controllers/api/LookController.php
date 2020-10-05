@@ -40,14 +40,14 @@ class LookController extends BaseController
             $slider = \App\Slider::where('id_categories', 1)->where('status', 1)->get();
         }
         else if($request->page=='informasi'){
-            $datapage = \App\Content::where('post_categories_id', 2)->where('status', 2)->get();
-            $slider = \App\Slider::where('id_categories', 2)->where('status', 2)->get();
+            $datapage = \App\Content::where('post_categories_id', 2)->where('status', 1)->get();
+            $slider = \App\Slider::where('id_categories', 2)->where('status', 1)->get();
         }else if($request->page=='integrasi'){
-            $datapage = \App\Content::where('post_categories_id', 3)->where('status', 3)->get();
-            $slider = \App\Slider::where('id_categories', 3)->where('status', 3)->get();
+            $datapage = \App\Content::where('post_categories_id', 3)->where('status', 1)->get();
+            $slider = \App\Slider::where('id_categories', 3)->where('status', 1)->get();
         }else if($request->page=='pengaduan'){
-            $datapage = \App\Content::where('post_categories_id', 4)->where('status', 4)->get();
-            $slider = \App\Slider::where('id_categories', 4)->where('status', 4)->get();
+            $datapage = \App\Content::where('post_categories_id', 4)->where('status', 1)->get();
+            $slider = \App\Slider::where('id_categories', 4)->where('status', 1)->get();
         }else{
             $image = ['/storage/images/post/slider-1.png',
             '/storage/images/post/slider-2.png',
