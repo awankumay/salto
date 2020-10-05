@@ -105,13 +105,14 @@ class LookController extends BaseController
         $bulan = substr($request->date, 3, 7);
         $year = date('Y');
         if(strtolower($bulan)=='oktober'){
-            $datePost = date_create($year-10-$tgl);
+            $datePost = date_create($year.'-10-'.$tgl);
         }else{
             $datePost = $getDate;
         }
         $getDate = $datePost;
         //return $this->sendResponse($success, 'm');
         $setDate = date_format($getDate, 'Y-m-d');
+        $success['tgls']=$setDate;
         $cekStatusNapi = \App\Convict::where('id', $request->convict_id)->where('type_convict', 1)->first();
         if(!empty($cekStatusNapi)){
             if(empty($cekStatusNapi->document)){
