@@ -100,19 +100,54 @@ class LookController extends BaseController
         $visit = New Visit();
         $success=[];
         
-        $getDate = date_create($request->date);
-        $tgl = substr($request->date, 0, 2);
-        $bulan = substr($request->date, 3, 7);
-        $year = date('Y');
-        if(strtolower($bulan)=='oktober'){
-            $datePost = date_create($year.'-10-'.$tgl);
-        }else{
+        $getDate = array(explode(" ", $request->date));
+        $tgl = $getDate[0][0];
+        $bulan = $getDate[0][1];
+        $tahun = $getDate[0][2];
+
+        if(strtolower($bulan)=='januari'){
+            $datePost = date_create($tahun.'-01-'.$tgl);
+        }else if(strtolower($bulan)=='februari'){
+            $datePost = date_create($tahun.'-02-'.$tgl);
+        }
+        else if(strtolower($bulan)=='maret'){
+            $datePost = date_create($tahun.'-03-'.$tgl);
+        }
+        else if(strtolower($bulan)=='april'){
+            $datePost = date_create($tahun.'-04-'.$tgl);
+        }
+        else if(strtolower($bulan)=='mei'){
+            $datePost = date_create($tahun.'-05-'.$tgl);
+        }
+        else if(strtolower($bulan)=='juni'){
+            $datePost = date_create($tahun.'-06-'.$tgl);
+        }
+        else if(strtolower($bulan)=='juli'){
+            $datePost = date_create($tahun.'-07-'.$tgl);
+        }
+        else if(strtolower($bulan)=='agustus'){
+            $datePost = date_create($tahun.'-08-'.$tgl);
+        }
+        else if(strtolower($bulan)=='september'){
+            $datePost = date_create($tahun.'-09-'.$tgl);
+        }
+        else if(strtolower($bulan)=='oktober'){
+            $datePost = date_create($tahun.'-10-'.$tgl);
+        }
+        else if(strtolower($bulan)=='november'){
+            $datePost = date_create($tahun.'-11-'.$tgl);
+        }
+        else if(strtolower($bulan)=='desember'){
+            $datePost = date_create($tahun.'-12-'.$tgl);
+        }
+        else{
             $datePost = $getDate;
         }
         $getDate = $datePost;
         //return $this->sendResponse($success, 'm');
         $setDate = date_format($getDate, 'Y-m-d');
         $success['tgls']=$setDate;
+        
         $cekStatusNapi = \App\Convict::where('id', $request->convict_id)->where('type_convict', 1)->first();
         if(!empty($cekStatusNapi)){
             if(empty($cekStatusNapi->document)){
