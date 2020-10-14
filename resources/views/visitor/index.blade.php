@@ -53,7 +53,7 @@
             responsive: true,
             ajax: "{{ route('visitor.index') }}",
             columnDefs: [ { type: 'date', 'targets': [4], render:function(data){
-                return moment(data).format('D/M/YYYY');
+                return moment(data).format('D-M-YYYY');
             } } ],
             order: [[ 4, 'desc' ]],
             columns: [
