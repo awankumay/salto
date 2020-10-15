@@ -80,41 +80,6 @@
                 </li>
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
-                    Tahanan
-                </div>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#tahanan" aria-expanded="true" aria-controls="tahanan">
-                        <i class="fas fa-fw fa-user-circle"></i>
-                        <span>Tahanan & Pengunjung</span>
-                    </a>
-                    <div id="tahanan" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('convict-list')) <a class="collapse-item" href="{{route('convict.index')}}">Tahanan</a> @endif
-                        @if(auth()->user()->hasPermissionTo('visitor-list')) <a class="collapse-item" href="{{route('visitor.index')}}">Daftar Pengunjung</a> @endif
-                        </div>
-                    </div>
-                </li>
-                <hr class="sidebar-divider">
-                <div class="sidebar-heading">
-                    Produk
-                </div>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#product" aria-expanded="true" aria-controls="product">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Produk</span>
-                    </a>
-                    <div id="product" class="collapse" aria-labelledby="product" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('product-category-list'))<a class="collapse-item" href="{{route('product-category.index')}}">Kategori</a>@endif
-                        @if(auth()->user()->hasPermissionTo('product-list'))<a class="collapse-item" href="{{route('product.index')}}">Produk</a>@endif
-                        @if(auth()->user()->hasPermissionTo('transaction-list'))<a class="collapse-item" href="{{route('transaction.index')}}">Belanja</a>@endif
-                        </div>
-                    </div>
-                </li>
-                <hr class="sidebar-divider">
-                <div class="sidebar-heading">
                     Konten
                 </div>
                 <li class="nav-item">
@@ -126,9 +91,9 @@
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
 
-                        @if(auth()->user()->hasPermissionTo('post-category-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
-                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
-                        @if(auth()->user()->hasPermissionTo('post-list'))<a class="collapse-item" href="{{route('slider.index')}}">Slider</a>@endif
+                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
+                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
+                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Slider</a>@endif
                         </div>
                     </div>
                 </li>
@@ -144,8 +109,7 @@
                     <div id="pengaduan" class="collapse" aria-labelledby="pengaduan" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('send-report-list'))<a class="collapse-item" href="{{route('rating.index')}}">Survey</a>@endif
-                        @if(auth()->user()->hasPermissionTo('send-report-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan</a>@endif
+                        @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan (WBS)</a>@endif
                         </div>
                     </div>
                 </li>
@@ -163,11 +127,11 @@
                         </button>
                         <ul class="navbar-nav ml-auto">
                             <li class="nav-item dropdown no-arrow mx-1">
-                                <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  <i class="fas fa-bell fa-fw"></i>
+                              <!--   <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  <i class="fas fa-bell fa-fw"></i> -->
                                   <!-- Counter - Alerts -->
-                                  <span class="badge badge-danger badge-counter">3+</span>
-                                </a>
+                                 <!--  <span class="badge badge-danger badge-counter">3+</span>
+                                </a> -->
                                 <!-- Dropdown - Alerts -->
                                 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
                                   <h6 class="dropdown-header nope-dropdown-header">
@@ -236,7 +200,7 @@
                 <footer class="sticky-footer" style="background:#f8f9fc;">
                     <div class="container my-auto">
                         <div class="copyright text-center my-auto">
-                            <span> © MyValour. </span>
+                            <span> © SALTO {{date('Y')}}. </span>
                         </div>
                     </div>
                 </footer>

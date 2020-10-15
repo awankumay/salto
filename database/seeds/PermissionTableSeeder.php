@@ -96,6 +96,11 @@ class PermissionTableSeeder extends Seeder
             'surat-keterangan-delete',
             'surat-keterangan-approve',
 
+            'template-surat-list',
+            'template-surat-create',
+            'template-surat-edit',
+            'template-surat-delete',
+
             'pengasuhan-daring-list',
             'pengasuhan-daring-create',
             'pengasuhan-daring-edit',

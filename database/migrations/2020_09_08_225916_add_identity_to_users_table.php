@@ -18,6 +18,7 @@ class AddIdentityToUsersTable extends Migration
             $table->integer('province')->nullable();
             $table->integer('city')->nullable();
             $table->integer('country')->nullable();
+            $table->string('stb', 50)->nullable();
         });
     }
 
@@ -29,7 +30,7 @@ class AddIdentityToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['identity']);
+            $table->dropColumn(['identity', 'province', 'city', 'country', 'stb']);
         });
     }
 }

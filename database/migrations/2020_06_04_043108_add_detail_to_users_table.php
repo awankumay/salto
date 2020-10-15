@@ -23,7 +23,6 @@ class AddDetailToUsersTable extends Migration
             $table->smallInteger('status')->nullable();
             $table->string('photo')->nullable();
             $table->integer('user_type')->nullable();
-            $table->bigInteger('stb');
             $table->softDeletes('deleted_at');
         });
     }
