@@ -14,7 +14,7 @@ class AddDetailToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->bigInteger('phone');
+            $table->bigInteger('phone')->nullable();
             $table->bigInteger('whatsapp')->nullable();
             $table->longText('address')->nullable();
             $table->longText('description')->nullable();
@@ -23,6 +23,7 @@ class AddDetailToUsersTable extends Migration
             $table->smallInteger('status')->nullable();
             $table->string('photo')->nullable();
             $table->integer('user_type')->nullable();
+            $table->bigInteger('stb');
             $table->softDeletes('deleted_at');
         });
     }

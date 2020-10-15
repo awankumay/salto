@@ -15,6 +15,9 @@ class AddIdentityToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('identity')->nullable();
+            $table->integer('province')->nullable();
+            $table->integer('city')->nullable();
+            $table->integer('country')->nullable();
         });
     }
 
