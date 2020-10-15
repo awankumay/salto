@@ -161,11 +161,8 @@ class PermissionTableSeeder extends Seeder
          foreach ($permissions as $permission) {
               Permission::updateOrCreate(['name' => $permission]);
          }
-
          $role = Role::updateOrCreate(['name' => 'Super Admin']);
          $permissions = Permission::pluck('id','id')->all();
          $role->syncPermissions($permissions);
-         Role::updateOrCreate(['name'=> 'Admin'])->givePermissionTo(['product-category-list', 'post-category-list']);
-         Role::updateOrCreate(['name'=> 'User'])->givePermissionTo(['product-category-list', 'post-category-list']);
     }
 }
