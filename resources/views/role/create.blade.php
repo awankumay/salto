@@ -34,8 +34,8 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-6">
-                    <button type="submit" class="btn btn-sm btn-success">Save</button>
-                    <a class="btn btn-sm btn-success" href="{{route('role.index')}}">Cancel</a>
+                    <button type="submit" class="btn btn-sm btn-danger">Save</button>
+                    <a class="btn btn-sm btn-warning" href="{{route('role.index')}}">Cancel</a>
                 </div>
             </div>
             {!! Form::close() !!}

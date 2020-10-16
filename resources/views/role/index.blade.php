@@ -11,7 +11,7 @@
                 <div class="p-2">Table Role</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('role-create'))
-                        <a href="{{route('role.create')}}" class="btn btn-success btn-sm text-white btn-add">Add Role</a>
+                        <a href="{{route('role.create')}}" class="btn btn-danger btn-sm text-white btn-add">Add Role</a>
                     @endif
                 </div>
             </div>
