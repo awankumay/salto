@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ __('Sistem Pelayanan Taruna dan Orang Tua (SALTO).') }}</title>
 
     @php /*Scripts
     <script src="{{ asset('js/app.js') }}" defer></script>*/@endphp
@@ -47,12 +47,12 @@
             </div>
         </div>
         <div id="wrapper">
-            <ul class="navbar-nav bg-gradient-success sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+            <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion toggled" id="accordionSidebar">
                 <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{route('home')}}">
                     <div class="sidebar-brand-icon">
-                        <i class="fa fa-university"></i>
+                    <img src="/logo.png" class="img-fluid mx-auto d-block" style="max-height:80px;">
                     </div>
-                    <div class="sidebar-brand-text mx-3">RutanDepok</div>
+                    <div class="sidebar-brand-text mx-3">SALTO</div>
                 </a>
                 <hr class="sidebar-divider my-0">
                 <li class="nav-item active">

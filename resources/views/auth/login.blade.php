@@ -1,11 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container py-5">
+<style>
+#app{
+    background : #eee;
+}
+html {
+    background: #eee;
+}
+.bg-danger {
+    background-color: #c71400!important;
+}
+
+element.style {
+}
+[type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled), button:not(:disabled) {
+    cursor: pointer;
+}
+button:not(:disabled), [type=button]:not(:disabled), [type=reset]:not(:disabled), [type=submit]:not(:disabled) {
+    cursor: pointer;
+}
+.btn-danger {
+    color: #fff;
+    background-color: #bb1200;
+    border-color: #bb1200;
+}
+</style>
+<div class="container py-2">
+    <img src="/logo.png" class="img-fluid mx-auto d-block" style="max-height:300px;">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header bg-danger text-white">{{ __('SALTO.') }}</div>
+                <div class="card-header bg-danger text-white text-center">{{ __('Sistem Pelayanan Taruna dan Orang Tua (SALTO).') }}</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
@@ -14,7 +40,7 @@
                             <label for="username" class="col-md-4 col-form-label text-md-right">{{ __('Email / STB') }}</label>
 
                             <div class="col-md-6">
-                                <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                                <input id="username" placeholder="Username atau STB" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -28,7 +54,7 @@
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+                                <input id="password" placeholder="Password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -70,10 +96,10 @@
         </div>
     </div>
 </div>
-<footer class="sticky-footer bg-white">
+<footer class="sticky-footer" style="background:#eee;">
     <div class="container my-auto">
         <div class="copyright text-center my-auto">
-            <span>Copyright © SALTO {{date('Y')}}</span>
+            <span>Copyright © Politeknik Ilmu Pemasyarakatan Tahun {{date('Y')}}</span>
         </div>
     </div>
 </footer>

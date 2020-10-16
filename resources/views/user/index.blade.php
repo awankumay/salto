@@ -11,7 +11,7 @@
                 <div class="p-2"> Pengguna</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('user-create'))
-                        <a href="{{route('user.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Pengguna</a>
+                        <a href="{{route('user.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Pengguna</a>
                     @endif
                 </div>
             </div>

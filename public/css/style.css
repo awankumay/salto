@@ -1,14 +1,14 @@
 .nope-dropdown-header{
-    background-color: #1cc88a;
-    border: 1px solid #1cc88a;
+    background-color: #e74a3b;
+    border: 1px solid #e74a3b;
 }
 .page-item.active .page-link {
     color: #fff;
-    background-color: #1cc88a;
-    border-color: #1cc88a;
+    background-color: #e74a3b;
+    border-color: #e74a3b;
 }
 .page-link {
-    color: #1cc88a;
+    color: #e74a3b;
     background-color: #fff;
     border: 1px solid #dddfeb;
 }
@@ -35,14 +35,14 @@
     margin-top: 10px !important;
 }
 .breadcrumb-item a{
-    color: #1cc88a;
+    color: #e74a3b;
     text-decoration: none;
 }
 .action-table{
     margin-right: 15px;
 }
 .btn-link, .btn-link:hover{
-    color: #1cc88a;
+    color: #e74a3b;
 }
 .card.table{
     border: 0px solid #e3e6f0;
@@ -72,7 +72,7 @@ table.dataTable td, table.dataTable th {
     width: 40px;
     height: 40px;
     border: 4px #ddd solid;
-    border-top: 4px #1cc88a solid;
+    border-top: 4px #e74a3b solid;
     border-radius: 50%;
     animation: sp-anime 0.8s infinite linear;
 }
@@ -87,6 +87,10 @@ table.dataTable td, table.dataTable th {
 }
 .text-help {
     font-size: 11px;
+}
+table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td.dtr-control:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th.dtr-control:before {
+
+    background-color: #e14536 !important;
 }
 /*
 .cards tbody tr {
