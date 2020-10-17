@@ -33,10 +33,10 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
-                            <strong>Identitas:</strong>
-                            {!! Form::text('identity', null, array('placeholder' => 'Identitas','class' => 'form-control form-control-sm')) !!}
-                            <span class="form-text {{isset($errors->messages()['identity']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['identity']) ? $errors->messages()['identity'][0] .'*' : 'Identitas pengguna wajib diisi *'}}
+                            <strong>STB:</strong>
+                            {!! Form::text('stb', null, array('placeholder' => 'STB','class' => 'form-control form-control-sm')) !!}
+                            <span class="form-text {{isset($errors->messages()['stb']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['stb']) ? $errors->messages()['stb'][0] .'*' : 'STB pengguna wajib diisi *'}}
                             </span>
                         </div>
                     </div>
@@ -86,6 +86,15 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
+                            <strong>Identitas:</strong>
+                            {!! Form::text('identity', null, array('placeholder' => 'Identitas','class' => 'form-control form-control-sm')) !!}
+                            <span class="form-text {{isset($errors->messages()['identity']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['identity']) ? $errors->messages()['identity'][0] .'*' : 'Identitas pengguna wajib diisi *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
                             <strong>Nomor Telepon:</strong>
                             {!! Form::number('phone', null, array('placeholder' => 'Nomor telepon','class' => 'form-control form-control-sm')) !!}
                             <span class="form-text {{isset($errors->messages()['phone']) ? 'text-danger text-help' : 'text-muted text-help'}}">
@@ -105,8 +114,8 @@
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
                             <strong>Jenis Kelamin:</strong><br>
-                            {!! Form::radio('sex', '1', array('class' => 'form-control form-control-sm')) !!} Man &nbsp;
-                            {!! Form::radio('sex', '2', array('class' => 'form-control form-control-sm')) !!} Women &nbsp;
+                            {!! Form::radio('sex', '1', array('class' => 'form-control form-control-sm')) !!} Laki Laki &nbsp;
+                            {!! Form::radio('sex', '2', array('class' => 'form-control form-control-sm')) !!} Perempuan &nbsp;
                             <span class="form-text {{isset($errors->messages()['sex']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['sex']) ? $errors->messages()['sex'][0] .'*' : 'Pilih salah satu *'}}
                             </span>
@@ -132,26 +141,10 @@
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
                             <strong>Role:</strong>
-                            {!! Form::select('role[]', $role, [], array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Hak akses pengguna')) !!}
+                            {!! Form::select('role', $role, [], array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Hak akses pengguna')) !!}
                             <span class="form-text {{isset($errors->messages()['role']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['role']) ? $errors->messages()['role'][0] .'*' : 'Pilih salah satu *'}}
                             </span>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group col-md-12">
-                            <strong>Napi 1 :</strong>
-                            <select class="napi-1-select form-control form-control-sm" name="napi_1">
-                                <option value="">- pilih napi  -</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group col-md-12">
-                            <strong>Napi 2 :</strong>
-                            <select class="napi-2-select form-control form-control-sm" name="napi_2">
-                                <option value="">- pilih napi  -</option>
-                            </select>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -178,8 +171,8 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group col-md-12">
-                    <button type="submit" class="btn btn-sm btn-success">Save</button>
-                    <a class="btn btn-sm btn-success" href="{{route('user.index')}}">Cancel</a>
+                    <button type="submit" class="btn btn-sm btn-danger">Save</button>
+                    <a class="btn btn-sm btn-warning" href="{{route('user.index')}}">Cancel</a>
                 </div>
             </div>
         </div>

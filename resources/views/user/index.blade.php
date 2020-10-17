@@ -21,14 +21,14 @@
                 <table class="table display nowrap user-table" style="width:100%">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>STB</th>
                             <th>Nama</th>
+                            <th>Foto</th>
                             <th>Email</th>
                             <th>Telepon</th>
                             <th>Whatsapp</th>
                             <th>Jk</th>
                             <th>Status</th>
-                            <th>Foto</th>
                             <th>Alamat</th>
                             <th>Create</th>
                             <th>Update</th>
@@ -55,11 +55,20 @@
             responsive: true,
             ajax: "{{ route('user.index') }}",
             columns: [
-                {data: 'id', name: 'id'},
+                {data: 'stb', name: 'stb'},
                 {data: 'name', name: 'name'},
-                {data: 'email', name: 'email'},
-                {data: 'phone', name: 'phone'},
-                {data: 'whatsapp', name: 'whatsapp'},
+                {data: 'photo', name: 'photo',
+                    render:function(row, type, val, meta){
+                        if(val.photo){
+                            return "<img src=\"" + "/storage/{{config('app.userImagePath')}}/"+val.photo+ "\" height=\"50\"/>";
+                        }else{
+                            return "<img src=\"" + "/profile.png"+"\" height=\"50\"/>";
+                        }
+                    }, orderable: false, searchable: false
+                },
+                {data: 'email', name: 'email', orderable: false, searchable: false},
+                {data: 'phone', name: 'phone', orderable: false, searchable: false},
+                {data: 'whatsapp', name: 'whatsapp', orderable: false, searchable: false},
                 {data: 'sex', name: 'sex',
                     render:function(data){
                         if(data==1){
@@ -67,7 +76,7 @@
                         }else{
                             return '<i class="fa fa-female fa-2x" aria-hidden="true"></i>';
                         }
-                    }
+                    }, orderable: false, searchable: false
                 },
                 {data: 'status', name: 'status',
                     render:function(row, type, val, meta){
@@ -76,21 +85,12 @@
                         }else{
                             return '<span class="badge badge-warning">Not Active</span>';
                         }
-                    }
+                    }, orderable: false, searchable: false
                 },
-                {data: 'photo', name: 'photo',
-                    render:function(row, type, val, meta){
-                        if(val.photo){
-                            return "<img src=\"" + "/storage/{{config('app.userImagePath')}}/"+val.photo+ "\" height=\"50\"/>";
-                        }else{
-                            return "<img src=\"" + "/profile.png"+"\" height=\"50\"/>";
-                        }
-                    }
-                },
-                {data: 'address', name: 'address'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'updated_at', name: 'updated_at'},
-                {data: 'deleted_at', name: 'deleted_at'},
+                {data: 'address', name: 'address', orderable: false, searchable: false},
+                {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
+                {data: 'updated_at', name: 'updated_at', orderable: false, searchable: false},
+                {data: 'deleted_at', name: 'deleted_at', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

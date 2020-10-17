@@ -42,7 +42,7 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $columns = array(
-                0=>'id',
+                0=>'stb',
                 1=>'name',
                 2=>'email',
                 3=>'phone',
@@ -71,35 +71,21 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $role = Role::pluck('name','name')->all();
-        $getNapi =  UserConvicts::where('users_id', $id)->get();
-        $nm_napi_1=null;
-        $nm_napi_2=null;
-        if(!empty($getNapi)){
-            $napi = count($getNapi);
-            if($napi==1 && $napi!=0){
-                $napi_1=$getNapi[0]->convicts_id;
-                $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
-            }else if($napi>1){
-                $napi_1=$getNapi[0]->convicts_id;
-                $napi_2=$getNapi[1]->convicts_id;
-                $nm_napi_1 = \App\Convict::where('id', $napi_1)->first();
-                $nm_napi_2 = \App\Convict::where('id', $napi_2)->first();
-            }
-        }
         $userRole = $user->roles->pluck('name','name')->all();
-        return view('user.edit', compact('user', 'role', 'userRole', 'nm_napi_1', 'nm_napi_2'));
+        return view('user.edit', compact('user', 'role', 'userRole'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
-            'identity' => 'required',
+            'identity' => 'numeric',
+            'stb' => 'required|unique:users,stb',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone',
             'whatsapp' => 'numeric|unique:users,whatsapp',
-            'file' => 'nullable|mimes:jpeg,bmp,png|max:100',
+            'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'
@@ -124,24 +110,9 @@ class UserController extends Controller
                     }
                 }
                 $input = $request->all();
-                $napi_1 = $input['napi_1'];
-                $napi_2 = $input['napi_2'];
-                Arr::forget($input, array('napi_1', 'napi_2'));
                 $input['password'] = Hash::make($input['password']);
                 $user = User::create($input);
                 $user->assignRole($request->input('role'));
-                if(!empty($napi_1)){
-                    $userHasConvicts = New UserConvicts();
-                    $userHasConvicts->convicts_id=$napi_1;
-                    $userHasConvicts->users_id=$user->id;
-                    $userHasConvicts->save();
-                }
-                if(!empty($napi_2)){
-                    $userHasConvicts = New UserConvicts();
-                    $userHasConvicts->convicts_id=$napi_2;
-                    $userHasConvicts->users_id=$user->id;
-                    $userHasConvicts->save();
-                }
             DB::commit();
 
             \Session::flash('success','User berhasil ditambah.');
@@ -164,11 +135,12 @@ class UserController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'identity' => 'required',
+            'stb' => 'required|unique:users,stb,'.$id,
             'email' => 'required|email|unique:users,email,'.$id,
             'password' => 'same:confirm-password',
             'phone' => 'required|numeric|unique:users,phone,'.$id,
             'whatsapp' => 'numeric|unique:users,whatsapp,'.$id,
-            'file' => 'nullable|mimes:jpeg,bmp,png|max:100',
+            'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
             'role'=>'required',
             'sex'=>'required',
             'status'=>'required'
@@ -191,31 +163,13 @@ class UserController extends Controller
                 }
             }
             $input = $request->all();
-            $napi_1 = $input['napi_1'];
-            $napi_2 = $input['napi_2'];
 
-            Arr::forget($input, array('napi_1', 'napi_2'));
             if(!empty($input['password'])){
                 $input['password'] = Hash::make($input['password']);
             }else{
                Arr::forget($input, array('password', 'confirm-password'));
             }
             DB::beginTransaction();
-            if(!empty($napi_1) || !empty($napi_2)){
-                \App\UserConvicts::where('users_id', $id)->delete();
-                if(!empty($napi_1)){
-                    $userHasConvicts = New UserConvicts();
-                    $userHasConvicts->convicts_id=$napi_1;
-                    $userHasConvicts->users_id=$user->id;
-                    $userHasConvicts->save();
-                }
-                if(!empty($napi_2)){
-                    $userHasConvicts = New UserConvicts();
-                    $userHasConvicts->convicts_id=$napi_2;
-                    $userHasConvicts->users_id=$user->id;
-                    $userHasConvicts->save();
-                }
-            }
                 $user->update($input);
             DB::table('model_has_roles')->where('model_id',$id)->delete();
                 $user->assignRole($request->input('role'));
