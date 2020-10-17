@@ -5,8 +5,11 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use DB;
    
 class LoginController extends BaseController
 {
@@ -44,22 +47,47 @@ class LoginController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
-            $user = Auth::user(); 
-            $success['name'] =  $user->name;
-            $success['role'] =  $user->roles()->pluck('name');
-            $success['user_id'] = $user->id;
-            if($success['role']['0']!='Pengunjung'){
-                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+        $username = $request->username;
+        $password = $request->password;
+        if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
+            //user sent their email 
+            if(Auth::attempt(['email' => $username, 'password' => $password])){
+                $user = Auth::user(); 
+                $success['profile'] =  $user;
+                $roles = $user->getRoleNames();
+                $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
+                $success['permission'] = [];
+                foreach ($user->getAllPermissions() as $key => $vals) {
+                    $success['permission'][]=$vals->name;
+                }
+                $success['user_id'] = $user->id;
+                $success['token'] =  $user->createToken('MyApp')->accessToken; 
+       
+                return $this->sendResponse($success, 'User login successfully.');
+            }else{
+                $success['id'] =   $username;
+                return $this->sendResponseFalse($success, 'User login failed.');
             }
-            $success['token'] =  $user->createToken('MyApp')->accessToken; 
-   
-            return $this->sendResponse($success, 'User login successfully.');
-        } 
-        else{
-            $success['name'] =   $request->email;
-            return $this->sendResponseFalse($success, 'User login failed.');
-        } 
+        } else {
+            //they sent their username instead 
+            if(Auth::attempt(['stb' => $username, 'password' => $password])){
+                $user = Auth::user(); 
+                $success['profile'] =  $user;
+                $roles = $user->getRoleNames();
+                $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
+                $success['permission'] = [];
+                foreach ($user->getAllPermissions() as $key => $vals) {
+                    $success['permission'][]=$vals->name;
+                }
+                $success['user_id'] = $user->id;
+                $success['token'] =  $user->createToken('MyApp')->accessToken; 
+       
+                return $this->sendResponse($success, 'User login successfully.');
+            }else{
+                $success['id'] =   $username;
+                return $this->sendResponseFalse($success, 'User login failed.');
+            }
+        }
     }
 
     public function logout(Request $request)
