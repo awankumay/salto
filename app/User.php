@@ -70,6 +70,7 @@ class User extends Authenticatable
                             ->orWhere('phone', 'LIKE',"%{$search}%")
                             ->orWhere('whatsapp', 'LIKE',"%{$search}%")
                             ->orWhere('email', 'LIKE',"%{$search}%")
+                            ->orWhere('stb', 'LIKE',"%{$search}%")
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -82,6 +83,7 @@ class User extends Authenticatable
                             ->orWhere('phone', 'LIKE',"%{$search}%")
                             ->orWhere('whatsapp', 'LIKE',"%{$search}%")
                             ->orWhere('email', 'LIKE',"%{$search}%")
+                            ->orWhere('stb', 'LIKE',"%{$search}%")
                             ->count();
         return $data;
     }
