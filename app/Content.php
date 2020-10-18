@@ -1,11 +1,12 @@
 <?php
 
 namespace App;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Content extends Model
 {
+    use SoftDeletes;
     protected $table = 'posts';
     protected $fillable = [
         'title',
@@ -24,6 +25,7 @@ class Content extends Model
         'user_updated',
         'date_published'
     ];
+    protected $dates = ['deleted_at'];
 
     public function Author()
     {

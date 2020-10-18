@@ -30,10 +30,10 @@ class ContentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:post-list');
-        $this->middleware('permission:post-create', ['only' => ['create','store']]);
-        $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:post-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:berita-list');
+        $this->middleware('permission:berita-create', ['only' => ['create','store']]);
+        $this->middleware('permission:berita-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:berita-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -49,14 +49,13 @@ class ContentController extends Controller
                 1=>'title',
                 2=>'excerpt',
                 3=>'content',
-                4=>'headline',
-                5=>'status',
-                6=>'user_created',
-                7=>'created_at',
-                8=>'updated_at'
+                4=>'status',
+                5=>'user_created',
+                6=>'created_at',
+                7=>'updated_at'
             );
             $model  = New Content();
-            return $this->ActionTable($columns, $model, $request, 'content.edit', 'post-edit', 'post-delete');
+            return $this->ActionTable($columns, $model, $request, 'content.edit', 'berita-edit', 'berita-delete');
         }
         return view('content.index');
     }
@@ -64,34 +63,26 @@ class ContentController extends Controller
     public function create()
     {
         $postCategory = PostCategory::pluck('name','id')->all();
-        $tags = Tags::pluck('name','name')->all();
-        return view('content.create', compact('postCategory', 'tags'));
+        return view('content.create', compact('postCategory'));
     }
 
     public function edit($id)
     {
-        //$content = Content::with('PostCategory')->where('id', $id)->get();
-        //@dd($content);
         $postCategory = PostCategory::pluck('name','id')->all();
-        $tags = Tags::pluck('name','name')->all();
         $content = Content::find($id);
-        $selectTags = !empty($content->tags) ? explode(',',$content->tags) : '';
         $selectCategory =$content->post_categories_id;
-        return view('content.edit', compact('content', 'postCategory', 'selectCategory', 'tags', 'selectTags'));
+        return view('content.edit', compact('content', 'postCategory', 'selectCategory'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
             'title' => 'required|unique:posts,title',
-            'meta_title' => 'required',
-            'meta_description' => 'required',
             'excerpt' => 'required',
             'post_categories_id' => 'required',
             'content' => 'required',
-            'headline' => 'required',
             'status' => 'required',
-            'file' => 'required|mimes:jpeg,bmp,png|max:100'
+            'file' => 'required|mimes:jpeg,bmp,png|max:300'
         ]);
         $detail=$request->input('content');
         $dom = new \DomDocument();
@@ -132,13 +123,13 @@ class ContentController extends Controller
                     }
                 }
                 $request->request->add(['slug'=> $slug]);
+                $request->request->add(['headline'=> 0]);
                 $request->request->add(['author'=> Auth::user()->id]);
                 $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content', 'tags'));
+                Arr::forget($input, array('content'));
                 $input['content']=$detail;
-                $input['tags']= $request->input('tags') ? implode(',',$request->input('tags')) : '';
                 Content::create($input);
 
 
@@ -151,6 +142,7 @@ class ContentController extends Controller
                     $this->DeleteImage($image, config('app.postImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
+            @dd($th->getMessage());
             return redirect()->route('content.create');
         }
 
@@ -160,14 +152,11 @@ class ContentController extends Controller
     {
         $this->validate($request, [
             'title' => 'required|unique:posts,title,'.$id,
-            'meta_title' => 'required',
-            'meta_description' => 'required',
             'excerpt' => 'required',
             'post_categories_id' => 'required',
             'content' => 'required',
-            'headline' => 'required',
             'status' => 'required',
-            'file' => 'mimes:jpeg,bmp,png|max:100'
+            'file' => 'mimes:jpeg,bmp,png|max:300'
         ]);
         $detail=$request->input('content');
         libxml_use_internal_errors(true);
@@ -214,13 +203,13 @@ class ContentController extends Controller
                     }
                 }
                 $request->request->add(['slug'=> $slug]);
+                $request->request->add(['headline'=> 0]);
                 $request->request->add(['author'=> Auth::user()->id]);
                 $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content', 'tags'));
+                Arr::forget($input, array('content'));
                 $input['content']=$detail;
-                $input['tags']= $request->input('tags') ? implode(',',$request->input('tags')) : '';
 
                 $content->update($input);
 

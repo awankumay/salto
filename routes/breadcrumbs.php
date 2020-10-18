@@ -53,11 +53,11 @@ Breadcrumbs::register('tags.edit', function ($breadcrumbs, $tags) {
 });
 Breadcrumbs::register('content', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Konten', route('content.index'));
+    $breadcrumbs->push('Berita & Informasi', route('content.index'));
 });
 Breadcrumbs::register('content.create', function ($breadcrumbs) {
     $breadcrumbs->parent('content');
-    $breadcrumbs->push('Tambah Konten', route('content.create'));
+    $breadcrumbs->push('Tambah Berita & Informasi', route('content.create'));
 });
 Breadcrumbs::register('content.edit', function ($breadcrumbs, $content) {
     $breadcrumbs->parent('content');

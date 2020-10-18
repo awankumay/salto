@@ -10,8 +10,8 @@
             <div class="d-flex justify-content-between">
                 <div class="p-2">Konten</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('post-create'))
-                        <a href="{{route('content.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Konten</a>
+                    @if(auth()->user()->hasPermissionTo('berita-create'))
+                        <a href="{{route('content.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Berita & Informasi</a>
                     @endif
                 </div>
             </div>
@@ -23,7 +23,6 @@
                         <tr>
                             <th style="width:5%;">ID</th>
                             <th style="width:15%;">Judul</th>
-                            <th style="width:5%;">Headline</th>
                             <th style="width:25%;">Status</th>
                             <th style="width:20%;">Ringkasan</th>
                             <th style="width:5%;">Content</th>
@@ -56,15 +55,6 @@
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'title', name: 'title'},
-                {data: 'headline', name: 'headline',
-                    render:function(data){
-                            if(data==1){
-                                return '<span class="badge badge-success">Yes</span>';
-                            }else{
-                                return '<span class="badge badge-warning">No</span>';
-                            }
-                        }
-                },
                 {data: 'status', name: 'status',
                     render:function(data){
                             if(data==1){

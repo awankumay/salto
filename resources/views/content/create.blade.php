@@ -8,9 +8,9 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Tambah konten baru</div>
+                <div class="p-2">Tambah Berita & Informasi</div>
                 <div class="p-2">
-                    <a class="btn btn-sm btn-success float-right" href="{{route('content.index')}}">Kembali</a></div>
+                    <a class="btn btn-sm btn-warning float-right" href="{{route('content.index')}}">Kembali</a></div>
             </div>
         </div>
         <div class="card-body">
@@ -38,13 +38,6 @@
                             {{isset($errors->messages()['content']) ? $errors->messages()['content'][0] .'*' : 'Konten wajib disii *'}}
                         </span>
                     </div>
-                    <div class="form-group col-md-12">
-                        <strong>Tags:</strong>
-                        {!! Form::select('tags[]', $tags, [], array('class' => 'form-control form-control-sm tagging', 'multiple', 'placeholder'=>'Pilih Tags')) !!}
-                        <span class="form-text {{isset($errors->messages()['tags']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['tags']) ? $errors->messages()['tags'][0] .'' : 'Pilih tags'}}
-                        </span>
-                    </div>
                 </div>
                 <div class="col-lg-4 col-md-12 col-sm-12">
                     <div class="form-group col-md-12" ng-controller="SelectFileController">
@@ -52,7 +45,7 @@
                         <input type="file" name="file" onchange="angular.element(this).scope().SelectFile(event)">
                         <div class="mt-1"><img ng-src="<%= PreviewImage %>" ng-if="PreviewImage != null" alt="" style="height:200px;width:200px" /></div>
                         <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 100kb *'}}
+                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 300kb *'}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
@@ -70,32 +63,10 @@
                             {{isset($errors->messages()['status']) ? $errors->messages()['status'][0] .'*' : 'Pilih salah satu *'}}
                         </span>
                     </div>
-                    <div class="form-group col-md-12">
-                        <strong>Headline:</strong><br>
-                        {!! Form::radio('headline', 1, array('class' => 'form-control form-control-sm')) !!} Ya &nbsp;
-                        {!! Form::radio('headline', 0, array('class' => 'form-control form-control-sm')) !!} Tidak &nbsp;
-                        <span class="form-text {{isset($errors->messages()['headline']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['headline']) ? $errors->messages()['headline'][0] .'*' : 'pilih salah satu *'}}
-                        </span>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <strong>Meta Title</strong> {{-- <i class="text-help text-danger">(sisa karakter <%= 150-meta_description.length %>)</i> --}}
-                        {!! Form::textarea('meta_title', null, array('rows' => 2, 'ng-model'=>'meta_title', 'maxlength'=>'150', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Title')) !!}
-                        <span class="form-text {{isset($errors->messages()['meta_title']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['meta_title']) ? $errors->messages()['meta_title'][0] .'*' : 'Meta title wajib diisi *'}}
-                        </span>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <strong>Meta Deskripsi</strong> {{-- <i class="text-help text-danger">(sisa karakter <%= 150-meta_description.length %>)</i> --}}
-                        {!! Form::textarea('meta_description', null, array('rows' => 4, 'ng-model'=>'meta_description', 'maxlength'=>'150', 'class'=>'form-control form-control-sm editable', 'placeholder'=>'Meta Deskripsi')) !!}
-                        <span class="form-text {{isset($errors->messages()['meta_description']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['meta_description']) ? $errors->messages()['meta_description'][0] .'*' : 'Meta deskripsi wajib diisi *'}}
-                        </span>
-                    </div>
                 </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-xs-12 col-sm-12 col-md-6">
-                            <button type="submit" class="btn btn-sm btn-success">Simpan</button>
+                            <button type="submit" class="btn btn-sm btn-danger">Simpan</button>
                     </div>
                 </div>
             </div>
@@ -140,9 +111,9 @@ $(document).ready(function() {
                 onImageUpload: function(image) {
                     var sizeKB = image[0]['size'] / 1000;
                     var tmp_pr = 0;
-                    if(sizeKB > 100){
+                    if(sizeKB > 300){
                         tmp_pr = 1;
-                        toastr.error("Gagal, Ukuran gambar maksimal 100kb");
+                        toastr.error("Gagal, Ukuran gambar maksimal 300kb");
                     }
                     if(image[0]['type'] != 'image/jpeg' && image[0]['type'] != 'image/png'){
                         tmp_pr = 1;
