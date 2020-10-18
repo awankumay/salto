@@ -8,9 +8,9 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Ubah Slider</div>
+                <div class="p-2">Ubah Banner</div>
                 <div class="p-2">
-                    <a class="btn btn-sm btn-success float-right" href="{{route('slider.index')}}">Kembali</a></div>
+                    <a class="btn btn-sm btn-warning float-right" href="{{route('slider.index')}}">Kembali</a></div>
             </div>
         </div>
         <div class="card-body">
@@ -27,13 +27,6 @@
                         </span>
                     </div>
                     <div class="form-group col-md-12">
-                        <strong>Kategori:</strong>
-                        {!! Form::select('id_categories', $postCategory, $idCategory, array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Pilih kategori')) !!}
-                        <span class="form-text {{isset($errors->messages()['id_categories']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['id_categories']) ? $errors->messages()['id_categories'][0] .'*' : 'Pilih salah satu *'}}
-                        </span>
-                    </div>
-                    <div class="form-group col-md-12">
                         <strong>Status:</strong><br>
                         {!! Form::radio('status', 1, array('class' => 'form-control form-control-sm')) !!} Aktif &nbsp;
                         {!! Form::radio('status', 0, array('class' => 'form-control form-control-sm')) !!} Tidak Aktif &nbsp;
@@ -44,7 +37,7 @@
                 </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-xs-12 col-sm-12 col-md-6">
-                            <button type="submit" class="btn btn-sm btn-success">Simpan</button>
+                            <button type="submit" class="btn btn-sm btn-danger">Simpan</button>
                     </div>
                 </div>
             </div>

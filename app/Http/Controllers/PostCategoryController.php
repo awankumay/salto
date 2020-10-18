@@ -24,10 +24,10 @@ class PostCategoryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:post-category-list');
-        $this->middleware('permission:post-category-create', ['only' => ['create','store']]);
-        $this->middleware('permission:post-category-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:post-category-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:kategori-berita-list');
+        $this->middleware('permission:kategori-berita-create', ['only' => ['create','store']]);
+        $this->middleware('permission:kategori-berita-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:kategori-berita-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -47,7 +47,7 @@ class PostCategoryController extends Controller
                 5=>'user_created',
             );
             $model  = New PostCategory();
-            return $this->ActionTable($columns, $model, $request, 'post-category.edit', 'post-category-edit', 'post-category-delete');
+            return $this->ActionTable($columns, $model, $request, 'post-category.edit', 'kategori-berita-edit', 'kategori-berita-delete');
         }
         return view('post-category.index');
     }
@@ -77,7 +77,7 @@ class PostCategoryController extends Controller
                 $input=$request->all();
                 PostCategory::create($input);
             DB::commit();
-            \Session::flash('success','Kategori konten berhasil ditambah.');
+            \Session::flash('success','Data berhasil ditambah.');
             return redirect()->route('post-category.index');
 
         }catch (\Throwable $th) {
@@ -101,7 +101,7 @@ class PostCategoryController extends Controller
                 $postCategory->update($input);
 
             DB::commit();
-            \Session::flash('success','Kategori konten berhasil diperbarui.');
+            \Session::flash('success','Data berhasil diperbarui.');
             return redirect()->route('post-category.index');
         } catch (\Throwable $th) {
             DB::rollBack();

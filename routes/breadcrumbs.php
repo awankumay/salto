@@ -29,11 +29,11 @@ Breadcrumbs::register('role.edit', function ($breadcrumbs, $role) {
 });
 Breadcrumbs::register('post-category', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Kategori Konten', route('post-category.index'));
+    $breadcrumbs->push('Kategori Berita', route('post-category.index'));
 });
 Breadcrumbs::register('post-category.create', function ($breadcrumbs) {
     $breadcrumbs->parent('post-category');
-    $breadcrumbs->push('Tambah Kategori Konten', route('post-category.create'));
+    $breadcrumbs->push('Tambah Kategori Berita', route('post-category.create'));
 });
 Breadcrumbs::register('post-category.edit', function ($breadcrumbs, $postCategory) {
     $breadcrumbs->parent('post-category');
@@ -149,11 +149,11 @@ Breadcrumbs::register('transaction.edit', function ($breadcrumbs, $transaction) 
 });
 Breadcrumbs::register('slider', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Slider', route('slider.index'));
+    $breadcrumbs->push('Banner', route('slider.index'));
 });
 Breadcrumbs::register('slider.create', function ($breadcrumbs) {
     $breadcrumbs->parent('slider');
-    $breadcrumbs->push('Tambah Slider', route('slider.create'));
+    $breadcrumbs->push('Tambah Banner', route('slider.create'));
 });
 Breadcrumbs::register('slider.edit', function ($breadcrumbs, $slider) {
     $breadcrumbs->parent('slider');

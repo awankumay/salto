@@ -8,10 +8,10 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Slider</div>
+                <div class="p-2">Banner</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('post-create'))
-                        <a href="{{route('slider.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Slider</a>
+                    @if(auth()->user()->hasPermissionTo('banner-create'))
+                        <a href="{{route('slider.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Banner</a>
                     @endif
                 </div>
             </div>

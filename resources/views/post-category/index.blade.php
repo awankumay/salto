@@ -8,10 +8,10 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Kategori Konten</div>
+                <div class="p-2">Kategori Berita</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('post-category-create'))
-                        <a href="{{route('post-category.create')}}" class="btn btn-success btn-sm text-white btn-add">Tambah Kategori</a>
+                    @if(auth()->user()->hasPermissionTo('kategori-berita-create'))
+                        <a href="{{route('post-category.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Kategori</a>
                     @endif
                 </div>
             </div>

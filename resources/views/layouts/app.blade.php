@@ -80,12 +80,12 @@
                 </li>
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
-                    Konten
+                    Berita & Informasi
                 </div>
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#supplier" aria-expanded="true" aria-controls="supplier">
                         <i class="fas fa-newspaper"></i>
-                        <span>Konten</span>
+                        <span>Berita & Informasi</span>
                     </a>
                     <div id="supplier" class="collapse" aria-labelledby="supplier" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
@@ -93,7 +93,7 @@
 
                         @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Slider</a>@endif
+                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Banner</a>@endif
                         </div>
                     </div>
                 </li>

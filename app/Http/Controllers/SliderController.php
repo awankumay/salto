@@ -29,10 +29,10 @@ class SliderController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:post-list');
-        $this->middleware('permission:post-create', ['only' => ['create','store']]);
-        $this->middleware('permission:post-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:post-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:banner-list');
+        $this->middleware('permission:banner-create', ['only' => ['create','store']]);
+        $this->middleware('permission:banner-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:banner-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -52,30 +52,26 @@ class SliderController extends Controller
                 5=>'updated_at'
             );
             $model  = New Slider();
-            return $this->ActionTable($columns, $model, $request, 'slider.edit', 'post-edit', 'post-delete');
+            return $this->ActionTable($columns, $model, $request, 'slider.edit', 'banner-edit', 'banner-delete');
         }
         return view('slider.index');
     }
 
     public function create()
     {
-        $postCategory = PostCategory::pluck('name','id')->all();
-        return view('slider.create', compact('postCategory'));
+        return view('slider.create');
     }
 
     public function edit($id)
     {
         $slider = Slider::find($id);
-        $postCategory = PostCategory::pluck('name','id')->all();
-        $idCategory = $slider->id_categories;
-        return view('slider.edit', compact('slider', 'postCategory', 'idCategory'));
+        return view('slider.edit', compact('slider'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
             'status' => 'required',
-            'id_categories' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:300'
             ]
         );
@@ -120,7 +116,6 @@ class SliderController extends Controller
     {
         $this->validate($request, [
             'status' => 'required',
-            'id_categories' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:300'
             ]
         );

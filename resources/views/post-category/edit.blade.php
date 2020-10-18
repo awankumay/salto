@@ -8,7 +8,7 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Ubah Kategori Konten</div>
+                <div class="p-2">Ubah Kategori Berita</div>
             </div>
         </div>
         <div class="card-body">
@@ -36,8 +36,8 @@
                 </div>
                 <div class="col-sm-12 col-md-12">
                     <div class="form-group col-xs-12 col-sm-12 col-md-6">
-                            <button type="submit" class="btn btn-sm btn-success">Simpan</button>
-                            <a class="btn btn-sm btn-success" href="{{route('post-category.index')}}">Kembali</a>
+                            <button type="submit" class="btn btn-sm btn-danger">Simpan</button>
+                            <a class="btn btn-sm btn-warning" href="{{route('post-category.index')}}">Kembali</a>
                     </div>
                 </div>
             </div>
