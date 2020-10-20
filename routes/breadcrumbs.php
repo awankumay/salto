@@ -63,17 +63,17 @@ Breadcrumbs::register('content.edit', function ($breadcrumbs, $content) {
     $breadcrumbs->parent('content');
     $breadcrumbs->push($content->title, route('content.edit', $content->id));
 });
-Breadcrumbs::register('campaign', function ($breadcrumbs) {
+Breadcrumbs::register('permission', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Campaign', route('campaign.index'));
+    $breadcrumbs->push('Permission', route('permission.index'));
 });
-Breadcrumbs::register('campaign.create', function ($breadcrumbs) {
-    $breadcrumbs->parent('campaign');
-    $breadcrumbs->push('Tambah Campaign', route('campaign.create'));
+Breadcrumbs::register('permission.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('permission');
+    $breadcrumbs->push('Tambah Kategori Surat', route('permission.create'));
 });
-Breadcrumbs::register('campaign.edit', function ($breadcrumbs, $campaign) {
-    $breadcrumbs->parent('campaign');
-    $breadcrumbs->push($campaign->title, route('campaign.edit', $campaign->id));
+Breadcrumbs::register('permission.edit', function ($breadcrumbs, $permission) {
+    $breadcrumbs->parent('permission');
+    $breadcrumbs->push($permission->nama_menu, route('permission.edit', $permission->id));
 });
 Breadcrumbs::register('auction', function ($breadcrumbs) {
     $breadcrumbs->parent('home');

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
-use App\PostCategory;
+use App\Permission;
 use App\User;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
@@ -13,7 +13,7 @@ use Spatie\Permission\Models\Role;
 use DataTables;
 use DB;
 use Auth;
-class PostCategoryController extends Controller
+class PermissionCategoryController extends Controller
 {
     use ActionTable;
     /**
@@ -40,80 +40,73 @@ class PostCategoryController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'name',
-                2=>'description',
-                3=>'created_at',
-                4=>'updated_at',
-                5=>'user_created',
+                1=>'nama_menu',
             );
-            $model  = New PostCategory();
-            return $this->ActionTable($columns, $model, $request, 'post-category.edit', 'kategori-berita-edit', 'kategori-berita-delete');
+            $model  = New Permission();
+            return $this->ActionTable($columns, $model, $request, 'permission.edit', 'kategori-surat-izin-edit', 'kategori-surat-izin-delete');
         }
-        return view('post-category.index');
+        return view('permission.index');
     }
 
     public function create()
     {
-        return view('post-category.create');
+        return view('permission.create');
     }
 
     public function edit($id)
     {
-        $postCategory = PostCategory::find($id);
-        return view('post-category.edit',compact('postCategory'));
+        $permission = Permission::find($id);
+        return view('permission.edit',compact('permission'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request,
-                        ['name' => 'required|unique:post_categories,name'],
-                        ['name.required'=> 'Nama kategori wajib diisi', 'name.unique'=> 'Nama kategori telah digunakan']    
+                        ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu'],
                         );
         try {
             DB::beginTransaction();
                 $request->request->add(['author'=> Auth::user()->id]);
-                $request->request->add(['user_created'=> Auth::user()->name]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
-                PostCategory::create($input);
+                Permission::create($input);
             DB::commit();
             \Session::flash('success','Data berhasil ditambah.');
-            return redirect()->route('post-category.index');
+            return redirect()->route('permission.index');
 
         }catch (\Throwable $th) {
             DB::rollBack();
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('post-category.create');
+            return redirect()->route('permission.create');
         }
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request,
-                            ['name' => 'required|unique:post_categories,name,'.$id],
+                            ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu,'.$id],
                         );
         try {
-            $postCategory = PostCategory::find($id);
+            $postCategory = Permission::find($id);
             DB::beginTransaction();
-            $request->request->add(['user_updated'=> Auth::user()->name]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
                 $postCategory->update($input);
 
             DB::commit();
             \Session::flash('success','Data berhasil diperbarui.');
-            return redirect()->route('post-category.index');
+            return redirect()->route('permission.index');
         } catch (\Throwable $th) {
             DB::rollBack();
             \Session::flash('error','Terjadi kesalahan server'. $th);
-            return redirect()->route('post-category.edit');
+            return redirect()->route('permission.edit');
         }
     }
 
     public function destroy($id)
     {
         try {
-            PostCategory::find($id)->delete();
+            Permission::find($id)->delete();
             return true;
         } catch (\Throwable $th) {
             return false;
