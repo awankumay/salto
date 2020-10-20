@@ -62,7 +62,7 @@ class PermissionCategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,
-                        ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu'],
+                        ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu']
                         );
         try {
             DB::beginTransaction();
@@ -84,7 +84,7 @@ class PermissionCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,
-                            ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu,'.$id],
+                            ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu,'.$id]
                         );
         try {
             $postCategory = Permission::find($id);
