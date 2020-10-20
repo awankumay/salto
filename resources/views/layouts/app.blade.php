@@ -60,6 +60,7 @@
                     <i class="fa fa-university"></i>
                     <span>Dashboard</span></a>
                 </li>
+                @if(auth()->user()->hasPermissionTo('role-list') || auth()->user()->hasPermissionTo('user-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Hak Akses
@@ -78,6 +79,8 @@
                         </div>
                     </div>
                 </li>
+                @endif
+                @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list') || auth()->user()->hasPermissionTo('user-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Master Data
@@ -92,41 +95,23 @@
                         <h6 class="collapse-header">Menu</h6>
 
                         @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list'))<a class="collapse-item" href="{{route('permission.index')}}">Kategori Surat</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Kategori Keluarga Asuh</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Data Keluarga Asuh dan Taruna</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Wali Asuh dan Keluarga Asuh</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Orang Tua dan Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))<a class="collapse-item" href="{{route('content.index')}}">Data Keluarga Asuh dan Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('data-pembina-keluarga-asuh-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Wali Asuh dan Keluarga Asuh</a>@endif
                         </div>
                     </div>
                 </li>
-                <hr class="sidebar-divider">
-                <div class="sidebar-heading">
-                    Surat Izin
-                </div>
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#surat-izin" aria-expanded="true" aria-controls="surat-izin">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Surat Izin</span>
-                    </a>
-                    <div id="surat-izin" class="collapse" aria-labelledby="surat-izin" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Menu</h6>
+                @endif
 
-                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Sakit</a>@endif
-                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Keluar Kampus</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Training Center</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Pernikahan Saudara</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Pemakaman Keluarga</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Orang Tua Sakit</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Tugas</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Kegiatan Dalam</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Kegiatan Pesiar</a>@endif
-                        </div>
-                    </div>
+                @if(auth()->user()->hasPermissionTo('surat-izin-orang-tua-sakit-list'))
+                <hr class="sidebar-divider">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('home')}}"> <i class="fas fa-newspaper"></i> <span>Surat Izin</span></a>
                 </li>
+                @endif
+                @if(auth()->user()->hasPermissionTo('prestasi-taruna-list') || auth()->user()->hasPermissionTo('hukuman-dinas-list') || auth()->user()->hasPermissionTo('pengasuhan-daring-list') || auth()->user()->hasPermissionTo('surat-keterangan-list') || auth()->user()->hasPermissionTo('absensi-list') || auth()->user()->hasPermissionTo('jurnal-harian-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
-                    Surat Izin
+                    Monitoring
                 </div>
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#data-monitoring" aria-expanded="true" aria-controls="data-monitoring">
@@ -136,15 +121,17 @@
                     <div id="data-monitoring" class="collapse" aria-labelledby="data-monitoring" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Penghargaan Taruna</a>@endif
-                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Pengasuhan Daring</a>@endif
-                        @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Surat Keterangan</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Absensi Harian</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Jurnal Harian</a>@endif
+                        @if(auth()->user()->hasPermissionTo('prestasi-taruna-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Penghargaan Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('hukuman-dinas-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
+                        @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('content.index')}}">Pengasuhan Daring</a>@endif
+                        @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('content.index')}}">Surat Keterangan</a>@endif
+                        @if(auth()->user()->hasPermissionTo('absensi-list'))<a class="collapse-item" href="{{route('slider.index')}}">Absensi Harian</a>@endif
+                        @if(auth()->user()->hasPermissionTo('jurnal-harian-list'))<a class="collapse-item" href="{{route('slider.index')}}">Jurnal Harian</a>@endif
                         </div>
                     </div>
                 </li>
+                @endif
+                @if(auth()->user()->hasPermissionTo('kategori-berita-list') || auth()->user()->hasPermissionTo('berita-list') || auth()->user()->hasPermissionTo('banner-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Berita & Informasi
@@ -164,6 +151,8 @@
                         </div>
                     </div>
                 </li>
+                @endif
+                @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Pengaduan
@@ -180,6 +169,7 @@
                         </div>
                     </div>
                 </li>
+                @endif
                 <hr class="sidebar-divider">
                 <div class="text-center d-none d-md-inline">
                     <button class="rounded-circle border-0" id="sidebarToggle"></button>

@@ -72,7 +72,7 @@ class SliderController extends Controller
     {
         $this->validate($request, [
             'status' => 'required',
-            'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:300'
+            'file' => 'required|mimes:jpeg,bmp,png,jpg|max:300'
             ]
         );
 

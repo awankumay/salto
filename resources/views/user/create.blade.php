@@ -9,6 +9,7 @@
         <div class="card-header">
             <div class="d-flex justify-content-between">
                 <div class="p-2">Tambah Pengguna</div>
+                <a class="btn btn-sm btn-warning" href="{{route('user.index')}}">Kembali</a>
             </div>
         </div>
         <div class="card-body">
@@ -172,7 +173,6 @@
             <div class="col-xs-12 col-sm-12 col-md-6">
                 <div class="form-group col-md-12">
                     <button type="submit" class="btn btn-sm btn-danger">Save</button>
-                    <a class="btn btn-sm btn-warning" href="{{route('user.index')}}">Cancel</a>
                 </div>
             </div>
         </div>
