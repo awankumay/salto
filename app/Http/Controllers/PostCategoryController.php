@@ -66,8 +66,7 @@ class PostCategoryController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,
-                        ['name' => 'required|unique:post_categories,name'],
-                        ['name.required'=> 'Nama kategori wajib diisi', 'name.unique'=> 'Nama kategori telah digunakan']    
+                        ['name' => 'required|unique:post_categories,name']
                         );
         try {
             DB::beginTransaction();
@@ -90,7 +89,7 @@ class PostCategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request,
-                            ['name' => 'required|unique:post_categories,name,'.$id],
+                            ['name' => 'required|unique:post_categories,name,'.$id]
                         );
         try {
             $postCategory = PostCategory::find($id);

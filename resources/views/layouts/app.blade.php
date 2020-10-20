@@ -92,7 +92,6 @@
                         <h6 class="collapse-header">Menu</h6>
 
                         @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list'))<a class="collapse-item" href="{{route('permission.index')}}">Kategori Surat</a>@endif
-                        @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Template Surat</a>@endif
                         @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Kategori Keluarga Asuh</a>@endif
                         @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Data Keluarga Asuh dan Taruna</a>@endif
                         @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Wali Asuh dan Keluarga Asuh</a>@endif
