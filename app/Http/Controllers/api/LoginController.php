@@ -65,8 +65,8 @@ class LoginController extends BaseController
        
                 return $this->sendResponse($success, 'User login successfully.');
             }else{
-                $success['id'] =   $username;
-                return $this->sendResponseFalse($success, 'User login failed.');
+                $success['id'] =  $username;
+                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
             }
         } else {
             //they sent their username instead 
@@ -85,7 +85,7 @@ class LoginController extends BaseController
                 return $this->sendResponse($success, 'User login successfully.');
             }else{
                 $success['id'] =   $username;
-                return $this->sendResponseFalse($success, 'User login failed.');
+                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
             }
         }
     }
