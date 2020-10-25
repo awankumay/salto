@@ -22,7 +22,9 @@ class AddDetailToUsersTable extends Migration
             $table->smallInteger('sex')->nullable();
             $table->smallInteger('status')->nullable();
             $table->string('photo')->nullable();
-            $table->integer('user_type')->nullable();
+            $table->integer('user_created')->nullable();
+            $table->integer('user_updated')->nullable();
+            $table->integer('user_deleted')->nullable();
             $table->softDeletes('deleted_at');
         });
     }
@@ -35,7 +37,7 @@ class AddDetailToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['phone', 'photo', 'whatsapp', 'address', 'sex', 'status', 'user_type', 'description', 'tagline']);
+            $table->dropColumn(['phone', 'photo', 'whatsapp', 'address', 'sex', 'status', 'description', 'tagline', 'user_created', 'user_updated', 'user_deleted']);
             $table->dropSoftDeletes();
         });
     }

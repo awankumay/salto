@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
+use DB;
 
 class User extends Authenticatable
 {
@@ -21,7 +22,9 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'identity', 'stb', 'email', 'password', 'phone', 'whatsapp', 'address', 'description', 'tagline', 'sex', 'status', 'photo', 'user_type'
+        'name', 'identity', 'stb', 'email', 'password', 'phone', 
+        'whatsapp', 'address', 'description', 'tagline', 'sex', 'status', 'photo', 
+        'user_created', 'user_updated', 'user_deleted', 'grade', 'province_id', 'regencie_id'
     ];
     protected $dates = ['deleted_at'];
     /**
@@ -41,14 +44,6 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    public function PostCategory(){
-    	return $this->hasMany(PostCategory::class, 'author', 'id');
-    }
-
-    public function Content(){
-    	return $this->hasMany(Content::class, 'author', 'id');
-    }
 
     public function GetCount()
     {
@@ -86,5 +81,32 @@ class User extends Authenticatable
                             ->orWhere('stb', 'LIKE',"%{$search}%")
                             ->count();
         return $data;
+    }
+
+    public static function GetOrangTua($id=null){
+        if($id!==null){
+            $user = DB::table('users')
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+            ->select('users.id', 'users.name')
+            ->where('model_has_roles.role_id', 8)
+            ->whereNull('users.deleted_at')
+            ->whereNotIn('users.id', function ($query) use ($id) {
+                $query->select('orangtua_id')->from('orang_tua_taruna')->whereNull('deleted_at')
+                ->where('taruna_id', '!=', $id);
+            })
+            ->get();
+        }else{
+            $user = DB::table('users')
+            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->select('users.id', 'users.name')
+            ->where('model_has_roles.role_id', 8)
+            ->whereNull('users.deleted_at')
+            ->whereNotIn('users.id', function ($query) {
+                $query->select('orangtua_id')->from('orang_tua_taruna')->whereNull('deleted_at');
+            })->get();
+        }
+
+        return $user;
     }
 }

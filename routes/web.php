@@ -30,7 +30,12 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('content', 'ContentController');
         Route::resource('slider', 'SliderController');
         Route::resource('report', 'ReportController');
+        Route::resource('grade', 'GradeController');
+        Route::resource('keluarga-asuh', 'KeluargaAsuhController');
+        Route::resource('pembina-keluarga-asuh', 'PembinaKeluargaAsuhController');
         Route::get('getnapi', 'ConvictController@getnapi')->name('getnapi');
+        Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
+        Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
         Route::post('deleteExistImageCampaign', 'CampaignController@deleteExistImageCampaign')->name('deleteExistImageCampaign');

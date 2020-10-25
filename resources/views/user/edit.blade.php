@@ -124,6 +124,24 @@
                     </div>
                     <div class="col-md-12">
                         <div class="form-group col-md-12">
+                            <strong>Provinsi:</strong>
+                            {!! Form::select('province_id', $provinces, $selectProvince, array('class' => 'form-control form-control-sm province', 'single', 'placeholder'=>'Pilih provinsi')) !!}
+                            <span class="form-text {{isset($errors->messages()['province_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['province_id']) ? $errors->messages()['province_id'][0] .'' : 'Pilih provinsi'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Kota:</strong>
+                            {!! Form::select('regencie_id', $regencies, $selectRegencie, array('class' => 'form-control form-control-sm regencie', 'single', 'placeholder'=>'Pilih kota')) !!}
+                            <span class="form-text {{isset($errors->messages()['regencie_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['regencie_id']) ? $errors->messages()['regencie_id'][0] .'' : 'Pilih kota'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
                             <strong>Alamat:</strong>
                             {!! Form::textarea('address', null, array('rows' => 3, 'cols' => 5, 'class'=>'form-control form-control-sm', 'placeholder'=>'Alamat pengguna')) !!}
                             <span class="form-text {{isset($errors->messages()['address']) ? 'text-danger text-help' : 'text-muted text-help'}}">
@@ -152,9 +170,27 @@
                         <div class="form-group col-md-12">
                             <strong>Status:</strong><br>
                             {!! Form::radio('status', '1', array('class' => 'form-control form-control-sm')) !!} Active &nbsp;
-                            {!! Form::radio('status', '2', array('class' => 'form-control form-control-sm')) !!} Not Active &nbsp;
+                            {!! Form::radio('status', '0', array('class' => 'form-control form-control-sm')) !!} Not Active &nbsp;
                             <span class="form-text {{isset($errors->messages()['status']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                 {{isset($errors->messages()['status']) ? $errors->messages()['status'][0] .'*' : 'Pilih salah satu *'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Grade:</strong>
+                            {!! Form::select('grade', $grade, $selectGrade, array('class' => 'form-control form-control-sm grade', 'single', 'placeholder'=>'Pilih Grade')) !!}
+                            <span class="form-text {{isset($errors->messages()['grade']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['grade']) ? $errors->messages()['grade'][0] .'' : 'Pilih Grade'}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group col-md-12">
+                            <strong>Orang Tua:</strong>
+                            {!! Form::select('orangtua', $orangtua, $selectOrangTua, array('class' => 'form-control form-control-sm orangtua', 'single', 'placeholder'=>'Pilih Orang tua')) !!}
+                            <span class="form-text {{isset($errors->messages()['orangtua']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                                {{isset($errors->messages()['orangtua']) ? $errors->messages()['orangtua'][0] .'' : 'Pilih orang tua'}}
                             </span>
                         </div>
                     </div>
@@ -182,52 +218,32 @@
 @push('scripts')
 <script type="text/javascript">
     $(function(){
-       $('.napi-1-select').select2({
-           minimumInputLength: 3,
-           allowClear: true,
-           placeholder: 'masukkan nama napi',
-           ajax: {
-              dataType: 'json',
-              url: '/dashboard/convict/getnapi',
-              delay: 800,
-              data: function(params) {
-                return {
-                  search: params.term
+        $('.grade').select2();
+        $('.orangtua').select2();
+        $('.province').select2();
+        $('.regencie').select2();
+        $('.province').change(function () {
+            var datax = [];
+            $('.regencie').val(null);
+            $('.regencie').empty();
+            let province = $(this).val();
+            let token ="{{csrf_token()}}";
+            let params = {
+                'province_id':province, '_token':token,
+            }
+            $.ajax({
+                type: 'POST',
+                url : "{{url('/')}}/dashboard/getregencies",
+                data : params,
+                success : function (res) {
+                    $('.regencie').select2({data:JSON.parse(res)});
+                    console.log(res);
+                },
+                error : function (res) {
+                    console.log(res);
                 }
-              },
-              processResults: function (data, page) {
-              return {
-                results: data
-              };
-            },
-          }
-      }).on('napi-1-select:select', function (evt) {
-         var data = $(".napi-1-select option:selected").text();
-      });
-    });
-    $(function(){
-       $('.napi-2-select').select2({
-           minimumInputLength: 3,
-           allowClear: true,
-           placeholder: 'masukkan nama napi',
-           ajax: {
-              dataType: 'json',
-              url: '/dashboard/convict/getnapi',
-              delay: 800,
-              data: function(params) {
-                return {
-                  search: params.term
-                }
-              },
-              processResults: function (data, page) {
-              return {
-                results: data
-              };
-            },
-          }
-      }).on('napi-2-select:select', function (evt) {
-         var data = $(".napi-2-select option:selected").text();
-      });
+            })
+        });
     });
 </script>
 <script type="text/javascript">

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSlidersTable extends Migration
+class OrangTuaPembinaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateSlidersTable extends Migration
      */
     public function up()
     {
-        Schema::create('sliders', function (Blueprint $table) {
+        Schema::create('orang_tua_taruna', function (Blueprint $table) {
             $table->id();
-            $table->string('photo');
-            $table->integer('status');
+            $table->integer('orangtua_id');
+            $table->integer('taruna_id');
             $table->integer('user_created');
             $table->integer('user_updated')->nullable();
             $table->integer('user_deleted')->nullable();
+            $table->softDeletes('deleted_at');
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ class CreateSlidersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sliders');
+        Schema::dropIfExists('orang_tua_taruna');
     }
 }

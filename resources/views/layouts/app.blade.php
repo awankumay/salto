@@ -80,7 +80,7 @@
                     </div>
                 </li>
                 @endif
-                @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list') || auth()->user()->hasPermissionTo('user-list'))
+                @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list') || auth()->user()->hasPermissionTo('user-list') || auth()->user()->hasPermissionTo('grade-list') || auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Master Data
@@ -95,7 +95,8 @@
                         <h6 class="collapse-header">Menu</h6>
 
                         @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list'))<a class="collapse-item" href="{{route('permission.index')}}">Kategori Surat</a>@endif
-                        @if(auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))<a class="collapse-item" href="{{route('content.index')}}">Data Keluarga Asuh dan Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('grade-list'))<a class="collapse-item" href="{{route('grade.index')}}">Kategori Grade</a>@endif
+                        @if(auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))<a class="collapse-item" href="{{route('keluarga-asuh.index')}}">Data Keluarga Asuh Taruna</a>@endif
                         @if(auth()->user()->hasPermissionTo('data-pembina-keluarga-asuh-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Wali Asuh dan Keluarga Asuh</a>@endif
                         </div>
                     </div>
@@ -237,11 +238,16 @@
                                     {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="{{ route('editprofile') }}">
+                                        {{ __('Edit Profile') }}
+                                    </a>
+                                    <hr class="sidebar-divider">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault();
                                                     document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>

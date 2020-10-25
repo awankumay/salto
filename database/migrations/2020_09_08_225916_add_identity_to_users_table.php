@@ -15,10 +15,10 @@ class AddIdentityToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('identity')->nullable();
-            $table->integer('province')->nullable();
-            $table->integer('city')->nullable();
-            $table->integer('country')->nullable();
-            $table->string('stb', 50)->nullable();
+            $table->integer('grade')->nullable();
+            $table->integer('province_id')->nullable();
+            $table->integer('regencie_id')->nullable();
+            $table->string('stb')->nullable();
         });
     }
 
@@ -30,7 +30,7 @@ class AddIdentityToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['identity', 'province', 'city', 'country', 'stb']);
+            $table->dropColumn(['identity', 'province_id', 'regencie_id', 'stb', 'grade']);
         });
     }
 }

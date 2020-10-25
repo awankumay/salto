@@ -4,51 +4,34 @@ namespace App\Traits;
 use Illuminate\Support\Str;
 use Auth;
 
-trait ActionTable
+trait ActionTableWithDetail
 {
-    public function ActionTable($columns, $model, $request, $routeEdit, $permissionEdit, $permissionDelete)
+    public function ActionTableWithDetail($columns, $model, $request, $routeEdit, $routeDetail, $permissionEdit, $permissionDelete, $permissionDetail)
     {
         $limit = $request->input('length');
         $start = $request->input('start');
         $order = $columns[$request->input('order.0.column')];
         $dir   = $request->input('order.0.dir');
-        $id    = !empty($request->input('id')) ? $request->input('id'): '';
-        
-        if(!empty($id)){
-            $totalData = $model->GetCount($id);
-        }else{
-            $totalData = $model->GetCount();
-        }
+
+        $totalData = $model->GetCount();
         $totalFiltered = $totalData;
 
         if(empty($request->input('search.value'))) {
-            if(!empty($id)){
-                $dataModel = $model->GetCurrentData($start, $limit, $order, $dir, $id);
-            }else{
-                $dataModel = $model->GetCurrentData($start, $limit, $order, $dir);
-            }
+            $dataModel = $model->GetCurrentData($start, $limit, $order, $dir);
         }
         else{
             $search = $request->input('search.value');
-            if(!empty($id)){
-                $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search, $id);
-                $totalFiltered = $model->GetCountDataFilter($search, $id);
-            }else{
-                $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search);
-                $totalFiltered = $model->GetCountDataFilter($search);
-            }
+            $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search);
+            $totalFiltered = $model->GetCountDataFilter($search);
         }
         $data = array();
         if(!empty($dataModel))
         {
             foreach ($dataModel as $key => $val) {
                 #$show =  route('post-category.show',$val->id);
-                if($permissionEdit!=null){
-                    $edit    = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
-                }else{
-                    $edit    = '';
-                }
+                $edit    = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
                 $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this)' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
+                $detail  = Auth::user()->hasPermissionTo($permissionDetail) ? "<a href=".route($routeDetail, $val->id)." class='action-table text-info text-sm'><i class='fas fa-cogs'></i></a>" : '';
                 for ($i=0; $i < count($columns); $i++) {
                     if($columns[$i]=='created_at'){
                         $nestedData['created_at'] = date('d-m-Y H:i',strtotime($val->created_at));
@@ -69,7 +52,7 @@ trait ActionTable
                         $nestedData[$columns[$i]] = $dataModel[$key][$columns[$i]];
                     }
                 }
-                $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit;
+                $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
                 $data[] = $nestedData;
             }
         }

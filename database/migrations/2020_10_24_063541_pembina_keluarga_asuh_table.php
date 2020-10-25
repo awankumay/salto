@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateKeluargaAsuhBodyTable extends Migration
+class PembinaKeluargaAsuhTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateKeluargaAsuhBodyTable extends Migration
      */
     public function up()
     {
-        Schema::create('keluarga_asuh_body', function (Blueprint $table) {
+        Schema::create('pembina_keluarga_asuh', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_keluarga_asuh_header');
-            $table->integer('id_taruna');
-            $table->integer('id_grade')->nullable();
-            $table->integer('author');
+            $table->integer('keluarga_asuh_id');
+            $table->integer('pembina_id');
+            $table->integer('user_created');
             $table->integer('user_updated')->nullable();
+            $table->integer('user_deleted')->nullable();
             $table->softDeletes('deleted_at');
             $table->timestamps();
         });
@@ -32,6 +32,6 @@ class CreateKeluargaAsuhBodyTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keluarga_asuh_body');
+        Schema::dropIfExists('pembina_keluarga_asuh');
     }
 }

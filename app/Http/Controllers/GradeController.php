@@ -5,15 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
-use App\Permission;
-use App\User;
+use App\Grade;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
 use DataTables;
 use DB;
 use Auth;
-class PermissionCategoryController extends Controller
+class GradeController extends Controller
 {
     use ActionTable;
     /**
@@ -24,10 +23,10 @@ class PermissionCategoryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:kategori-surat-izin-list');
-        $this->middleware('permission:kategori-surat-izin-create', ['only' => ['create','store']]);
-        $this->middleware('permission:kategori-surat-izin-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:kategori-surat-izin-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:grade-list');
+        $this->middleware('permission:grade-create', ['only' => ['create','store']]);
+        $this->middleware('permission:grade-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:grade-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -40,77 +39,80 @@ class PermissionCategoryController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'nama_menu',
+                1=>'grade',
+                2=>'created_at',
+                3=>'updated_at',
+                4=>'user_created',
             );
-            $model  = New Permission();
-            return $this->ActionTable($columns, $model, $request, 'permission.edit', 'kategori-surat-izin-edit', 'kategori-surat-izin-delete');
+            $model  = New Grade();
+            return $this->ActionTable($columns, $model, $request, 'grade.edit', 'grade-edit', 'grade-delete');
         }
-        return view('permission.index');
+        return view('grade.index');
     }
 
     public function create()
     {
-        return view('permission.create');
+        return view('grade.create');
     }
 
     public function edit($id)
     {
-        $permission = Permission::find($id);
-        return view('permission.edit',compact('permission'));
+        $grade = Grade::find($id);
+        return view('grade.edit',compact('grade'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request,
-                        ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu,NULL,id,deleted_at,NULL']
+                        ['grade' => 'required|unique:grade_table,grade,NULL,id,deleted_at,NULL']
                         );
         try {
             DB::beginTransaction();
                 $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
-                Permission::create($input);
+                Grade::create($input);
             DB::commit();
             \Session::flash('success','Data berhasil ditambah.');
-            return redirect()->route('permission.index');
+            return redirect()->route('grade.index');
 
         }catch (\Throwable $th) {
             DB::rollBack();
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('permission.create');
+            return redirect()->route('grade.create');
         }
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request,
-                            ['nama_menu' => "required|unique:menu_persetujuan,nama_menu,{$id},id,deleted_at,NULL"]
+                            ['grade' => "required|unique:grade_table,grade,{$id},id,deleted_at,NULL"]
                         );
         try {
-            $postCategory = Permission::find($id);
+            $grade = Grade::find($id);
             DB::beginTransaction();
             $request->request->add(['user_updated'=> Auth::user()->id]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
-                $postCategory->update($input);
+                $grade->update($input);
 
             DB::commit();
             \Session::flash('success','Data berhasil diperbarui.');
-            return redirect()->route('permission.index');
+            return redirect()->route('grade.index');
         } catch (\Throwable $th) {
             DB::rollBack();
             \Session::flash('error','Terjadi kesalahan server'. $th);
-            return redirect()->route('permission.edit');
+            return redirect()->route('grade.edit');
         }
     }
 
     public function destroy($id)
     {
         try {
-            $data = Permission::find($id);
-            $data->user_deleted = Auth::user()->id;
-            $data->save();
-            $data->delete();
+            $grade = Grade::find($id);
+            $grade->user_deleted = Auth::user()->id;
+            $grade->save();
+            $grade->delete();
             return true;
         } catch (\Throwable $th) {
             return false;

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMenuPersetujuanTable extends Migration
+class GradeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class AddMenuPersetujuanTable extends Migration
      */
     public function up()
     {
-        Schema::table('menu_persetujuan', function (Blueprint $table) {
+        Schema::create('grade_table', function (Blueprint $table) {
+            $table->id();
+            $table->string('grade');
+            $table->integer('user_created');
+            $table->integer('user_updated')->nullable();
+            $table->integer('user_deleted')->nullable();
             $table->softDeletes('deleted_at');
             $table->timestamps();
-            $table->integer('author')->null();
         });
     }
 
@@ -27,9 +31,6 @@ class AddMenuPersetujuanTable extends Migration
      */
     public function down()
     {
-        Schema::table('menu_persetujuan', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-            $table->dropColumn(['author']);
-        });
+        Schema::dropIfExists('grade_table');
     }
 }

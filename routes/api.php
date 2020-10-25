@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('login', 'api\LoginController@login');
+Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile');
 Route::post('/getdata', 'api\LookController@getdata')->name('getdata');
 Route::post('surveyikm', 'api\LookController@surveyikm')->name('surveyikm');
 Route::post('schedule', 'api\LookController@getschedule')->name('schedule');

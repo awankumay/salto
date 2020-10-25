@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
-use App\Permission;
+use App\KeluargaAsuh;
 use App\User;
-use App\Traits\ActionTable;
+use App\Traits\ActionTableWithDetail;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
 use DataTables;
 use DB;
 use Auth;
-class PermissionCategoryController extends Controller
+class KeluargaAsuhController extends Controller
 {
-    use ActionTable;
+    use ActionTableWithDetail;
     /**
      * Create a new controller instance.
      *
@@ -24,10 +24,10 @@ class PermissionCategoryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:kategori-surat-izin-list');
-        $this->middleware('permission:kategori-surat-izin-create', ['only' => ['create','store']]);
-        $this->middleware('permission:kategori-surat-izin-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:kategori-surat-izin-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:data-keluarga-asuh-list');
+        $this->middleware('permission:data-keluarga-asuh-create', ['only' => ['create','store']]);
+        $this->middleware('permission:data-keluarga-asuh-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:data-keluarga-asuh-delete', ['only' => ['destroy']]);
     }
 
     /**
@@ -40,74 +40,84 @@ class PermissionCategoryController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'nama_menu',
+                1=>'name',
+                2=>'description',
+                3=>'created_at',
+                4=>'updated_at',
             );
-            $model  = New Permission();
-            return $this->ActionTable($columns, $model, $request, 'permission.edit', 'kategori-surat-izin-edit', 'kategori-surat-izin-delete');
+            $model  = New KeluargaAsuh();
+            return $this->ActionTableWithDetail($columns, $model, $request, 'keluarga-asuh.edit', 'keluarga-asuh.show', 'data-keluarga-asuh-edit', 'data-keluarga-asuh-delete', 'data-keluarga-asuh-edit');
         }
-        return view('permission.index');
+        return view('keluarga-asuh.index');
     }
 
     public function create()
     {
-        return view('permission.create');
+        return view('keluarga-asuh.create');
     }
 
     public function edit($id)
     {
-        $permission = Permission::find($id);
-        return view('permission.edit',compact('permission'));
+        $keluargaAsuh = KeluargaAsuh::find($id);
+        return view('keluarga-asuh.edit',compact('keluargaAsuh'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request,
-                        ['nama_menu' => 'required|unique:menu_persetujuan,nama_menu,NULL,id,deleted_at,NULL']
+                        ['name' => 'required|unique:keluarga_asuh,name,NULL,id,deleted_at,NULL']
                         );
         try {
             DB::beginTransaction();
                 $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
-                Permission::create($input);
+                KeluargaAsuh::create($input);
             DB::commit();
             \Session::flash('success','Data berhasil ditambah.');
-            return redirect()->route('permission.index');
+            return redirect()->route('keluarga-asuh.index');
 
         }catch (\Throwable $th) {
+            @dd($th);
             DB::rollBack();
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('permission.create');
+            return redirect()->route('keluarga-asuh.create');
         }
     }
 
     public function update(Request $request, $id)
     {
         $this->validate($request,
-                            ['nama_menu' => "required|unique:menu_persetujuan,nama_menu,{$id},id,deleted_at,NULL"]
+                            ['name' => "required|unique:keluarga_asuh,name,{$id},id,deleted_at,NULL"]
                         );
         try {
-            $postCategory = Permission::find($id);
+            $keluargaAsuh = KeluargaAsuh::find($id);
             DB::beginTransaction();
             $request->request->add(['user_updated'=> Auth::user()->id]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
-                $postCategory->update($input);
+                $keluargaAsuh->update($input);
 
             DB::commit();
             \Session::flash('success','Data berhasil diperbarui.');
-            return redirect()->route('permission.index');
+            return redirect()->route('keluarga-asuh.index');
         } catch (\Throwable $th) {
             DB::rollBack();
-            \Session::flash('error','Terjadi kesalahan server'. $th);
-            return redirect()->route('permission.edit');
+            \Session::flash('error','Terjadi kesalahan server');
+            return redirect()->route('keluarga-asuh.edit');
         }
+    }
+
+    public function show($id)
+    {
+        $keluargaAsuh = KeluargaAsuh::find($id);
+        return view('keluarga-asuh.show',compact('keluargaAsuh'));
     }
 
     public function destroy($id)
     {
         try {
-            $data = Permission::find($id);
+            $data = KeluargaAsuh::find($id);
             $data->user_deleted = Auth::user()->id;
             $data->save();
             $data->delete();

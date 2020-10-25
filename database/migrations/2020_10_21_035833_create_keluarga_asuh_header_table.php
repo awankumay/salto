@@ -13,14 +13,13 @@ class CreateKeluargaAsuhHeaderTable extends Migration
      */
     public function up()
     {
-        Schema::create('keluarga_asuh_header', function (Blueprint $table) {
+        Schema::create('keluarga_asuh', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('end_date');
-            $table->integer('id_wali_asuh')->nullable();
             $table->longText('description')->nullable();
-            $table->integer('author');
+            $table->integer('user_created');
             $table->integer('user_updated')->nullable();
+            $table->integer('user_deleted')->nullable();
             $table->softDeletes('deleted_at');
             $table->timestamps();
         });
@@ -33,6 +32,6 @@ class CreateKeluargaAsuhHeaderTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keluarga_asuh_header');
+        Schema::dropIfExists('keluarga_asuh');
     }
 }

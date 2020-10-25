@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use App\User;
-use App\UserConvicts;
+use App\Provinces;
+use App\Grade;
+use App\Regencies;
+use App\OrangTua;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Hash;
@@ -52,8 +55,7 @@ class UserController extends Controller
                 7=>'status',
                 8=>'photo',
                 9=>'created_at',
-                10=>'updated_at',
-                11=>'deleted_at'
+                10=>'updated_at'
             );
             $model  = New User();
             return $this->ActionTable($columns, $model, $request, 'user.edit', 'user-edit', 'user-delete');
@@ -63,34 +65,65 @@ class UserController extends Controller
 
     public function create()
     {
+        $provinces = Provinces::pluck('name','id')->all();
+        $grade = Grade::pluck('grade','id')->all();
+        $orangtua = User::GetOrangTua()->pluck('name', 'id')->all();
         $role = Role::pluck('name','name')->all();
-        return view('user.create', compact('role'));
+        return view('user.create', compact('role', 'provinces', 'grade', 'orangtua'));
     }
 
     public function edit($id)
     {
         $user = User::find($id);
         $role = Role::pluck('name','name')->all();
+        $grade = Grade::pluck('grade', 'id')->all();
+        $orangtua = User::GetOrangTua($user->id)->pluck('name', 'id')->all();
+        $provinces = Provinces::pluck('name','id')->all();
+        $regencies = Regencies::where('province_id', $user->province_id)->pluck('name','id')->all();
+        $getOrangTua = OrangTua::where('taruna_id', $user->id)->first();
+        $selectOrangTua = !empty($getOrangTua->orangtua_id) ? $getOrangTua->orangtua_id : '';
+        $selectGrade = !empty($user->grade) ? $user->grade : '';
+        $selectProvince = !empty($user->province_id) ? $user->province_id : '';
+        $selectRegencie = !empty($user->regencie_id) ? $user->regencie_id : '';
         $userRole = $user->roles->pluck('name','name')->all();
-        return view('user.edit', compact('user', 'role', 'userRole'));
+        return view('user.edit', compact('user', 'role', 'userRole', 'selectProvince', 'selectRegencie', 'provinces', 'regencies', 'orangtua', 'grade', 'selectOrangTua', 'selectGrade'));
     }
 
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'identity' => 'numeric',
-            'stb' => 'required|unique:users,stb',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|same:confirm-password',
-            'phone' => 'required|numeric|unique:users,phone',
-            'whatsapp' => 'numeric|unique:users,whatsapp',
-            'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
-            'role'=>'required',
-            'sex'=>'required',
-            'status'=>'required'
-        ]);
-
+        $orangtua = null;
+        if($request->input('role')=='Taruna'){
+            $this->validate($request, [
+                'name' => 'required',
+                'identity' => 'nullable|numeric|unique:users,identity,NULL,id,deleted_at,NULL',
+                'stb' => 'nullable|unique:users,stb,NULL,id,deleted_at,NULL',
+                'email' => 'required|email|unique:users,email,NULL,id,deleted_at,NULL',
+                'password' => 'required|same:confirm-password',
+                'phone' => 'required|numeric|unique:users,phone,NULL,id,deleted_at,NULL',
+                'whatsapp' => 'numeric|unique:users,whatsapp,NULL,id,deleted_at,NULL',
+                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'role'=>'required',
+                'sex'=>'required',
+                'status'=>'required',
+                'orangtua'=>'required',
+                'grade'=>'required'
+            ]);
+            $orangtua = $request->input('orangtua');
+        }else{
+            $this->validate($request, [
+                'name' => 'required',
+                'identity' => 'nullable|numeric|unique:users,identity,NULL,id,deleted_at,NULL',
+                'stb' => 'nullable|unique:users,stb,NULL,id,deleted_at,NULL',
+                'email' => 'required|email|unique:users,email,NULL,id,deleted_at,NULL',
+                'password' => 'required|same:confirm-password',
+                'phone' => 'required|numeric|unique:users,phone,NULL,id,deleted_at,NULL',
+                'whatsapp' => 'numeric|unique:users,whatsapp,NULL,id,deleted_at,NULL',
+                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'role'=>'required',
+                'sex'=>'required',
+                'status'=>'required'
+            ]);
+        }
         if($request->file){
 
             $image = $this->UploadImage($request->file, config('app.userImagePath'));
@@ -109,10 +142,20 @@ class UserController extends Controller
                         $request->request->add(['photo'=> $image]);
                     }
                 }
+                $request->request->add(['user_created'=> Auth::user()->id]);
                 $input = $request->all();
+                Arr::forget($input, array('orangtua'));
                 $input['password'] = Hash::make($input['password']);
                 $user = User::create($input);
                 $user->assignRole($request->input('role'));
+                if($orangtua!=null){
+                    $dataOrangTua = [];
+                    $dataOrangTua['orangtua_id']=$orangtua;
+                    $dataOrangTua['taruna_id']=$user->id;
+                    $dataOrangTua['user_created']=Auth::user()->id;
+                    OrangTua::create($dataOrangTua);
+                }
+
             DB::commit();
 
             \Session::flash('success','User berhasil ditambah.');
@@ -132,19 +175,38 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'name' => 'required',
-            'identity' => 'required',
-            'stb' => 'required|unique:users,stb,'.$id,
-            'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'same:confirm-password',
-            'phone' => 'required|numeric|unique:users,phone,'.$id,
-            'whatsapp' => 'numeric|unique:users,whatsapp,'.$id,
-            'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
-            'role'=>'required',
-            'sex'=>'required',
-            'status'=>'required'
-        ]);
+        $orangtua = null;
+        if($request->input('role')=='Taruna'){
+            $this->validate($request, [
+                'name' => 'required',
+                'identity' => "nullable|numeric|unique:users,identity,{$id},id,deleted_at,NULL",
+                'stb' => "nullable|unique:users,stb,{$id},id,deleted_at,NULL",
+                'email' => "required|email|unique:users,email,{$id},id,deleted_at,NULL",
+                'password' => 'same:confirm-password',
+                'phone' => "required|numeric|unique:users,phone,{$id},id,deleted_at,NULL",
+                'whatsapp' => "numeric|unique:users,whatsapp,{$id},id,deleted_at,NULL",
+                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'role'=>'required',
+                'sex'=>'required',
+                'status'=>'required',
+                'grade'=>'required',
+                'orangtua'=>'required'
+            ]);
+        }else{
+            $this->validate($request, [
+                'name' => 'required',
+                'identity' => "nullable|numeric|unique:users,identity,{$id},id,deleted_at,NULL",
+                'stb' => "nullable|unique:users,stb,{$id},id,deleted_at,NULL",
+                'email' => "required|email|unique:users,email,{$id},id,deleted_at,NULL",
+                'password' => 'same:confirm-password',
+                'phone' => "required|numeric|unique:users,phone,{$id},id,deleted_at,NULL",
+                'whatsapp' => "numeric|unique:users,whatsapp,{$id},id,deleted_at,NULL",
+                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'role'=>'required',
+                'sex'=>'required',
+                'status'=>'required'
+            ]);
+        }
 
 
         $user = User::find($id);
@@ -162,17 +224,24 @@ class UserController extends Controller
                     $request->request->add(['photo'=> $image]);
                 }
             }
+            $request->request->add(['user_updated'=> Auth::user()->id]);
             $input = $request->all();
 
             if(!empty($input['password'])){
                 $input['password'] = Hash::make($input['password']);
             }else{
-               Arr::forget($input, array('password', 'confirm-password'));
+               Arr::forget($input, array('password', 'confirm-password', 'orangtua'));
             }
             DB::beginTransaction();
                 $user->update($input);
             DB::table('model_has_roles')->where('model_id',$id)->delete();
                 $user->assignRole($request->input('role'));
+                if($orangtua!=null){
+                    $getOrangTua = OrangTua::where('taruna_id', $id)->find();
+                    $getOrangTua->orangtua_id=$orangtua;
+                    $getOrangTua->user_updated=Auth::user()->id;
+                    $getOrangTua->save();
+                }
             DB::commit();
 
             \Session::flash('success','User updated successfully.');
@@ -195,6 +264,8 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
                 $this->DeleteImage($user->photo, config('app.userImagePath'));
+                $user->user_deleted = Auth::user()->id;
+                $user->save();
                 $user->delete();
             DB::commit();
             return true;
