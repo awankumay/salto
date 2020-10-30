@@ -70,8 +70,7 @@ class PostCategoryController extends Controller
                         );
         try {
             DB::beginTransaction();
-                $request->request->add(['author'=> Auth::user()->id]);
-                $request->request->add(['user_created'=> Auth::user()->name]);
+                $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
                 PostCategory::create($input);
@@ -94,7 +93,7 @@ class PostCategoryController extends Controller
         try {
             $postCategory = PostCategory::find($id);
             DB::beginTransaction();
-            $request->request->add(['user_updated'=> Auth::user()->name]);
+            $request->request->add(['user_updated'=> Auth::user()->id]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input=$request->all();
                 $postCategory->update($input);

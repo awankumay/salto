@@ -26,8 +26,7 @@
                             <th>Deskripsi</th>
                             <th>Create</th>
                             <th>Update</th>
-                            <th>Author</th>
-                            <th>Opsi</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,7 +53,6 @@
                 {data: 'description', name: 'description'},
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
                 {data: 'updated_at', name: 'updated_at'},
-                {data: 'user_created', name: 'user_created'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

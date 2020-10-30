@@ -123,9 +123,7 @@ class ContentController extends Controller
                     }
                 }
                 $request->request->add(['slug'=> $slug]);
-                $request->request->add(['headline'=> 0]);
-                $request->request->add(['author'=> Auth::user()->id]);
-                $request->request->add(['user_created'=> Auth::user()->name]);
+                $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 Arr::forget($input, array('content'));
@@ -203,10 +201,8 @@ class ContentController extends Controller
                     }
                 }
                 $request->request->add(['slug'=> $slug]);
-                $request->request->add(['headline'=> 0]);
-                $request->request->add(['author'=> Auth::user()->id]);
-                $request->request->add(['user_created'=> Auth::user()->name]);
-                $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
+                $request->request->add(['user_updated'=> Auth::user()->id]);
+                $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 Arr::forget($input, array('content'));
                 $input['content']=$detail;
@@ -232,6 +228,7 @@ class ContentController extends Controller
         try {
             DB::beginTransaction();
                 $this->DeleteImage($content->photo, config('app.postImagePath'));
+                $content->user_deleted = Auth::user()->id;
                 $content->delete();
             DB::commit();
             return true;

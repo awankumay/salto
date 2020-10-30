@@ -33,8 +33,10 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('grade', 'GradeController');
         Route::resource('keluarga-asuh', 'KeluargaAsuhController');
         Route::resource('pembina-keluarga-asuh', 'PembinaKeluargaAsuhController');
-        Route::get('getnapi', 'ConvictController@getnapi')->name('getnapi');
+        Route::resource('waliasuh-keluarga-asuh', 'WaliasuhKeluargaAsuhController');
+        Route::resource('taruna-keluarga-asuh', 'TarunaKeluargaAsuhController');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
+        Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');

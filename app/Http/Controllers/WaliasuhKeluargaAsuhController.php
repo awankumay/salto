@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
-use App\PembinaKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\KeluargaAsuh;
 use App\User;
 use App\Traits\ActionTable;
@@ -14,7 +14,7 @@ use Spatie\Permission\Models\Role;
 use DataTables;
 use DB;
 use Auth;
-class PembinaKeluargaAsuhController extends Controller
+class WaliasuhKeluargaAsuhController extends Controller
 {
     use ActionTable;
     /**
@@ -47,7 +47,7 @@ class PembinaKeluargaAsuhController extends Controller
                 3=>'whatsapp',
                 4=>'date_created'
             );
-            $model  = New PembinaKeluargaAsuh();
+            $model  = New WaliasuhKeluargaAsuh();
             return $this->ActionTable($columns, $model, $request, 'keluarga-asuh.edit', null, 'data-keluarga-asuh-delete');
         }
         $keluargaAsuh = KeluargaAsuh::find($id);
@@ -65,15 +65,13 @@ class PembinaKeluargaAsuhController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,
-            ['pembina_id' => "required|unique:pembina_keluarga_asuh,pembina_id,{$request->pembina_id},id,keluarga_asuh_id,{$request->keluarga_asuh_id}"]
+            ['waliasuh_id' => "required|unique:waliasuh_keluarga_asuh,waliasuh_id,{$request->waliasuh_id},id,keluarga_asuh_id,{$request->keluarga_asuh_id}"]
         );
         //@dd('ok');
         $request->request->add(['user_created'=> Auth::user()->id]);
         $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
         $input = $request->all();
-        PembinaKeluargaAsuh::create($input);
-        $keluargaAsuh = KeluargaAsuh::where('id', $request->keluarga_asuh_id)->first();
-        $pembina      = User::role('Pembina')->pluck('name', 'id')->all();
+        WaliasuhKeluargaAsuh::create($input);
         return redirect()->route('keluarga-asuh.show', [$request->keluarga_asuh_id]);
     }
 
@@ -88,7 +86,7 @@ class PembinaKeluargaAsuhController extends Controller
     public function destroy($id)
     {
         try {
-            $data = PembinaKeluargaAsuh::find($id);
+            $data = WaliasuhKeluargaAsuh::find($id);
             $data->delete();
             return true;
         } catch (\Throwable $th) {

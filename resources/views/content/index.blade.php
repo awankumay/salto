@@ -26,7 +26,6 @@
                             <th style="width:25%;">Status</th>
                             <th style="width:20%;">Ringkasan</th>
                             <th style="width:5%;">Content</th>
-                            <th style="width:25%;">Author</th>
                             <th style="width:25%;">Create</th>
                             <th style="width:25%;">Update</th>
                             <th style="width:10%">Action</th>
@@ -66,7 +65,6 @@
                 },
                 {data: 'excerpt', name: 'excerpt'},
                 {data: 'content', name: 'content'},
-                {data: 'user_created', name: 'user_created'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},

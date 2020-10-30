@@ -29,6 +29,7 @@ class LookController extends BaseController
     public function getprofile(Request $request)
     {
         $user = User::where('id', $request->id)->first();
+        $user->photo = url('/')."/storage/".config('app.userImagePath')."/".$user->photo;
         $data=[];
         $data['user'] = $user;
         $data['select_grade'] = Grade::where('id', $user->grade)->pluck('grade','id')->all();

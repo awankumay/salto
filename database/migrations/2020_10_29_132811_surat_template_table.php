@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class MenuPersetujuanTable extends Migration
+class SuratTemplateTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,17 @@ class MenuPersetujuanTable extends Migration
      */
     public function up()
     {
-        Schema::table('menu_persetujuan', function (Blueprint $table) {
+        Schema::create('surat_template', function (Blueprint $table) {
+            $table->id();
+            $table->longText('header')->nullable();
+            $table->longText('body')->nullable();
+            $table->longText('footer')->nullable();
+            $table->integer('id_category');
             $table->integer('user_created')->nullable();
             $table->integer('user_updated')->nullable();
             $table->integer('user_deleted')->nullable();
-            $table->softDeletes('deleted_at');
+            $table->softDeletes();
             $table->timestamps();
-          
         });
     }
 
@@ -30,10 +34,6 @@ class MenuPersetujuanTable extends Migration
      */
     public function down()
     {
-        
-        Schema::table('menu_persetujuan', function (Blueprint $table) {
-            $table->dropColumn(['user_created', 'user_updated', 'user_deleted', 'deleted_at', 'created_at', 'updated_at']);
-        });
-        
+        Schema::dropIfExists('surat_template');
     }
 }

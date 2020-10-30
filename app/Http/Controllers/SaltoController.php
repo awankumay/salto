@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Regencies;
+use App\User;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Hash;
@@ -50,6 +51,23 @@ class SaltoController extends Controller
 
     public function editprofile()
     {
+        return view('salto.profile');
+    }
+
+    public function gettaruna(Request $request)
+    {
+        $search =$request->get('search');
+        $getTaruna = User::role('Taruna')->where('name', 'like', "%$search%")->get();
         
+        if (!empty($getTaruna)) {
+            $list = array();
+            foreach ($getTaruna as $key => $row) {
+                $list[$key]['id'] = $row->id;
+                $list[$key]['text'] = $row->name; 
+            }
+            echo json_encode($list);
+        } else {
+            echo "hasil kosong";
+        }
     }
 }

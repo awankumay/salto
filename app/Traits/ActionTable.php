@@ -38,6 +38,7 @@ trait ActionTable
                 $totalFiltered = $model->GetCountDataFilter($search);
             }
         }
+        $nama_model = class_basename($model);
         $data = array();
         if(!empty($dataModel))
         {
@@ -48,13 +49,17 @@ trait ActionTable
                 }else{
                     $edit    = '';
                 }
-                $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this)' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
+                $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this,\"$nama_model\")' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
                 for ($i=0; $i < count($columns); $i++) {
                     if($columns[$i]=='created_at'){
                         $nestedData['created_at'] = date('d-m-Y H:i',strtotime($val->created_at));
-                    }else if($columns[$i]=='updated_at'){
+                    }else if($columns[$i]=='date_created'){
+                        $nestedData['date_created'] = $val->date_created ? date('d-m-Y H:i',strtotime($val->date_created)) : '';
+                    }
+                    else if($columns[$i]=='updated_at'){
                         $nestedData['updated_at'] = $val->updated_at ? date('d-m-Y H:i',strtotime($val->updated_at)) : '';
-                    }else if($columns[$i]=='deleted_at'){
+                    }
+                    else if($columns[$i]=='deleted_at'){
                         $nestedData['deleted_at'] = $val->deleted_at ? date('d-m-Y H:i',strtotime($val->deleted_at)) : '';
                     }else if($columns[$i]=='excerpt'){
                         $nestedData['excerpt'] = Str::limit($val->excerpt, 30);

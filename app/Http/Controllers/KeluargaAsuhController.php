@@ -46,7 +46,7 @@ class KeluargaAsuhController extends Controller
                 4=>'updated_at',
             );
             $model  = New KeluargaAsuh();
-            return $this->ActionTableWithDetail($columns, $model, $request, 'keluarga-asuh.edit', 'keluarga-asuh.show', 'data-keluarga-asuh-edit', 'data-keluarga-asuh-delete', 'data-keluarga-asuh-edit');
+            return $this->ActionTableWithDetail($columns, $model, $request, 'keluarga-asuh.edit', 'keluarga-asuh.show', 'data-keluarga-asuh-edit', 'data-keluarga-asuh-delete', 'data-keluarga-asuh-list');
         }
         return view('keluarga-asuh.index');
     }
@@ -111,7 +111,9 @@ class KeluargaAsuhController extends Controller
     public function show($id)
     {
         $keluargaAsuh = KeluargaAsuh::find($id);
-        return view('keluarga-asuh.show',compact('keluargaAsuh'));
+        $pembina      = User::role('Pembina')->pluck('name', 'id')->all();
+        $waliasuh     = User::role('Wali Asuh')->pluck('name', 'id')->all();
+        return view('keluarga-asuh.show',compact('keluargaAsuh', 'pembina', 'waliasuh'));
     }
 
     public function destroy($id)

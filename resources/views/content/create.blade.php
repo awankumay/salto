@@ -56,6 +56,14 @@
                         </span>
                     </div>
                     <div class="form-group col-md-12">
+                        <strong>Headline:</strong><br>
+                        {!! Form::radio('headline', 1, array('class' => 'form-control form-control-sm')) !!} Ya &nbsp;
+                        {!! Form::radio('headline', 0, array('class' => 'form-control form-control-sm')) !!} Tidak &nbsp;
+                        <span class="form-text {{isset($errors->messages()['headline']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['headline']) ? $errors->messages()['headline'][0] .'*' : 'Pilih salah satu *'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12">
                         <strong>Status:</strong><br>
                         {!! Form::radio('status', 1, array('class' => 'form-control form-control-sm')) !!} Aktif &nbsp;
                         {!! Form::radio('status', 0, array('class' => 'form-control form-control-sm')) !!} Tidak Aktif &nbsp;
