@@ -24,6 +24,8 @@
                             <th style="width:5%;">ID</th>
                             <th style="width:15%;">Judul</th>
                             <th style="width:25%;">Status</th>
+                            <th style="width:20%;">Headline</th>
+                            <th style="width:20%;">Image</th>
                             <th style="width:20%;">Ringkasan</th>
                             <th style="width:5%;">Content</th>
                             <th style="width:25%;">Create</th>
@@ -44,9 +46,6 @@
         let table = $('.post-table').DataTable({
             processing: true,
             serverSide: true,
-            rowReorder: {
-                selector: 'td:nth-child(2)'
-            },
             responsive: true,
             columnDefs: [ { type: 'date', 'targets': [3] } ],
             order: [[ 3, 'desc' ]],
@@ -85,7 +84,7 @@
                 {data: 'content', name: 'content'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'updated_at', name: 'updated_at'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false}
             ]
         });
         $(".dataTables_filter input")

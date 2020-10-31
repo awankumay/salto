@@ -50,9 +50,11 @@ class ContentController extends Controller
                 2=>'excerpt',
                 3=>'content',
                 4=>'status',
-                5=>'user_created',
-                6=>'created_at',
-                7=>'updated_at'
+                5=>'headline',
+                6=>'photo',
+                7=>'user_created',
+                8=>'created_at',
+                9=>'updated_at'
             );
             $model  = New Content();
             return $this->ActionTable($columns, $model, $request, 'content.edit', 'berita-edit', 'berita-delete');
