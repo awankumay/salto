@@ -8,7 +8,7 @@
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Keluarga Asuh</div>
+                <div class="p-2">Surat Izin</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('surat-izin-create'))
                         <a href="{{route('surat-izin.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Surat Izin</a>
@@ -42,6 +42,7 @@
         var table = $('.surat-izin-table').DataTable({
             processing: true,
             serverSide: true,
+            order: [[ 3, "ASC" ]],
   /*           rowReorder: {
                 selector: 'td:nth-child(2)'
             }, */
@@ -51,8 +52,18 @@
                 {data: 'id', name: 'id'},
                 {data: 'name', name: 'name'},
                 {data: 'nama_menu', name: 'nama_menu', orderable: false, searchable: false},
-                {data: 'status', name: 'status', orderable: false, searchable: false},
-                {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
+                {data: 'status', name: 'status',
+                    render:function(row, type, val, meta){
+                        if(val.status==1){
+                            return '<span class="badge badge-success">Disetujui</span>';
+                        }else if(val.status==2){
+                            return '<span class="badge badge-info">Dibatalkan</span>';
+                        }else{
+                            return '<span class="badge badge-info">Belum Disetujui</span>';
+                        }
+                    }, orderable: false, searchable: false
+                },
+                {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

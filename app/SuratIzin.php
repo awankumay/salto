@@ -206,10 +206,6 @@ class SuratIzin extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
@@ -218,10 +214,6 @@ class SuratIzin extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
@@ -232,10 +224,6 @@ class SuratIzin extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
@@ -245,10 +233,6 @@ class SuratIzin extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
@@ -258,10 +242,6 @@ class SuratIzin extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
                             ->count();
         }
         return $data;
