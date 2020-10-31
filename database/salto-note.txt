@@ -1,0 +1,75 @@
+table yang sama 
+
+tb_orangtua, tb_pemakaman, tb_pernikahan_saudara, tb_tugas
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 1 as id_category, a.status, 3075, 3075, concat(SUBSTRING(a.mulai, 7,10),'',SUBSTRING(a.mulai, 3,5),'',SUBSTRING(a.mulai, 1,1)), concat(SUBSTRING(a.mulai, 7,10),'',SUBSTRING(a.mulai, 3,5),'',SUBSTRING(a.mulai, 1,1)),
+b.id, concat(SUBSTRING(a.mulai, 7,10),'',SUBSTRING(a.mulai, 3,5),'',SUBSTRING(a.mulai, 1,1))
+, a.status, a.status, concat(SUBSTRING(a.mulai, 7,10),'',SUBSTRING(a.mulai, 3,5),'',SUBSTRING(a.mulai, 1,1)),
+concat(SUBSTRING(a.mulai, 7,10),'',SUBSTRING(a.mulai, 3,5),'',SUBSTRING(a.mulai, 1,1))
+FROM tb_izin_sakit a
+join users b on a.stb = b.stb
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 8 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.mulai
+FROM tb_kegiatan a
+join users b on a.stb = b.stb
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 2 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.mulai
+FROM tb_keluar_kampus a
+join users b on a.stb = b.stb
+where a.mulai=a.akhir
+and LENGTH(a.mulai)=10
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 6 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.mulai
+FROM tb_orangtua a
+join users b on a.stb = b.stb
+where a.mulai=a.akhir
+and LENGTH(a.mulai)=10
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 5 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.mulai
+FROM tb_orangtua a
+join users b on a.stb = b.stb
+where a.mulai=a.akhir
+and LENGTH(a.mulai)=10
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 4 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.akhir
+FROM tb_pernikahan_saudara a
+join users b on a.stb = b.stb
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 3 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.akhir
+FROM tb_training a
+join users b on a.stb = b.stb
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 7 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.akhir
+FROM tb_tugas a
+join users b on a.stb = b.stb
+
+INSERT into surat_header (id_user, id_surat, id_category, status, 
+user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
+user_created, created_at, status_level_1, status_level_2, start, end)
+SELECT b.id, a.id, 9 as id_category, a.status, 3075, 3075, a.mulai, a.mulai, b.id, a.mulai, a.status, a.status, a.mulai, a.akhir
+FROM tb_pesiar a
+join users b on a.stb = b.stb

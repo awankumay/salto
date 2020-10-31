@@ -106,7 +106,7 @@
                 @if(auth()->user()->hasPermissionTo('surat-izin-orang-tua-sakit-list'))
                 <hr class="sidebar-divider">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('home')}}"> <i class="fas fa-newspaper"></i> <span>Surat Izin</span></a>
+                    <a class="nav-link" href="{{route('surat-izin.index')}}"> <i class="fas fa-newspaper"></i> <span>Surat Izin</span></a>
                 </li>
                 @endif
                 @if(auth()->user()->hasPermissionTo('prestasi-taruna-list') || auth()->user()->hasPermissionTo('hukuman-dinas-list') || auth()->user()->hasPermissionTo('pengasuhan-daring-list') || auth()->user()->hasPermissionTo('surat-keterangan-list') || auth()->user()->hasPermissionTo('absensi-list') || auth()->user()->hasPermissionTo('jurnal-harian-list'))

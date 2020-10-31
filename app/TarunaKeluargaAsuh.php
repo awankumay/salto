@@ -41,13 +41,13 @@ class TarunaKeluargaAsuh extends Model
     {
         $params['id'] = $id;
         $params['search'] = $search;
-        $data = TarunaKeluargaAsuh::join('keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'keluarga_asuh.id')
-                    ->join('users', 'users.id', '=', 'waliasuh_keluarga_asuh.waliasuh_id')
-                    ->select('waliasuh_keluarga_asuh.id', 'users.name', 'users.phone', 'users.whatsapp', 'waliasuh_keluarga_asuh.created_at as date_created')
+        $data = TarunaKeluargaAsuh::join('keluarga_asuh', 'taruna_keluarga_asuh.keluarga_asuh_id', '=', 'keluarga_asuh.id')
+                    ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
+                    ->select('taruna_keluarga_asuh.id', 'users.name', 'users.phone', 'users.whatsapp', 'taruna_keluarga_asuh.created_at as date_created')
                     ->where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
-                        ->where('waliasuh_keluarga_asuh.keluarga_asuh_id', $params['id']);
+                        ->where('taruna_keluarga_asuh.keluarga_asuh_id', $params['id']);
                     })
                     ->offset($start)
                     ->limit($limit)
@@ -60,13 +60,13 @@ class TarunaKeluargaAsuh extends Model
     public function GetCountDataFilter($search, $id){
         $params['id'] = $id;
         $params['search'] = $search;
-        $data = TarunaKeluargaAsuh::join('keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'keluarga_asuh.id')
-                    ->join('users', 'users.id', '=', 'waliasuh_keluarga_asuh.waliasuh_id')
-                    ->select('waliasuh_keluarga_asuh.id', 'users.name', 'users.phone', 'users.whatsapp')
+        $data = TarunaKeluargaAsuh::join('keluarga_asuh', 'taruna_keluarga_asuh.keluarga_asuh_id', '=', 'keluarga_asuh.id')
+                    ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
+                    ->select('taruna_keluarga_asuh.id', 'users.name', 'users.phone', 'users.whatsapp')
                     ->Where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
-                        ->where('waliasuh_keluarga_asuh.keluarga_asuh_id', $params['id']);
+                        ->where('taruna_keluarga_asuh.keluarga_asuh_id', $params['id']);
                     })
                     ->count();
 

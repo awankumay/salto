@@ -45,17 +45,16 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $columns = array(
-                0=>'stb',
+                0=>'id',
                 1=>'name',
-                2=>'email',
-                3=>'phone',
-                4=>'whatsapp',
-                5=>'address',
+                2=>'stb',
+                3=>'role',
+                4=>'photo',
+                5=>'status',
                 6=>'sex',
-                7=>'status',
-                8=>'photo',
-                9=>'created_at',
-                10=>'updated_at'
+                7=>'phone',
+                8=>'whatsapp',
+                9=>'email'
             );
             $model  = New User();
             return $this->ActionTable($columns, $model, $request, 'user.edit', 'user-edit', 'user-delete');

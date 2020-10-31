@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('pembina-keluarga-asuh', 'PembinaKeluargaAsuhController');
         Route::resource('waliasuh-keluarga-asuh', 'WaliasuhKeluargaAsuhController');
         Route::resource('taruna-keluarga-asuh', 'TarunaKeluargaAsuhController');
+        Route::resource('surat-izin', 'SuratIzinController');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');

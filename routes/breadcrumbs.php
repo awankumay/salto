@@ -115,6 +115,22 @@ Breadcrumbs::register('keluarga-asuh.show', function ($breadcrumbs, $keluargaAsu
     $breadcrumbs->parent('keluarga-asuh');
     $breadcrumbs->push($keluargaAsuh->name, route('keluarga-asuh.show', $keluargaAsuh->id));
 });
+Breadcrumbs::register('surat-izin', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Surat Izin', route('surat-izin.index'));
+});
+Breadcrumbs::register('surat-izin.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('surat-izin');
+    $breadcrumbs->push('Tambah Surat Izin', route('surat-izin.create'));
+});
+Breadcrumbs::register('surat-izin.edit', function ($breadcrumbs, $suratIzin) {
+    $breadcrumbs->parent('surat-izin');
+    $breadcrumbs->push($suratIzin->name, route('surat-izin.edit', $suratIzin->id));
+});
+Breadcrumbs::register('surat-izin.show', function ($breadcrumbs, $suratIzin) {
+    $breadcrumbs->parent('surat-izin');
+    $breadcrumbs->push($suratIzin->name, route('surat-izin.show', $suratIzin->id));
+});
 
 
 ?>

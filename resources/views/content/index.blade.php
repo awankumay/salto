@@ -63,6 +63,24 @@
                             }
                         }
                 },
+                {data: 'headline', name: 'headline',
+                    render:function(data){
+                            if(data==1){
+                                return '<span class="badge badge-success">Ya</span>';
+                            }else{
+                                return '<span class="badge badge-warning">Tidak</span>';
+                            }
+                        }
+                },
+                {data: 'photo', name: 'photo',
+                    render:function(row, type, val, meta){
+                        if(val.photo){
+                            return "<img src=\"" + "/storage/{{config('app.postImagePath')}}/"+val.photo+ "\" height=\"50\"/>";
+                        }else{
+                            return "-";
+                        }
+                    }, orderable: false, searchable: false
+                },
                 {data: 'excerpt', name: 'excerpt'},
                 {data: 'content', name: 'content'},
                 {data: 'created_at', name: 'created_at'},

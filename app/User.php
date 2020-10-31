@@ -9,6 +9,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use DB;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -47,39 +48,99 @@ class User extends Authenticatable
 
     public function GetCount()
     {
-        return User::count();
+        $currentUser = Auth::user();
+        if ($currentUser->getRoleNames()[0]=='Super Admin') {
+            return User::count();
+        }else{
+            return User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->where('model_has_roles.role_id', '!=', 1)->count();
+        }
+        
     }
 
     public function GetCurrentData($start, $limit, $order, $dir)
     {
-        $data = User::offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
-                            ->get();
+        $currentUser = Auth::user();
+        if ($currentUser->getRoleNames()[0]=='Super Admin') {
+            $data = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                        ->select('users.id', 'users.name', 'roles.name as role', 'users.photo', 'users.status', 'users.sex', 'users.stb', 'users.phone', 'users.whatsapp', 'users.email')
+                        ->offset($start)
+                        ->limit($limit)
+                        ->orderBy($order,$dir)
+                        ->get();
+        }else{
+            $data = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                        ->where('model_has_roles.role_id', '!=', 1)
+                        ->select('users.id', 'users.name', 'roles.name as role', 'users.photo', 'users.status', 'users.sex', 'users.stb', 'users.phone', 'users.whatsapp', 'users.email')
+                        ->offset($start)
+                        ->limit($limit)
+                        ->orderBy($order,$dir)
+                        ->get();
+        }
+       
+       
         return $data;
     }
 
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
-        $data = User::where('name','LIKE',"%{$search}%")
-                            ->orWhere('phone', 'LIKE',"%{$search}%")
-                            ->orWhere('whatsapp', 'LIKE',"%{$search}%")
-                            ->orWhere('email', 'LIKE',"%{$search}%")
-                            ->orWhere('stb', 'LIKE',"%{$search}%")
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy($order,$dir)
-                            ->get();
+        $currentUser = Auth::user();
+        if ($currentUser->getRoleNames()[0]=='Super Admin') {
+            $data = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                        ->where('users.name','LIKE',"%{$search}%")
+                        ->orWhere('users.phone', 'LIKE',"%{$search}%")
+                        ->orWhere('users.whatsapp', 'LIKE',"%{$search}%")
+                        ->orWhere('users.email', 'LIKE',"%{$search}%")
+                        ->orWhere('users.stb', 'LIKE',"%{$search}%")
+                        ->select('users.id', 'users.name', 'roles.name as role', 'users.photo', 'users.status', 'users.sex', 'users.stb', 'users.phone', 'users.whatsapp', 'users.email')
+                        ->offset($start)
+                        ->limit($limit)
+                        ->orderBy($order,$dir)
+                        ->get();
+        }else{
+            $data = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->join('roles', 'roles.id', '=', 'model_has_roles.role_id')
+                        ->where('model_has_roles.role_id', '!=', 1)
+                        ->Where(function($q) use ($search) {
+                            $q->where('users.name','LIKE',"%{$search}%")
+                            ->orWhere('users.phone', 'LIKE',"%{$search}%")
+                            ->orWhere('users.whatsapp', 'LIKE',"%{$search}%")
+                            ->orWhere('users.email', 'LIKE',"%{$search}%")
+                            ->orWhere('users.stb', 'LIKE',"%{$search}%");
+                        })
+                        ->select('users.id', 'users.name', 'roles.name as role', 'users.photo', 'users.status', 'users.sex', 'users.stb', 'users.phone', 'users.whatsapp', 'users.email')
+                        ->offset($start)
+                        ->limit($limit)
+                        ->orderBy($order,$dir)
+                        ->get();
+        }
         return $data;
     }
 
     public function GetCountDataFilter($search){
-        $data = User::where('name','LIKE',"%{$search}%")
-                            ->orWhere('phone', 'LIKE',"%{$search}%")
-                            ->orWhere('whatsapp', 'LIKE',"%{$search}%")
-                            ->orWhere('email', 'LIKE',"%{$search}%")
-                            ->orWhere('stb', 'LIKE',"%{$search}%")
+        $currentUser = Auth::user();
+        if ($currentUser->getRoleNames()[0]=='Super Admin') {
+            $data = User::where('name','LIKE',"%{$search}%")
+                            ->orWhere('users.phone', 'LIKE',"%{$search}%")
+                            ->orWhere('users.whatsapp', 'LIKE',"%{$search}%")
+                            ->orWhere('users.email', 'LIKE',"%{$search}%")
+                            ->orWhere('users.stb', 'LIKE',"%{$search}%")
                             ->count();
+        }else{
+            $data = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                        ->where('model_has_roles.role_id', '!=', 1)
+                        ->Where(function($q) use ($search) {
+                            $q->where('users.name','LIKE',"%{$search}%")
+                            ->orWhere('users.phone', 'LIKE',"%{$search}%")
+                            ->orWhere('users.whatsapp', 'LIKE',"%{$search}%")
+                            ->orWhere('users.email', 'LIKE',"%{$search}%")
+                            ->orWhere('users.stb', 'LIKE',"%{$search}%");
+                        })
+                        ->count();
+        }
         return $data;
     }
 

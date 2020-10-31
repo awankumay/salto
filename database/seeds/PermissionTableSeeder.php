@@ -99,7 +99,11 @@ class PermissionTableSeeder extends Seeder
           'role-create',
           'role-edit',
           'role-delete',
-
+          
+          'surat-izin-list',
+          'surat-izin-create',
+          'surat-izin-edit',
+          'surat-izin-delete',
           'surat-izin-orang-tua-sakit-list',
           'surat-izin-orang-tua-sakit-create',
           'surat-izin-orang-tua-sakit-edit',
@@ -276,6 +280,7 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-edit',
                     'pengaduan-delete',
 
+                    'surat-izin-list',
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-meninggal-list',
                     'surat-izin-pernikahan-saudara-list',
@@ -334,6 +339,7 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-edit',
                     'pengaduan-delete',
 
+                    'surat-izin-list',
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-meninggal-list',
                     'surat-izin-pernikahan-saudara-list',
@@ -382,6 +388,8 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-create',
                     'pengaduan-edit',
                     'pengaduan-delete',
+
+                    'surat-izin-list',
 
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-sakit-approve',
@@ -451,6 +459,7 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-edit',
                     'pengaduan-delete',
 
+                    'surat-izin-list',
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-sakit-approve',
                     'surat-izin-orang-tua-meninggal-list',
@@ -496,6 +505,10 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-edit',
                     'pengaduan-delete',
 
+                    'surat-izin-list',
+                    'surat-izin-create',
+                    'surat-izin-edit',
+                    'surat-izin-delete',
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-meninggal-list',
                     'surat-izin-pernikahan-saudara-list',
@@ -573,6 +586,7 @@ class PermissionTableSeeder extends Seeder
                     'pengaduan-edit',
                     'pengaduan-delete',
 
+                    'surat-izin-list',
                     'surat-izin-orang-tua-sakit-list',
                     'surat-izin-orang-tua-sakit-create',
                     'surat-izin-orang-tua-sakit-edit',
