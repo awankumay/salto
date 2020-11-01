@@ -5,10 +5,10 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
+use App\Content;
 use App\Grade;
 use App\Provinces;
 use App\Regencies;
-use App\Content;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
@@ -46,6 +46,24 @@ class LookController extends BaseController
     {
         $data = Regencies::where('province_id', $request->id)->pluck('name','id')->all();
         return $this->sendResponse($data, 'regencies load successfully.');
+
+    }
+
+    public function getslider(Request $request)
+    {
+        $data=[];
+        $data = Content::where('status', 1)->where('headline', 1)->select('id','photo')->get();
+        $data['path_image'] = url('/')."/storage/".config('app.postImagePath')."/";
+        return $data;
+
+    }
+
+    public function getsliderdetail(Request $request)
+    {
+        $data=[];
+        $data = Content::where('status', 1)->where('headline', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
+        $data['path_image'] = url('/')."/storage/".config('app.postImagePath')."/";
+        return $data;
 
     }
 
