@@ -51,19 +51,23 @@ class LookController extends BaseController
 
     public function getslider(Request $request)
     {
-        $data=[];
+        $result=[];
         $data = Content::where('status', 1)->where('headline', 1)->select('id','photo')->get();
-        $data['path_image'] = url('/')."/storage/".config('app.postImagePath')."/";
-        return $data;
+        foreach ($data as $key => $value) {
+            $result[]=[
+                'id'=>$value->id,
+                'photo'=>url('/')."/storage/".config('app.postImagePath')."/".$value->photo
+            ];
+        }
+        return $this->sendResponse($result, 'slider load successfully.');
 
     }
 
     public function getsliderdetail(Request $request)
     {
-        $data=[];
         $data = Content::where('status', 1)->where('headline', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
-        $data['path_image'] = url('/')."/storage/".config('app.postImagePath')."/";
-        return $data;
+        $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
+        return $this->sendResponse($data, 'detail slider load successfully.');
 
     }
 
