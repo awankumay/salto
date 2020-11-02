@@ -84,7 +84,8 @@ class ContentController extends Controller
             'post_categories_id' => 'required',
             'content' => 'required',
             'status' => 'required',
-            'file' => 'required|mimes:jpeg,bmp,png|max:300'
+            'file' => 'required|mimes:jpeg,bmp,png|max:300',
+            'file_lampiran' => 'nullable|mimes:pdf|max:1024'
         ]);
         $detail=$request->input('content');
         $dom = new \DomDocument();
@@ -116,6 +117,16 @@ class ContentController extends Controller
             }
         }
 
+        if($request->file_lampiran){
+
+            $doc = $this->UploadImage($request->file_lampiran, config('app.documentImagePath'));
+            if($doc==false){
+                \Session::flash('error', 'file upload failure');
+                return redirect()->route('content.create');
+
+            }
+        }
+
        try {
 
             DB::beginTransaction();
@@ -128,7 +139,12 @@ class ContentController extends Controller
                 $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content'));
+                Arr::forget($input, array('content', 'file_lampiran'));
+                if(isset($doc)){
+                    if($doc!=false){
+                        $input['file']=$doc;
+                    }
+                }
                 $input['content']=$detail;
                 Content::create($input);
 
@@ -140,6 +156,9 @@ class ContentController extends Controller
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.postImagePath'));
+                }
+                if($doc!=false){
+                    $this->DeleteImage($doc, config('app.documentImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
             @dd($th->getMessage());
@@ -156,7 +175,8 @@ class ContentController extends Controller
             'post_categories_id' => 'required',
             'content' => 'required',
             'status' => 'required',
-            'file' => 'mimes:jpeg,bmp,png|max:300'
+            'file' => 'mimes:jpeg,bmp,png|max:300',
+            'file_lampiran' => 'nullable|mimes:pdf|max:1024'
         ]);
         $detail=$request->input('content');
         libxml_use_internal_errors(true);
@@ -191,6 +211,15 @@ class ContentController extends Controller
             }
         }
 
+        if($request->file_lampiran){
+
+            $doc = $this->UploadImage($request->file_lampiran, config('app.documentImagePath'));
+            if($doc==false){
+                \Session::flash('error', 'file upload failure');
+                return redirect()->route('content.create');
+            }
+        }
+
        try {
 
             DB::beginTransaction();
@@ -202,11 +231,17 @@ class ContentController extends Controller
                         $this->DeleteImage($content->file, config('app.postImagePath'));
                     }
                 }
+                if(isset($doc)){
+                    if($doc!=false){
+                        $request->request->add(['file'=> $doc]);
+                        $this->DeleteImage($content->file_lampiran, config('app.documentImagePath'));
+                    }
+                }
                 $request->request->add(['slug'=> $slug]);
                 $request->request->add(['user_updated'=> Auth::user()->id]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content'));
+                Arr::forget($input, array('content', 'file_lampiran'));
                 $input['content']=$detail;
 
                 $content->update($input);
@@ -219,6 +254,9 @@ class ContentController extends Controller
                 if($image!=false){
                     $this->DeleteImage($image, config('app.postImagePath'));
                 }
+                if($doc!=false){
+                    $this->DeleteImage($doc, config('app.documentImagePath'));
+                }
             \Session::flash('error','Terjadi kesalahan server');
             return redirect()->route('content.create');
         }
@@ -230,6 +268,7 @@ class ContentController extends Controller
         try {
             DB::beginTransaction();
                 $this->DeleteImage($content->photo, config('app.postImagePath'));
+                $this->DeleteImage($content->file, config('app.documentImagePath'));
                 $content->user_deleted = Auth::user()->id;
                 $content->delete();
             DB::commit();
@@ -248,16 +287,26 @@ class ContentController extends Controller
 
         $content = Content::find($id);
         try {
-            $deleteFile = $this->DeleteImage($image, config('app.postImagePath'));
+
             DB::beginTransaction();
+            if(!empty($image)){
+                $deleteFile = $this->DeleteImage($image, config('app.postImagePath'));
                 if($deleteFile == true){
                     $input = ['photo'=>NULL];
                     $content->update($input);
                 }
+            }else{
+                $deleteFile = $this->DeleteImage($image, config('app.documentImagePath'));
+                if($deleteFile == true){
+                    $input = ['file'=>NULL];
+                    $content->update($input);
+                }
+            }
+                
             DB::commit();
             return true;
         } catch (\Throwable $th) {
-                $input = ['photo'=>NULL];
+                $input = ['photo'=>NULL, 'file'=>NULL];
                 $content->update($input);
             DB::rollback();
             return false;

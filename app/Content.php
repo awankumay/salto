@@ -23,7 +23,8 @@ class Content extends Model
         'author',
         'user_created',
         'user_updated',
-        'date_published'
+        'date_published',
+        'file'
     ];
     protected $dates = ['deleted_at'];
 

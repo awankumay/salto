@@ -57,8 +57,8 @@ class SuratIzinController extends Controller
 
     public function create()
     {
-        $postCategory = PostCategory::pluck('name','id')->all();
-        return view('content.create', compact('postCategory'));
+        //$postCategory = PostCategory::pluck('name','id')->all();
+        return view('surat-izin.create');
     }
 
     public function edit($id)

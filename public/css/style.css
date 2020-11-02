@@ -92,6 +92,9 @@ table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td.dtr-control:before,
 
     background-color: #e14536 !important;
 }
+.lampiran{
+    display:none;
+}
 /*
 .cards tbody tr {
     float: left;

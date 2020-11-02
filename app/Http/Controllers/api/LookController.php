@@ -63,14 +63,6 @@ class LookController extends BaseController
 
     }
 
-    public function getsliderdetail(Request $request)
-    {
-        $data = Content::where('status', 1)->where('headline', 1)->where('id_category', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
-        $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
-        return $this->sendResponse($data, 'detail slider load successfully.');
-
-    }
-
     public function getberitadetail(Request $request)
     {
         $data = Content::where('status', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
@@ -85,9 +77,9 @@ class LookController extends BaseController
         $order  = !empty($request->order) ? $request->order : 'id';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
         $offset = ($page>1) ? ($page * $limit) - $limit : 0; 
-
+        $id_category = !empty($request->id_category) ? $request->id_category : 1;
         $data = Content::where('status', 1)
-                    ->where('post_categories_id', 1)
+                    ->where('post_categories_id', $id_category)
                     ->select('id','photo','title','excerpt','content','created_at')
                     ->offset($offset)
                     ->limit($limit)
@@ -95,7 +87,7 @@ class LookController extends BaseController
                     ->get();
 
         $count = Content::where('status', 1)
-                    ->where('post_categories_id', 1)
+                    ->where('post_categories_id', $id_category)
                     ->count();
         $result =[];
         foreach ($data as $key => $value) {

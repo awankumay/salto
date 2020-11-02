@@ -84,7 +84,7 @@ class SuratIzin extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.user_created')
-                            ->where('user_created', $currentUser->id)
+                            ->where('surat_header.user_created', $currentUser->id)
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
                             ->offset($start)
                             ->limit($limit)
