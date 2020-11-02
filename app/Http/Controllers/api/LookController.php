@@ -110,6 +110,7 @@ class LookController extends BaseController
                     'title'=>$value->title,
                     'excerpt'=>$value->excerpt,
                     'content'=>$value->content,
+                    'created_at'=>date_format($value->created_at, 'Y-m-d H:i'),
                     'file'=> url('/')."/storage/".config('app.documentImagePath')."/".$value->file
                 ];
             }else{
@@ -117,6 +118,7 @@ class LookController extends BaseController
                     'id'=>$value->id,
                     'title'=>$value->title,
                     'excerpt'=>$value->excerpt,
+                    'created_at'=>date_format($value->created_at, 'Y-m-d H:i'),
                     'photo'=> url('/')."/storage/".config('app.postImagePath')."/".$value->photo
                 ];
             }
