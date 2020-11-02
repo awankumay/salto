@@ -72,16 +72,16 @@ class LookController extends BaseController
     }
 
     public function getberita(Request $request){
-        $limit  = 10;
-        $page   = !empty($request->page) ? $request->page : 1;
+        $limit  = 2;
+        $lastId = !empty($request->lastId) ? $request->lastId : 1;
         $order  = !empty($request->order) ? $request->order : 'id';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
-        $offset = ($page>1) ? ($page * $limit) - $limit : 0; 
+
         $id_category = !empty($request->id_category) ? $request->id_category : 1;
         $data = Content::where('status', 1)
                     ->where('post_categories_id', $id_category)
                     ->select('id','photo','title','excerpt','content','created_at')
-                    ->offset($offset)
+                    ->offset($lastId)
                     ->limit($limit)
                     ->orderBy($order,$dir)
                     ->get();
