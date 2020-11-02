@@ -48,7 +48,7 @@
             serverSide: true,
             responsive: true,
             columnDefs: [ { type: 'date', 'targets': [3] } ],
-            order: [[ 3, 'desc' ]],
+            order: [[ 0, 'desc' ]],
             ajax: "{{ route('content.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
