@@ -72,34 +72,63 @@ class LookController extends BaseController
     }
 
     public function getberita(Request $request){
-        $limit  = 2;
-        $lastId = !empty($request->lastId) ? $request->lastId : 1;
+        $limit  = 5;
+        $id_category = !empty($request->id_category) ? $request->id_category : 0;
+        $lastId = !empty($request->lastId) ? $request->lastId : 0;
         $order  = !empty($request->order) ? $request->order : 'id';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
-
-        $id_category = !empty($request->id_category) ? $request->id_category : 1;
-        $data = Content::where('status', 1)
+   
+        if($lastId==0){
+            $data = Content::where('status', 1)
+                        ->where('post_categories_id', $id_category)
+                        ->select('id','photo','title','excerpt','content','created_at')
+                        ->limit($limit)
+                        ->orderBy($order,$dir)
+                        ->get();
+            $count = Content::where('status', 1)
+                        ->where('post_categories_id', $id_category)
+                        ->count();
+        }else{
+            $data = Content::where('status', 1)
+                    ->where('id', '<', $lastId)
                     ->where('post_categories_id', $id_category)
                     ->select('id','photo','title','excerpt','content','created_at')
-                    ->offset($lastId)
                     ->limit($limit)
                     ->orderBy($order,$dir)
                     ->get();
 
-        $count = Content::where('status', 1)
+            $count = Content::where('status', 1)
+                    ->where('id', '<', $lastId)
                     ->where('post_categories_id', $id_category)
                     ->count();
+        }
         $result =[];
         foreach ($data as $key => $value) {
-            $result['berita'][]= [ 
-                'id'=>$value->id,
-                'title'=>$value->title,
-                'excerpt'=>$value->excerpt,
-                'photo'=> url('/')."/storage/".config('app.postImagePath')."/".$value->photo
-            ];
+            if ($request->id_category==2) {
+                $result['berita'][]= [ 
+                    'id'=>$value->id,
+                    'title'=>$value->title,
+                    'excerpt'=>$value->excerpt,
+                    'content'=>$value->content,
+                    'file'=> url('/')."/storage/".config('app.documentImagePath')."/".$value->file
+                ];
+            }else{
+                $result['berita'][]= [ 
+                    'id'=>$value->id,
+                    'title'=>$value->title,
+                    'excerpt'=>$value->excerpt,
+                    'photo'=> url('/')."/storage/".config('app.postImagePath')."/".$value->photo
+                ];
+            }
         }
-        $result['info']['total_data']   = $count;
-        $result['info']['total_pages']  = ceil($count/$limit);
+
+        if($count > $limit){
+            $result['info']['lastId'] = $data[count($data)-1]->id;
+            $result['info']['loadmore'] = true;
+        }else{
+            $result['info']['lastId'] = 0;
+            $result['info']['loadmore'] = false;
+        }
         $result['info']['limit']  = $limit;
         return $this->sendResponse($result, 'berita load successfully.');
     }
