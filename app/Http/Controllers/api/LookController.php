@@ -65,10 +65,51 @@ class LookController extends BaseController
 
     public function getsliderdetail(Request $request)
     {
-        $data = Content::where('status', 1)->where('headline', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
+        $data = Content::where('status', 1)->where('headline', 1)->where('id_category', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
         $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
         return $this->sendResponse($data, 'detail slider load successfully.');
 
+    }
+
+    public function getberitadetail(Request $request)
+    {
+        $data = Content::where('status', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
+        $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
+        return $this->sendResponse($data, 'detail slider load successfully.');
+
+    }
+
+    public function getberita(Request $request){
+        $limit  = 10;
+        $page   = !empty($request->page) ? $request->page : 1;
+        $order  = !empty($request->order) ? $request->order : 'id';
+        $dir    = !empty($request->dir) ? $request->dir : 'DESC';
+        $offset = ($page>1) ? ($page * $limit) - $limit : 0; 
+
+        $data = Content::where('status', 1)
+                    ->where('post_categories_id', 1)
+                    ->select('id','photo','title','excerpt','content','created_at')
+                    ->offset($offset)
+                    ->limit($limit)
+                    ->orderBy($order,$dir)
+                    ->get();
+
+        $count = Content::where('status', 1)
+                    ->where('post_categories_id', 1)
+                    ->count();
+        $result =[];
+        foreach ($data as $key => $value) {
+            $result['berita'][]= [ 
+                'id'=>$value->id,
+                'title'=>$value->title,
+                'excerpt'=>$value->excerpt,
+                'photo'=> url('/')."/storage/".config('app.postImagePath')."/".$value->photo
+            ];
+        }
+        $result['info']['total_data']   = $count;
+        $result['info']['total_pages']  = ceil($count/$limit);
+        $result['info']['limit']  = $limit;
+        return $this->sendResponse($result, 'berita load successfully.');
     }
 
     public function setprofile(Request $request)
