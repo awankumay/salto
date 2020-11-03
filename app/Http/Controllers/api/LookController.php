@@ -77,7 +77,10 @@ class LookController extends BaseController
         $lastId = !empty($request->lastId) ? $request->lastId : 0;
         $order  = !empty($request->order) ? $request->order : 'id';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
-   
+        $total = Content::where('status', 1)
+                    ->where('post_categories_id', $id_category)
+                    ->count();
+        
         if($lastId==0){
             $data = Content::where('status', 1)
                         ->where('post_categories_id', $id_category)
@@ -127,9 +130,13 @@ class LookController extends BaseController
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;
             $result['info']['loadmore'] = true;
+            $result['info']['dataload'] = count($data);
+            $result['info']['totaldata'] = $total;
         }else{
             $result['info']['lastId'] = 0;
             $result['info']['loadmore'] = false;
+            $result['info']['dataload'] = count($data);
+            $result['info']['totaldata'] = $total;
         }
         $result['info']['limit']  = $limit;
         return $this->sendResponse($result, 'berita load successfully.');

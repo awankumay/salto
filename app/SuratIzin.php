@@ -83,8 +83,8 @@ class SuratIzin extends Authenticatable
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
-                            ->join('users', 'users.id', '=', 'surat_header.user_created')
-                            ->where('surat_header.user_created', $currentUser->id)
+                            ->join('users', 'users.id', '=', 'surat_header.id_user')
+                            ->where('surat_header.id_user', $currentUser->id)
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
                             ->offset($start)
                             ->limit($limit)
@@ -92,8 +92,8 @@ class SuratIzin extends Authenticatable
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
-                            ->join('users', 'users.id', '=', 'surat_header.user_created')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.user_created')
+                            ->join('users', 'users.id', '=', 'surat_header.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
@@ -103,8 +103,8 @@ class SuratIzin extends Authenticatable
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
-                            ->join('users', 'users.id', '=', 'surat_header.user_created')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.user_created')
+                            ->join('users', 'users.id', '=', 'surat_header.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
@@ -114,8 +114,8 @@ class SuratIzin extends Authenticatable
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
-                            ->join('users', 'users.id', '=', 'surat_header.user_created')
-                            ->join('orang_tua_taruna', 'taruna_id.id', '=', 'surat_header.user_created')
+                            ->join('users', 'users.id', '=', 'surat_header.id_user')
+                            ->join('orang_tua_taruna', 'taruna_id.id', '=', 'surat_header.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
                             ->offset($start)

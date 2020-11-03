@@ -51,9 +51,18 @@
                     </div>
                     <div class="form-group col-md-12">
                         <strong>Kategori:</strong>
-                        {!! Form::select('post_categories_id', $postCategory, $selectCategory, array('class' => 'form-control form-control-sm','single', 'placeholder'=>'Pilih kategori')) !!}
+                        {!! Form::select('post_categories_id', $postCategory, $selectCategory, array('id'=>'kategori', 'class' => 'form-control form-control-sm kategori','single', 'placeholder'=>'Pilih kategori')) !!}
                         <span class="form-text {{isset($errors->messages()['post_categories_id']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                             {{isset($errors->messages()['post_categories_id']) ? $errors->messages()['post_categories_id'][0] .'*' : 'Pilih salah satu *'}}
+                        </span>
+                    </div>
+                    <div class="form-group col-md-12 lampiran">
+                        <strong>File</strong><br>
+                        <input type="file" name="file_lampiran">
+                        <br>
+                        {{$content->file}}
+                        <span class="form-text {{isset($errors->messages()['file_lampiran']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['file_lampiran']) ? $errors->messages()['file_lampiran'][0] .'*' : 'Ukuran file < 1MB '}}
                         </span>
                     </div>
                     <div class="form-group col-md-12">
@@ -121,6 +130,21 @@ function deleteExist(fileName, id) {
     });
 }
 $(document).ready(function() {
+    $(window).on('load', function () {
+        var kategori = $('#kategori').val();
+        showFile(kategori);
+    });
+    $('#kategori').change(function () {
+       var kategori = $('#kategori').val();
+       showFile(kategori);
+    });
+    function showFile(kategori) {
+        if(kategori==2){
+            $('.lampiran').css('display', 'block');
+        }else{
+            $('.lampiran').css('display', 'none');
+        }
+    }
     $('.tagging').select2();
     setTimeout(() => {
         $('#summernote').summernote({

@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\SuratIzin;
+use App\Permission;
 use App\Traits\ActionTableWithDetail;
 use App\Traits\ImageTrait;
 use Hash;
@@ -58,7 +59,9 @@ class SuratIzinController extends Controller
     public function create()
     {
         //$postCategory = PostCategory::pluck('name','id')->all();
-        return view('surat-izin.create');
+        $suratIzin = Permission::pluck('name', 'id')->all();
+        $taruna = Permission::pluck('name', 'id')->all();
+        return view('surat-izin.create', compact('suratIzin', 'category'));
     }
 
     public function edit($id)
