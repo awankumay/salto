@@ -58,10 +58,9 @@ class SuratIzinController extends Controller
 
     public function create()
     {
-        //$postCategory = PostCategory::pluck('name','id')->all();
-        $suratIzin = Permission::pluck('name', 'id')->all();
-        $taruna = Permission::pluck('name', 'id')->all();
-        return view('surat-izin.create', compact('suratIzin', 'category'));
+        $currentUser    = Auth::user();
+        $suratIzin      = Permission::pluck('nama_menu', 'id')->all();
+        return view('surat-izin.create', compact('suratIzin', 'currentUser'));
     }
 
     public function edit($id)
@@ -75,71 +74,93 @@ class SuratIzinController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'title' => 'required|unique:posts,title',
-            'excerpt' => 'required',
-            'post_categories_id' => 'required',
-            'content' => 'required',
-            'status' => 'required',
-            'file' => 'required|mimes:jpeg,bmp,png|max:300'
+            'id_taruna' => 'required',
+            'start' => 'required',
+            'start_time' => 'required',
+            'end' => 'required',
+            'end_time' => 'required',
+            'keluhan'=>'required_if:id_category,1',
+            'keperluan'=>'required_if:id_category,2|required_if:id_category,3|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'tujuan'=>'required_if:id_category,3|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'pendamping'=>'required_if:id_category,2',
+            'pelatih'=>'required_if:id_category,3',
+            'nm_tc'=>'required_if:id_category,3',
+            'file' => 'required|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
-        $detail=$request->input('content');
-        $dom = new \DomDocument();
-        $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $images = $dom->getElementsByTagName('img');
 
-        foreach($images as $k => $img){
-            $data = $img->getAttribute('src');
-            list($type, $data) = explode(';', $data);
-            list(, $data)      = explode(',', $data);
-            $data = base64_decode($data);
-            $image_name= '/storage/'.config('app.postImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s')).$k.'.png';
-            $path = public_path() . $image_name;
-            file_put_contents($path, $data);
-            $img->removeAttribute('src');
-            $img->setAttribute('src', $image_name);
-        }
-
-        $detail = $dom->saveHTML();
-
-        $slug = Str::slug($request->title, '-');
         if($request->file){
-
-            $image = $this->UploadImage($request->file, config('app.postImagePath'));
+            $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
-                \Session::flash('error', 'image upload failure');
-                return redirect()->route('content.create');
+                \Session::flash('error', 'file upload failure');
+                return redirect()->route('surat-izin.create');
 
             }
         }
 
-       try {
+        $currentUser    = Auth::user();
 
+        try {
             DB::beginTransaction();
                 if(isset($image)){
                     if($image!=false){
                         $request->request->add(['photo'=> $image]);
                     }
                 }
-                $request->request->add(['slug'=> $slug]);
                 $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content'));
-                $input['content']=$detail;
-                Content::create($input);
+                $getUser = User::where('id', $request->id_user)->first();
+                if($currentUser->getRoleNames()[0]!='Taruna'){
+                    $input=['start'=>$request->start.' '.$request->start_time,
+                            'end'=>$request->end.' '.$request->end_time,
+                            'status'=>1,
+                            'status_level_1'=>1,
+                            'status_level_2'=>1,
+                            'reason_level_1'=>'Surat izin dibuatkan superadmin',
+                            'reason_level_2'=>'Surat izin dibuatkan superadmin',
+                            'user_approve_level_1'=>Auth::user()->id,
+                            'user_approve_level_2'=>Auth::user()->id,
+                            'date_approve_level_1'=>date('Y-m-d H:i:s'),
+                            'date_approve_level_2'=>date('Y-m-d H:i:s'),
+                            'grade'=>$getUser->grade,
+                            ];
+                }else{
+                    $input=['status'=>0,
+                            'status_level_1'=>0,
+                            'status_level_2'=>0,
+                            'grade'=>$getUser->grade,
+                            ];
+                    
+                }
+
+                $suratIzin = SuratIzin::create($input);
+
+                if($request->id_category==1){
+                    $dataDetail=['stb'=>$getUser->stb,
+                                 'keluhan'=>$request->keluhan,
+                                 'diagnosa'=>$request->diagnosa,
+                                 'rekomendasi'=>$request->rekomendasi,
+                                 'dokter'=>$request->dokter,
+                                 'status'=>$input['status'],
+                                 'user_created'=>$input['user_created'],
+                                 'created_at'=>$input['created_at'],
+                                 'id_surat'=>$suratIzin->id
+                                ];
+                    IzinSakit::create($dataDetail);
+                }
 
 
             DB::commit();
             \Session::flash('success','data berhasil ditambah.');
-            return redirect()->route('content.index');
+            return redirect()->route('surat-izin.index');
         } catch (\Throwable $th) {
             DB::rollBack();
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.postImagePath'));
+                    $this->DeleteImage($image, config('app.documentImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
             @dd($th->getMessage());
-            return redirect()->route('content.create');
+            return redirect()->route('surat-izin.create');
         }
 
     }

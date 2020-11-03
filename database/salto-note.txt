@@ -1,6 +1,6 @@
 table yang sama 
 
-tb_orangtua, tb_pemakaman, tb_pernikahan_saudara, tb_tugas
+tb_orangtua, tb_pemakaman, tb_pernikahan_saudara, tb_tugas, tb_kegiatan, tb_pesiar
 
 INSERT into surat_header (id_user, id_surat, id_category, status, 
 user_approve_level_1, user_approve_level_2, date_approve_level_1, date_approve_level_2,
