@@ -6,7 +6,17 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use App\User;
 use App\SuratIzin;
+use App\IzinSakit;
+use App\KeluarKampus;
+use App\TrainingCenter;
+use App\PernikahanSaudara;
+use App\PemakamanKeluarga;
+use App\OrangTuaSakit;
+use App\KegiatanDalam;
+use App\Tugas;
+use App\KegiatanPesiar;
 use App\Permission;
 use App\Traits\ActionTableWithDetail;
 use App\Traits\ImageTrait;
@@ -65,30 +75,32 @@ class SuratIzinController extends Controller
 
     public function edit($id)
     {
-        $postCategory = PostCategory::pluck('name','id')->all();
-        $content = Content::find($id);
-        $selectCategory =$content->post_categories_id;
-        return view('content.edit', compact('content', 'postCategory', 'selectCategory'));
+        $getSurat           = SuratIzin::find($id);
+        $currentUser        = Auth::user();
+        $suratIzin          = Permission::pluck('nama_menu', 'id')->all();
+        $selectSuratIzin    = $getSurat->id_category;
+        return view('surat-izin.edit', compact('getSurat', 'currentUser', 'suratIzin', 'selectSuratIzin'));
     }
 
     public function store(Request $request)
     {
         $this->validate($request, [
-            'id_taruna' => 'required',
+            'id_user' => 'required',
             'start' => 'required',
             'start_time' => 'required',
             'end' => 'required',
             'end_time' => 'required',
+            'id_category' =>'required',
             'keluhan'=>'required_if:id_category,1',
-            'keperluan'=>'required_if:id_category,2|required_if:id_category,3|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
-            'tujuan'=>'required_if:id_category,3|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'keperluan'=>'required_if:id_category,2|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'tujuan'=>'required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
             'pendamping'=>'required_if:id_category,2',
             'pelatih'=>'required_if:id_category,3',
             'nm_tc'=>'required_if:id_category,3',
-            'file' => 'required|mimes:jpeg,bmp,png,jpg|max:2048'
+            'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
 
-        if($request->file){
+        if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
                 \Session::flash('error', 'file upload failure');
@@ -101,7 +113,7 @@ class SuratIzinController extends Controller
 
         try {
             DB::beginTransaction();
-                if(isset($image)){
+                if(!empty($image)){
                     if($image!=false){
                         $request->request->add(['photo'=> $image]);
                     }
@@ -109,32 +121,31 @@ class SuratIzinController extends Controller
                 $request->request->add(['user_created'=> Auth::user()->id]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
+                Arr::forget($input, array('_token', 'file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $getUser = User::where('id', $request->id_user)->first();
+
                 if($currentUser->getRoleNames()[0]!='Taruna'){
-                    $input=['start'=>$request->start.' '.$request->start_time,
-                            'end'=>$request->end.' '.$request->end_time,
-                            'status'=>1,
-                            'status_level_1'=>1,
-                            'status_level_2'=>1,
-                            'reason_level_1'=>'Surat izin dibuatkan superadmin',
-                            'reason_level_2'=>'Surat izin dibuatkan superadmin',
-                            'user_approve_level_1'=>Auth::user()->id,
-                            'user_approve_level_2'=>Auth::user()->id,
-                            'date_approve_level_1'=>date('Y-m-d H:i:s'),
-                            'date_approve_level_2'=>date('Y-m-d H:i:s'),
-                            'grade'=>$getUser->grade,
-                            ];
-                }else{
-                    $input=['status'=>0,
-                            'status_level_1'=>0,
-                            'status_level_2'=>0,
-                            'grade'=>$getUser->grade,
-                            ];
-                    
+                    $input['start'] = $request->start.' '.$request->start_time;
+                    $input['end']   = $request->end.' '.$request->end_time;
+                    $input['status'] = 1;
+                    $input['status_level_1'] = 1;
+                    $input['status_level_2'] = 1;
+                    $input['reason_level_1'] = 'Surat izin dibuatkan superadmin';
+                    $input['reason_level_2'] = 'Surat izin dibuatkan superadmin';
+                    $input['user_approve_level_1'] = Auth::user()->id;
+                    $input['user_approve_level_2'] = Auth::user()->id;
+                    $input['date_approve_level_1'] = date('Y-m-d H:i:s');
+                    $input['date_approve_level_2'] = date('Y-m-d H:i:s');
+                    $input['grade'] = $getUser->grade;
+                }else{     
+                    $input['status'] = 0;
+                    $input['status_level_1'] = 0;
+                    $input['status_level_2'] = 0;
+                    $input['grade'] = $getUser->grade;   
                 }
-
-                $suratIzin = SuratIzin::create($input);
-
+                
+                $id = DB::table('surat_header')->insertGetId($input);
+               
                 if($request->id_category==1){
                     $dataDetail=['stb'=>$getUser->stb,
                                  'keluhan'=>$request->keluhan,
@@ -144,9 +155,112 @@ class SuratIzinController extends Controller
                                  'status'=>$input['status'],
                                  'user_created'=>$input['user_created'],
                                  'created_at'=>$input['created_at'],
-                                 'id_surat'=>$suratIzin->id
+                                 'id_user'=>$getUser->id,
+                                 'id_surat'=>$id
                                 ];
                     IzinSakit::create($dataDetail);
+                }
+                if($request->id_category==2){
+                    $dataDetail=['stb'=>$getUser->stb,
+                                 'keperluan'=>$request->keperluan,
+                                 'pendamping'=>$request->pendamping,
+                                 'status'=>$input['status'],
+                                 'user_created'=>$input['user_created'],
+                                 'created_at'=>$input['created_at'],
+                                 'id_user'=>$getUser->id,
+                                 'id_surat'=>$id
+                                ];
+                    KeluarKampus::create($dataDetail);
+                }
+                if($request->id_category==3){
+                    $dataDetail=['stb'=>$getUser->stb,
+                                 'training'=>$request->training,
+                                 'nm_tc'=>$request->nm_tc,
+                                 'status'=>$input['status'],
+                                 'user_created'=>$input['user_created'],
+                                 'created_at'=>$input['created_at'],
+                                 'id_user'=>$getUser->id,
+                                 'id_surat'=>$id
+                                ];
+                    TrainingCenter::create($dataDetail);
+                }
+                if($request->id_category==4){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    PernikahanSaudara::create($dataDetail);
+                }
+                if($request->id_category==5){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    PemakamanKeluarga::create($dataDetail);
+                }
+                if($request->id_category==6){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    OrangTuaSakit::create($dataDetail);
+                }
+                if($request->id_category==7){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    Tugas::create($dataDetail);
+                }
+                if($request->id_category==8){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    KegiatanDalam::create($dataDetail);
+                }
+                if($request->id_category==9){
+                    $dataDetail=[
+                        'stb'=>$getUser->stb,
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_created'=>$input['user_created'],
+                        'created_at'=>$input['created_at'],
+                        'id_user'=>$getUser->id,
+                        'id_surat'=>$id
+                    ];
+                    KegiatanPesiar::create($dataDetail);
                 }
 
 
@@ -154,12 +268,13 @@ class SuratIzinController extends Controller
             \Session::flash('success','data berhasil ditambah.');
             return redirect()->route('surat-izin.index');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.documentImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
-            @dd($th->getMessage());
+            
             return redirect()->route('surat-izin.create');
         }
 
@@ -168,43 +283,27 @@ class SuratIzinController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'title' => 'required|unique:posts,title,'.$id,
-            'excerpt' => 'required',
-            'post_categories_id' => 'required',
-            'content' => 'required',
-            'status' => 'required',
-            'file' => 'mimes:jpeg,bmp,png|max:300'
+            'id_user' => 'required',
+            'start' => 'required',
+            'start_time' => 'required',
+            'end' => 'required',
+            'end_time' => 'required',
+            'id_category' =>'required',
+            'keluhan'=>'required_if:id_category,1',
+            'keperluan'=>'required_if:id_category,2|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'tujuan'=>'required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
+            'pendamping'=>'required_if:id_category,2',
+            'pelatih'=>'required_if:id_category,3',
+            'nm_tc'=>'required_if:id_category,3',
+            'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
-        $detail=$request->input('content');
-        libxml_use_internal_errors(true);
-        $dom = new \DomDocument();
-        $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $images = $dom->getElementsByTagName('img');
-        if($images){
-            foreach($images as $k => $img){
-                $data = $img->getAttribute('src');
-                $getData = $this->checkDataImg($data);
-                if($getData != false){
-                    list($type, $data) = explode(';', $data);
-                    list(, $data)      = explode(',', $data);
-                    $data = base64_decode($data);
-                    $image_name= '/storage/'.config('app.postImagePath').'/'. md5(Carbon::now()->format('Ymd H:i:s.u')).$k.'.png';
-                    $path = public_path() . $image_name;
-                    file_put_contents($path, $data);
-                    $img->removeAttribute('src');
-                    $img->setAttribute('src', $image_name);
-                }
-            }
-        }
-        $detail = $dom->saveHTML();
 
-        $slug = Str::slug($request->title, '-');
         if($request->file){
 
             $image = $this->UploadImage($request->file, config('app.postImagePath'));
             if($image==false){
                 \Session::flash('error', 'image upload failure');
-                return redirect()->route('content.create');
+                return redirect()->route('surat-izin.edit');
             }
         }
 
@@ -243,7 +342,7 @@ class SuratIzinController extends Controller
 
     public function destroy($id)
     {
-        $content = Content::find($id);
+        $content = SuratIzin::find($id);
         try {
             DB::beginTransaction();
                 $this->DeleteImage($content->photo, config('app.postImagePath'));
@@ -265,7 +364,7 @@ class SuratIzinController extends Controller
 
         $content = Content::find($id);
         try {
-            $deleteFile = $this->DeleteImage($image, config('app.postImagePath'));
+            $deleteFile = $this->DeleteImage($image, config('app.documentImagePath'));
             DB::beginTransaction();
                 if($deleteFile == true){
                     $input = ['photo'=>NULL];

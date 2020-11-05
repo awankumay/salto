@@ -42,7 +42,7 @@
         var table = $('.surat-izin-table').DataTable({
             processing: true,
             serverSide: true,
-            order: [[ 3, "ASC" ]],
+            order: [[ 3, "ASC" ], [4, "DESC"]],
   /*           rowReorder: {
                 selector: 'td:nth-child(2)'
             }, */

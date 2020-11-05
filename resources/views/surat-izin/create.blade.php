@@ -209,7 +209,10 @@
 <script type="text/javascript">
 $(function () {
     $('.kategori').select2();
-    switchForm();
+    $(window).on('load', function () {
+        var kategori = $('#kategori').val();
+        switchForm(kategori);
+    });
     $('.kategori').change(function () {
        var kategori = $('.kategori').val();
        switchForm(kategori);
@@ -217,24 +220,40 @@ $(function () {
     function switchForm(kategori) {
         if(kategori==1){
             $('#izin-sakit').css('display', 'block');
+            $("#izin-sakit :input").prop("disabled", false);
             $('#keluar-kampus').css('display', 'none');
+            $("#keluar-kampus :input").prop("disabled", true);
             $('#training').css('display', 'none');
+            $("#training :input").prop("disabled", true);
             $('#umum').css('display', 'none');
+            $("#umum :input").prop("disabled", true);
         }else if(kategori==2){
             $('#izin-sakit').css('display', 'none');
+            $("#izin-sakit :input").prop("disabled", true);
             $('#keluar-kampus').css('display', 'block');
+            $("#keluar-kampus :input").prop("disabled", false);
             $('#training').css('display', 'none');
+            $("#training :input").prop("disabled", true);
             $('#umum').css('display', 'none');
+            $("#umum :input").prop("disabled", true);
         }else if(kategori==3){
             $('#izin-sakit').css('display', 'none');
+            $("#izin-sakit :input").prop("disabled", true);
             $('#keluar-kampus').css('display', 'none');
+            $("#keluar-kampus :input").prop("disabled", true);
             $('#training').css('display', 'block');
+            $("#training :input").prop("disabled", false);
             $('#umum').css('display', 'none');
+            $("#umum :input").prop("disabled", true);
         }else{
             $('#izin-sakit').css('display', 'none');
+            $("#izin-sakit :input").prop("disabled", true);
             $('#keluar-kampus').css('display', 'none');
+            $("#keluar-kampus :input").prop("disabled", true);
             $('#training').css('display', 'none');
+            $("#training :input").prop("disabled", true);
             $('#umum').css('display', 'block');
+            $("#umum :input").prop("disabled", false);
         }
     }
     $('.taruna').select2({
