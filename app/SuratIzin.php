@@ -136,7 +136,8 @@ class SuratIzin extends Authenticatable
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->Where(function($q) use ($search) {
-                                $q->where('users.name','LIKE',"%{$search}%");
+                                $q->where('users.name','LIKE',"%{$search}%")
+                                ->orWhere('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
                             ->offset($start)
@@ -162,7 +163,8 @@ class SuratIzin extends Authenticatable
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->Where(function($q) use ($search) {
-                                $q->where('users.name','LIKE',"%{$search}%");
+                                $q->where('users.name','LIKE',"%{$search}%")
+                                ->orWhere('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
                             ->offset($start)
@@ -206,7 +208,8 @@ class SuratIzin extends Authenticatable
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->Where(function($q) use ($search) {
-                                $q->where('users.name','LIKE',"%{$search}%");
+                                $q->where('users.name','LIKE',"%{$search}%")
+                                ->where('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){

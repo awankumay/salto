@@ -236,7 +236,7 @@ class UserController extends Controller
             DB::table('model_has_roles')->where('model_id',$id)->delete();
                 $user->assignRole($request->input('role'));
                 if($orangtua!=null){
-                    $getOrangTua = OrangTua::where('taruna_id', $id)->find();
+                    $getOrangTua = OrangTua::where('taruna_id', $id)->first();
                     $getOrangTua->orangtua_id=$orangtua;
                     $getOrangTua->user_updated=Auth::user()->id;
                     $getOrangTua->save();

@@ -210,7 +210,7 @@
 $(function () {
     $('.kategori').select2();
     $(window).on('load', function () {
-        var kategori = $('#kategori').val();
+        var kategori = $('.kategori').val();
         switchForm(kategori);
     });
     $('.kategori').change(function () {
@@ -259,7 +259,7 @@ $(function () {
     $('.taruna').select2({
         minimumInputLength: 3,
         allowClear: true,
-        placeholder: 'Masukkan Nama Taruna',
+        placeholder: 'Masukan Nama Taruna',
         ajax: {
             dataType: 'json',
             url: '/dashboard/gettaruna',

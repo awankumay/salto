@@ -127,9 +127,9 @@ Breadcrumbs::register('surat-izin.edit', function ($breadcrumbs, $getSurat) {
     $breadcrumbs->parent('surat-izin');
     $breadcrumbs->push($getSurat->id, route('surat-izin.edit', $getSurat->id));
 });
-Breadcrumbs::register('surat-izin.show', function ($breadcrumbs, $suratIzin) {
+Breadcrumbs::register('surat-izin.show', function ($breadcrumbs, $getSurat) {
     $breadcrumbs->parent('surat-izin');
-    $breadcrumbs->push($suratIzin->name, route('surat-izin.show', $suratIzin->id));
+    $breadcrumbs->push($getSurat->id, route('surat-izin.show', $getSurat->id));
 });
 
 

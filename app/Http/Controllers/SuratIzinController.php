@@ -75,11 +75,94 @@ class SuratIzinController extends Controller
 
     public function edit($id)
     {
-        $getSurat           = SuratIzin::find($id);
+        $getSurat = SuratIzin::find($id);
+        switch ($getSurat->id_category) {
+            case 1:
+                $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 2:
+                $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 3:
+                $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 4:
+                $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 5:
+                $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 6:
+                $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 7:
+                $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 8:
+                $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 9:
+                $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            default:
+                $getSuratDetail = [];
+                break;
+        }
         $currentUser        = Auth::user();
         $suratIzin          = Permission::pluck('nama_menu', 'id')->all();
+        $selectTaruna       = User::find($getSurat->id_user);
         $selectSuratIzin    = $getSurat->id_category;
-        return view('surat-izin.edit', compact('getSurat', 'currentUser', 'suratIzin', 'selectSuratIzin'));
+        $start              = date_format(date_create($getSurat->start), 'Y-m-d');
+        $start_time         = date_format(date_create($getSurat->start), 'H:i:s');
+        $end                = date_format(date_create($getSurat->end), 'Y-m-d');
+        $end_time           = date_format(date_create($getSurat->end), 'H:i:s');
+        return view('surat-izin.edit', compact('getSurat', 'currentUser', 'suratIzin', 'selectSuratIzin', 'getSuratDetail', 'selectTaruna', 'start', 'end', 'start_time', 'end_time'));
+    }
+
+    public function show($id)
+    {
+        $getSurat = SuratIzin::find($id);
+        switch ($getSurat->id_category) {
+            case 1:
+                $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 2:
+                $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 3:
+                $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 4:
+                $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 5:
+                $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 6:
+                $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 7:
+                $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 8:
+                $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            case 9:
+                $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                break;
+            default:
+                $getSuratDetail = [];
+                break;
+        }
+        $currentUser        = Auth::user();
+        $suratIzin          = Permission::pluck('nama_menu', 'id')->all();
+        $selectTaruna       = User::find($getSurat->id_user);
+        $selectSuratIzin    = $getSurat->id_category;
+        $start              = date_format(date_create($getSurat->start), 'Y-m-d');
+        $start_time         = date_format(date_create($getSurat->start), 'H:i:s');
+        $end                = date_format(date_create($getSurat->end), 'Y-m-d');
+        $end_time           = date_format(date_create($getSurat->end), 'H:i:s');
+        return view('surat-izin.show', compact('getSurat', 'currentUser', 'suratIzin', 'selectSuratIzin', 'getSuratDetail', 'selectTaruna', 'start', 'end', 'start_time', 'end_time'));
     }
 
     public function store(Request $request)
@@ -174,7 +257,8 @@ class SuratIzinController extends Controller
                 }
                 if($request->id_category==3){
                     $dataDetail=['stb'=>$getUser->stb,
-                                 'training'=>$request->training,
+                                'training'=>$request->training,
+                                'pelatih'=>$request->pelatih,
                                  'nm_tc'=>$request->nm_tc,
                                  'status'=>$input['status'],
                                  'user_created'=>$input['user_created'],
@@ -297,57 +381,238 @@ class SuratIzinController extends Controller
             'nm_tc'=>'required_if:id_category,3',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
-
-        if($request->file){
-
-            $image = $this->UploadImage($request->file, config('app.postImagePath'));
+        if(!empty($request->file)){
+            $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
                 \Session::flash('error', 'image upload failure');
-                return redirect()->route('surat-izin.edit');
+                return redirect()->route('surat-izin.edit', $id);
             }
         }
 
        try {
-
             DB::beginTransaction();
-            $content = Content::find($id);
+            $suratIzin = SuratIzin::find($id);
 
                 if(isset($image)){
                     if($image!=false){
                         $request->request->add(['photo'=> $image]);
-                        $this->DeleteImage($content->file, config('app.postImagePath'));
+                        $this->DeleteImage($suratIzin->photo, config('app.documentImagePath'));
                     }
                 }
-                $request->request->add(['slug'=> $slug]);
                 $request->request->add(['user_updated'=> Auth::user()->id]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('content'));
-                $input['content']=$detail;
-
-                $content->update($input);
+                Arr::forget($input, array('_token', 'file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
+                $currentUser = Auth::user();
+                if($currentUser->getRoleNames()[0]!='Taruna'){
+                    $input['start'] = $request->start.' '.$request->start_time;
+                    $input['end']   = $request->end.' '.$request->end_time;
+                    $input['status'] = 1;
+                    $input['status_level_1'] = 1;
+                    $input['status_level_2'] = 1;
+                    $input['reason_level_1'] = 'Surat izin dibuatkan superadmin';
+                    $input['reason_level_2'] = 'Surat izin dibuatkan superadmin';
+                    $input['user_approve_level_1'] = Auth::user()->id;
+                    $input['user_approve_level_2'] = Auth::user()->id;
+                    $input['date_approve_level_1'] = date('Y-m-d H:i:s');
+                    $input['date_approve_level_2'] = date('Y-m-d H:i:s');
+            
+                }else{     
+                    $input['status'] = $suratIzin->status;
+                    $input['status_level_1'] = $suratIzin->status_level_1;
+                    $input['status_level_2'] = $suratIzin->status_level_2;
+               
+                }
+                
+                $suratIzin->update($input);
+               
+                if($request->id_category==1){
+                    $table = IzinSakit::where('id_surat', $id)->first();
+                    
+                    $dataDetail=[
+                                 'keluhan'=>$request->keluhan,
+                                 'diagnosa'=>$request->diagnosa,
+                                 'rekomendasi'=>$request->rekomendasi,
+                                 'dokter'=>$request->dokter,
+                                 'status'=>$input['status'],
+                                 'user_updated'=>$input['user_updated'],
+                                 'updated_at'=>$input['updated_at']
+                                 
+                                 
+                                ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==2){
+                    $table = KeluarKampus::where('id_surat', $id)->first();
+                    $dataDetail=[
+                                 'keperluan'=>$request->keperluan,
+                                 'pendamping'=>$request->pendamping,
+                                 'status'=>$input['status'],
+                                 'user_updated'=>$input['user_updated'],
+                                 'updated_at'=>$input['updated_at']
+                                 
+                                 
+                                ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==3){
+                    $table = TrainingCenter::where('id_surat', $id)->first();
+                    $dataDetail=[
+                                'training'=>$request->training,
+                                'pelatih'=>$request->pelatih,
+                                 'nm_tc'=>$request->nm_tc,
+                                 'status'=>$input['status'],
+                                 'user_updated'=>$input['user_updated'],
+                                 'updated_at'=>$input['updated_at']
+                                 
+                                 
+                                ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==4){
+                    $table = PernikahanSaudara::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==5){
+                    $table = PemakamanKeluarga::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==6){
+                    $table = PemakamanKeluarga::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==7){
+                    $table = Tugas::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==8){
+                    $table = KegiatanDalam::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
+                if($request->id_category==9){
+                    $table = KegiatanPesiar::where('id_surat', $id)->first();
+                    $dataDetail=[
+                        
+                        'keperluan'=>$request->keperluan,
+                        'tujuan'=>$request->tujuan,
+                        'status'=>$input['status'],
+                        'user_updated'=>$input['user_updated'],
+                        'updated_at'=>$input['updated_at']
+                        
+                        
+                    ];
+                    $table->update($dataDetail);
+                }
 
             DB::commit();
             \Session::flash('success','Data berhasil diubah.');
-            return redirect()->route('content.index');
+            return redirect()->route('surat-izin.index');
         } catch (\Throwable $th) {
             DB::rollBack();
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.postImagePath'));
+                    $this->DeleteImage($image, config('app.documentImagePath'));
                 }
             \Session::flash('error','Terjadi kesalahan server');
-            return redirect()->route('content.create');
+            return redirect()->route('surat-izin.index');
         }
     }
 
     public function destroy($id)
     {
-        $content = SuratIzin::find($id);
+        $suratIzin = SuratIzin::find($id);
         try {
             DB::beginTransaction();
-                $this->DeleteImage($content->photo, config('app.postImagePath'));
-                $content->user_deleted = Auth::user()->id;
-                $content->delete();
+                $this->DeleteImage($suratIzin->photo, config('app.documentImagePath'));
+                $suratIzin->user_deleted = Auth::user()->id;
+                $suratIzin->save();
+                $suratIzin->delete();
+                switch ($suratIzin->id_category) {
+                    case 1:
+                        $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 2:
+                        $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 3:
+                        $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 4:
+                        $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 5:
+                        $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 6:
+                        $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 7:
+                        $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 8:
+                        $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    case 9:
+                        $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                        break;
+                    default:
+                        $getSuratDetail = [];
+                        break;
+                }
+                if(!empty($getSuratDetail)){
+                    $getSuratDetail->user_deleted = Auth::user()->id;
+                    $getSuratDetail->save();
+                    $getSuratDetail->delete();
+                }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
@@ -357,24 +622,24 @@ class SuratIzinController extends Controller
 
     }
 
-    public function deleteExistImagePost(Request $request)
+    public function deleteExistImageSurat(Request $request)
     {
         $image = $request->post('image');
         $id    = $request->post('id');
 
-        $content = Content::find($id);
+        $suratIzin = SuratIzin::find($id);
         try {
             $deleteFile = $this->DeleteImage($image, config('app.documentImagePath'));
             DB::beginTransaction();
                 if($deleteFile == true){
-                    $input = ['photo'=>NULL];
-                    $content->update($input);
+                    $input = ['photo'=>NULL, 'updated_at'=> date('Y-m-d H:i:s')];
+                    $suratIzin->update($input);
                 }
             DB::commit();
             return true;
         } catch (\Throwable $th) {
-                $input = ['photo'=>NULL];
-                $content->update($input);
+                $input = ['photo'=>NULL, 'updated_at'=> date('Y-m-d H:i:s')];
+                $suratIzin->update($input);
             DB::rollback();
             return false;
         }
