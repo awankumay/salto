@@ -126,8 +126,8 @@
                         @if(auth()->user()->hasPermissionTo('hukuman-dinas-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
                         @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('content.index')}}">Pengasuhan Daring</a>@endif
                         @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('content.index')}}">Surat Keterangan</a>@endif
-                        @if(auth()->user()->hasPermissionTo('absensi-list'))<a class="collapse-item" href="{{route('slider.index')}}">Absensi Harian</a>@endif
-                        @if(auth()->user()->hasPermissionTo('jurnal-harian-list'))<a class="collapse-item" href="{{route('slider.index')}}">Jurnal Harian</a>@endif
+                        @if(auth()->user()->hasPermissionTo('absensi-list'))<a class="collapse-item" href="{{route('absensi.index')}}">Absensi Harian</a>@endif
+                        @if(auth()->user()->hasPermissionTo('jurnal-harian-list'))<a class="collapse-item" href="{{route('jurnal.index')}}">Jurnal Harian</a>@endif
                         </div>
                     </div>
                 </li>

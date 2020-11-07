@@ -12,9 +12,13 @@ use App\Regencies;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
+use App\Absensi;
+use App\JurnalTaruna;
+use App\Traits\ImageTrait;
 
 class LookController extends BaseController
 {
+    use ImageTrait;
     /**
      * Register api
      *
@@ -153,6 +157,106 @@ class LookController extends BaseController
         $data['data']['select_regencies'] = Regencies::where('province_id', $user->province_id)->pluck('name','id')->all();
         return $this->sendResponse($data, 'profile load successfully.');
 
+    }
+
+    public function clockin(Request $request)
+    {
+        $data = [];
+        $validator = Validator::make($request->all(), 
+                    [ 
+                        'id_user' => 'required',
+                        'file_clock_in' => 'required|mimes:jpg,jpeg,png|max:2048',
+                    ]);   
+ 
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }  
+        if ($files = $request->file('file_clock_in')) {
+            $file = $this->UploadImage($request->file_clock_in, config('app.documentImagePath'));
+            if($file!=false){
+                try {
+                    DB::beginTransaction();
+                        $absensi = new Absensi();
+                        $absensi->id_user = $request->id_user;
+                        $absensi->clock_in = date('Y-m-d H:i:s');
+                        $absensi->file_clock_in = $file;
+                        $absensi->created_at = date('Y-m-d H:i:s');
+                        $absensi->save();
+                        $jurnal = New JurnalTaruna();
+                        $jurnal->id_user = $request->id_user;
+                        $jurnal->tanggal = date('Y-m-d');
+                        $jurnal->kegiatan = 'Clock In / Apel Pagi';
+                        $jurnal->status = 0;
+                        $jurnal->start = date('Y-m-d H:i:s');
+                        $jurnal->end = date('Y-m-d H:i:s');
+                        $jurnal->created_at = date('Y-m-d H:i:s');
+                        $jurnal->save();
+                    DB::commit();
+                } catch (\Throwable $th) {
+                    @dd($th);
+                    DB::rollBack();
+                    return $this->sendResponseError($data, 'Terjadi Kesalahan Server');  
+                }
+            }else{
+                return $this->sendResponseError($data, 'Terjadi Kesalahan Server'); 
+            }
+              
+            $result=[
+                "success" => true,
+                "file" => $file
+            ];
+            return $this->sendResponse($result, 'berhasil clock in');
+        }
+        
+    }
+
+    public function clockout(Request $request)
+    {
+        $validator = Validator::make($request->all(), 
+                    [ 
+                        'id_user' => 'required',
+                        'file_clock_out' => 'required|mimes:jpg,jpeg,png|max:2048',
+                    ]);   
+ 
+        if ($validator->fails()) {          
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                        
+        }  
+        if ($files = $request->file('file_clock_out')) {
+            $file = $this->UploadImage($request->file_clock_out, config('app.documentImagePath'));
+            if($file!=false){
+                try {
+                    $absensi = Absensi::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->first();
+                    $jurnal = New JurnalTaruna();
+                    DB::beginTransaction();
+                        $absensi->file_clock_out = $file;
+                        $absensi->clock_out = date('Y-m-d H:i:s');
+                        $absensi->updated_at = date('Y-m-d H:i:s');
+                        $absensi->update();
+                        $jurnal->id_user = $request->id_user;
+                        $jurnal->tanggal = date('Y-m-d');
+                        $jurnal->kegiatan = 'Clock Out / Apel Malam';
+                        $jurnal->status = 1;
+                        $jurnal->start = date('Y-m-d H:i:s');
+                        $jurnal->end = date('Y-m-d H:i:s');
+                        $jurnal->created_at = date('Y-m-d H:i:s');
+                        $jurnal->save();
+                    DB::commit();
+                } catch (\Throwable $th) {
+                    @dd($th);
+                    DB::rollBack();
+                    return $this->sendResponseError($data, 'Terjadi Kesalahan Server');   
+                }
+            }else{
+                return $this->sendResponseError($data, 'Terjadi Kesalahan Server');
+            }
+              
+            $result=[
+                "success" => true,
+                "file" => $file
+            ];
+            return $this->sendResponse($result, 'berhasil clock in');
+        }
+        
     }
 
 }

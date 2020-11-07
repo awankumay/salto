@@ -49,7 +49,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Tanggal Mulai:</strong>
                                     @php isset($errors->messages()['start']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::date('start', $start, array('placeholder' => 'Pilih Tanggal','class' => 'form-control form-control-sm '.$x.'', 'required')) !!}
+                                    {!! Form::date('start', $start, array('placeholder' => 'Pilih Tanggal','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['start']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['start']) ? $errors->messages()['start'][0] .'*' : 'Tanggal Mulai wajib diisi * '}}
                                     </span>
@@ -57,7 +57,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Waktu Mulai:</strong>
                                     @php isset($errors->messages()['start_time']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::time('start_time', $start_time, array('placeholder' => 'Pilih Waktu','class' => 'form-control form-control-sm '.$x.'', 'required')) !!}
+                                    {!! Form::time('start_time', $start_time, array('placeholder' => 'Pilih Waktu','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['start_time']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['start_time']) ? $errors->messages()['start_time'][0] .'*' : 'Waktu Mulai wajib diisi * '}}
                                     </span>
@@ -69,7 +69,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Tanggal Akhir:</strong>
                                     @php isset($errors->messages()['end']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::date('end', $end, array('placeholder' => 'Pilih Tanggal','class' => 'form-control form-control-sm '.$x.'', 'required')) !!}
+                                    {!! Form::date('end', $end, array('placeholder' => 'Pilih Tanggal','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['end']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['end']) ? $errors->messages()['end'][0] .'*' : 'Tanggal Akhir wajib diisi * '}}
                                     </span>
@@ -77,7 +77,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Waktu Akhir:</strong>
                                     @php isset($errors->messages()['end_time']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::time('end_time', $end_time, array('placeholder' => 'Pilih Waktu','class' => 'form-control form-control-sm '.$x.'', 'required')) !!}
+                                    {!! Form::time('end_time', $end_time, array('placeholder' => 'Pilih Waktu','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['end_time']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['end_time']) ? $errors->messages()['end_time'][0] .'*' : 'Waktu Akhir wajib diisi * '}}
                                     </span>
@@ -93,7 +93,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Keperluan:</strong>
                                     @php isset($errors->messages()['keperluan']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('keperluan', isset($getSuratDetail->keperluan) ? $getSuratDetail->keperluan : '' , array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keperluan')) !!}
+                                    {!! Form::textarea('keperluan', isset($getSuratDetail->keperluan) ? $getSuratDetail->keperluan : '' , array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keperluan', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['keperluan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['keperluan']) ? $errors->messages()['keperluan'][0] .'*' : 'Keperluan wajib diisi *'}}
                                     </span>
@@ -103,7 +103,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Tujuan:</strong>
                                     @php isset($errors->messages()['tujuan']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('tujuan', isset($getSuratDetail->tujuan) ? $getSuratDetail->tujuan : '', array('rows' => 3, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Tujuan')) !!}
+                                    {!! Form::textarea('tujuan', isset($getSuratDetail->tujuan) ? $getSuratDetail->tujuan : '', array('rows' => 3, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Tujuan', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['tujuan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['tujuan']) ? $errors->messages()['tujuan'][0] .'*' : 'Tujuan wajib diisi *'}}
                                     </span>
@@ -115,7 +115,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Keperluan:</strong>
                                     @php isset($errors->messages()['keperluan']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('keperluan', isset($getSuratDetail->keperluan) ? $getSuratDetail->keperluan : '', array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keperluan')) !!}
+                                    {!! Form::textarea('keperluan', isset($getSuratDetail->keperluan) ? $getSuratDetail->keperluan : '', array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keperluan', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['keperluan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['keperluan']) ? $errors->messages()['keperluan'][0] .'*' : 'Keperluan wajib diisi *'}}
                                     </span>
@@ -125,7 +125,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Pendamping:</strong>
                                     @php isset($errors->messages()['pendamping']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::text('pendamping', isset($getSuratDetail->pendamping) ? $getSuratDetail->pendamping : '', array('placeholder' => 'Nama Pendamping','class' => 'form-control form-control-sm '.$x.'')) !!}
+                                    {!! Form::text('pendamping', isset($getSuratDetail->pendamping) ? $getSuratDetail->pendamping : '', array('placeholder' => 'Nama Pendamping','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['pendamping']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['pendamping']) ? $errors->messages()['pendamping'][0] .'*' : 'Nama Pendamping wajib diisi *'}}
                                     </span>
@@ -137,7 +137,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Training:</strong>
                                     @php isset($errors->messages()['nm_tc']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::text('nm_tc', isset($getSuratDetail->nm_tc) ? $getSuratDetail->nm_tc : '', array('placeholder' => 'Nama Training','class' => 'form-control form-control-sm '.$x.'')) !!}
+                                    {!! Form::text('nm_tc', isset($getSuratDetail->nm_tc) ? $getSuratDetail->nm_tc : '', array('placeholder' => 'Nama Training','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['nm_tc']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['nm_tc']) ? $errors->messages()['nm_tc'][0] .'*' : 'Nama Training wajib diisi * '}}
                                     </span>
@@ -147,7 +147,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Pelatih:</strong>
                                     @php isset($errors->messages()['pelatih']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::text('pelatih', isset($getSuratDetail->pelatih) ? $getSuratDetail->pelatih : '', array('placeholder' => 'Nama Pelatih','class' => 'form-control form-control-sm '.$x.'')) !!}
+                                    {!! Form::text('pelatih', isset($getSuratDetail->pelatih) ? $getSuratDetail->pelatih : '', array('placeholder' => 'Nama Pelatih','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['pelatih']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['pelatih']) ? $errors->messages()['pelatih'][0] .'*' : 'Nama Pelatih wajib diisi *'}}
                                     </span>
@@ -159,7 +159,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Keluhan:</strong>
                                     @php isset($errors->messages()['keluhan']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('keluhan', isset($getSuratDetail->keluhan) ? $getSuratDetail->keluhan : '', array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keluhan')) !!}
+                                    {!! Form::textarea('keluhan', isset($getSuratDetail->keluhan) ? $getSuratDetail->keluhan : '', array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keluhan', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['keluhan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['keluhan']) ? $errors->messages()['keluhan'][0] .'*' : 'Keluhan wajib diisi'}}
                                     </span>
@@ -169,7 +169,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Diagnosa:</strong>
                                     @php isset($errors->messages()['diagnosa']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('diagnosa', isset($getSuratDetail->diagnosa) ? $getSuratDetail->diagnosa : '', array('rows' => 3, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Diagnosa')) !!}
+                                    {!! Form::textarea('diagnosa', isset($getSuratDetail->diagnosa) ? $getSuratDetail->diagnosa : '', array('rows' => 3, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Diagnosa', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['diagnosa']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['diagnosa']) ? $errors->messages()['diagnosa'][0] .'*' : 'Diagnosa tidak wajib diisi'}}
                                     </span>
@@ -179,7 +179,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Rekomendasi:</strong>
                                     @php isset($errors->messages()['rekomendasi']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::textarea('rekomendasi', isset($getSuratDetail->rekomendasi) ? $getSuratDetail->rekomendasi : '', array('rows' => 2, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Rekomendasi')) !!}
+                                    {!! Form::textarea('rekomendasi', isset($getSuratDetail->rekomendasi) ? $getSuratDetail->rekomendasi : '', array('rows' => 2, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Rekomendasi', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['rekomendasi']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                         {{isset($errors->messages()['rekomendasi']) ? $errors->messages()['rekomendasi'][0] .'*' : 'Rekomendasi tidak wajib diisi'}}
                                     </span>
@@ -189,7 +189,7 @@
                                 <div class="form-group col-md-12">
                                     <strong>Dokter:</strong>
                                     @php isset($errors->messages()['dokter']) ? $x='is-invalid' : $x='' @endphp
-                                    {!! Form::text('dokter', isset($getSuratDetail->dokter) ? $getSuratDetail->dokter : '', array('placeholder' => 'Nama Dokter','class' => 'form-control form-control-sm '.$x.'')) !!}
+                                    {!! Form::text('dokter', isset($getSuratDetail->dokter) ? $getSuratDetail->dokter : '', array('placeholder' => 'Nama Dokter','class' => 'form-control form-control-sm '.$x.'', 'readonly')) !!}
                                     <span class="form-text {{isset($errors->messages()['dokter']) ? 'text-danger text-help' : 'text-muted text-help'}}">
                                     {{isset($errors->messages()['dokter']) ? $errors->messages()['dokter'][0] .'*' : 'Nama dokter tidak wajib diisi'}}
                                     </span>
@@ -203,18 +203,22 @@
                         <div class="col-md-12">
                             <div class="form-group col-md-12" ng-controller="SelectFileController">
                                 <strong>Lampiran:</strong><br>
-                                @if($getSurat->photo)<img src="{{URL::to('/')}}/storage/{{config('app.documentImagePath')}}/{{$getSurat->photo}}" width="100%"/>@endif
+                                @if($getSurat->photo)
+                                <img src="{{URL::to('/')}}/storage/{{config('app.documentImagePath')}}/{{$getSurat->photo}}" width="100%"/> 
+                                @else
+                                Tidak ada Lampiran
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group col-md-12">
-                                <button style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-success">
+                                <button onclick="updatePermission(1)" style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-success">
                                     Disetujui
                                 </button>
-                                <button style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-danger">
+                                <button onclick="updatePermission(2)" style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-danger">
                                     Tidak Disetujui
                                 </button>
-                                <button style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-info">
+                                <button onclick="updatePermission(0)" style="font-size:12px;margin:5px;" type="button" class="btn btn-sm btn-info">
                                     Belum Disetujui
                                 </button>
                             </div>

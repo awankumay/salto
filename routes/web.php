@@ -36,6 +36,9 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('waliasuh-keluarga-asuh', 'WaliasuhKeluargaAsuhController');
         Route::resource('taruna-keluarga-asuh', 'TarunaKeluargaAsuhController');
         Route::resource('surat-izin', 'SuratIzinController');
+        Route::resource('absensi', 'AbsensiController');
+        Route::resource('jurnal', 'JurnalController');
+        Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
@@ -50,5 +53,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('deleteExistImageSurat', 'SuratIzinController@deleteExistImageSurat')->name('deleteExistImageSurat');
         Route::post('deleteItem', 'TransactionController@deleteItem')->name('deleteItem');
         Route::post('updatedItem', 'TransactionController@updatedItem')->name('updatedItem');
+        Route::post('clockin', 'SaltoController@clockin')->name('clockin');
+        Route::post('clockout', 'SaltoController@clockout')->name('clockout');
     });
 });

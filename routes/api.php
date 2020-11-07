@@ -18,10 +18,13 @@ Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile
 Route::post('getdata', 'api\LookController@getdata')->name('getdata');
 Route::get('getslider', 'api\LookController@getslider')->name('getslider');
 Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');
+Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');
 Route::get('getberitadetail/id/{id}', 'api\LookController@getberitadetail')->name('getberitadetail');
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');
 Route::get('/ok', 'api\LookController@test')->name('ok');
+Route::post('clockin', 'api\LookController@clockin')->name('clockin');
+Route::post('clockout', 'api\LookController@clockout')->name('clockout');
 });
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

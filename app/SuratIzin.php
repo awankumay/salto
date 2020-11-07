@@ -209,7 +209,7 @@ class SuratIzin extends Authenticatable
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
-                                ->where('surat_header.id', 'LIKE',"%{$search}%");
+                                ->orWhere('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){

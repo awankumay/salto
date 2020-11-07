@@ -43,6 +43,8 @@ trait ActionTableWithDetail
                         $nestedData['updated_at'] = $val->updated_at ? date('d-m-Y H:i',strtotime($val->updated_at)) : '';
                     }else if($columns[$i]=='deleted_at'){
                         $nestedData['deleted_at'] = $val->deleted_at ? date('d-m-Y H:i',strtotime($val->deleted_at)) : '';
+                    }else if($columns[$i]=='tanggal'){
+                        $nestedData['tanggal'] = $val->tanggal ? date('d-m-Y',strtotime($val->tanggal)) : '';
                     }else if($columns[$i]=='excerpt'){
                         $nestedData['excerpt'] = Str::limit($val->excerpt, 30);
                     }
@@ -56,7 +58,11 @@ trait ActionTableWithDetail
                         $nestedData[$columns[$i]] = $dataModel[$key][$columns[$i]];
                     }
                 }
-                $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
+                if($routeDetail=='jurnal.show'){
+                    $nestedData['action'] = "&emsp;".$detail;
+                }else{
+                    $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
+                }
                 $data[] = $nestedData;
             }
         }

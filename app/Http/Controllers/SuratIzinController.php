@@ -75,7 +75,13 @@ class SuratIzinController extends Controller
 
     public function edit($id)
     {
-        $getSurat = SuratIzin::find($id);
+        $getSurat       = SuratIzin::find($id);
+        $currentUser    = Auth::user();
+        if($currentUser->getRoleNames()[0]!='Super Admin'){
+            if ($currentUser->id!=$getSurat->id_user) {
+                return view('surat-izin.index');
+            }
+        }
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
@@ -121,7 +127,13 @@ class SuratIzinController extends Controller
 
     public function show($id)
     {
-        $getSurat = SuratIzin::find($id);
+        $getSurat       = SuratIzin::find($id);
+        $currentUser    = Auth::user();
+        if($currentUser->getRoleNames()[0]!='Super Admin'){
+            if ($currentUser->id!=$getSurat->id_user) {
+                return view('surat-izin.index');
+            }
+        }
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();

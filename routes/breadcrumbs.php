@@ -131,6 +131,24 @@ Breadcrumbs::register('surat-izin.show', function ($breadcrumbs, $getSurat) {
     $breadcrumbs->parent('surat-izin');
     $breadcrumbs->push($getSurat->id, route('surat-izin.show', $getSurat->id));
 });
-
-
+Breadcrumbs::register('absensi', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Absensi', route('absensi.index'));
+});
+Breadcrumbs::register('jurnal', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Jurnal', route('jurnal.index'));
+});
+Breadcrumbs::register('jurnal.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('jurnal');
+    $breadcrumbs->push('Tambah Jurnal', route('jurnal.create'));
+});
+Breadcrumbs::register('jurnal.edit', function ($breadcrumbs, $jurnal) {
+    $breadcrumbs->parent('jurnal');
+    $breadcrumbs->push($jurnal->id, route('jurnal.edit', $jurnal->id));
+});
+Breadcrumbs::register('jurnal.show', function ($breadcrumbs, $jurnal) {
+    $breadcrumbs->parent('jurnal');
+    $breadcrumbs->push($jurnal->id, route('jurnal.show', $jurnal->id));
+});
 ?>
