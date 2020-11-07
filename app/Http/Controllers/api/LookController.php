@@ -227,9 +227,8 @@ class LookController extends BaseController
             $file = $this->UploadImage($request->file_clock_out, config('app.documentImagePath'));
             if($file!=false){
                 try {
-                    $absensi = Absensi::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->first();
-                    $jurnal = New JurnalTaruna();
                     DB::beginTransaction();
+                        $jurnal = New JurnalTaruna();
                         $absensi = new Absensi();
                         $absensi->id_user = $request->id_user;
                         $absensi->clock_out = date('Y-m-d H:i:s');
