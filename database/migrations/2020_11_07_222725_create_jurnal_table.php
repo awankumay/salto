@@ -17,8 +17,8 @@ class CreateJurnalTable extends Migration
             $table->id();
             $table->integer('id_user');
             $table->date('tanggal');
-            $table->timestamp('start_date');
-            $table->timestamp('end_date');
+            $table->timestamp('start');
+            $table->timestamp('end');
             $table->longText('kegiatan');
             $table->integer('status');
             $table->timestamps();
