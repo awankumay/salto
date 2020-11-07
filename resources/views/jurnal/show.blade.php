@@ -46,7 +46,7 @@
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('jurnaldetail', ['id'=>$jurnal->id]) }}",
+            ajax: "{{ route('jurnaldetail', ['id_user'=>$jurnal->id_user, 'date'=>$jurnal->tanggal]) }}",
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'nama', name: 'nama'},

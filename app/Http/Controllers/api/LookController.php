@@ -181,6 +181,8 @@ class LookController extends BaseController
                         $absensi->clock_in = date('Y-m-d H:i:s');
                         $absensi->file_clock_in = $file;
                         $absensi->created_at = date('Y-m-d H:i:s');
+                        $absensi->lat = $request->lat;
+                        $absensi->long = $request->long;
                         $absensi->save();
                         $jurnal = New JurnalTaruna();
                         $jurnal->id_user = $request->id_user;
@@ -228,10 +230,14 @@ class LookController extends BaseController
                     $absensi = Absensi::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->first();
                     $jurnal = New JurnalTaruna();
                     DB::beginTransaction();
-                        $absensi->file_clock_out = $file;
+                        $absensi = new Absensi();
+                        $absensi->id_user = $request->id_user;
                         $absensi->clock_out = date('Y-m-d H:i:s');
-                        $absensi->updated_at = date('Y-m-d H:i:s');
-                        $absensi->update();
+                        $absensi->file_clock_out = $file;
+                        $absensi->created_at = date('Y-m-d H:i:s');
+                        $absensi->lat = $request->lat;
+                        $absensi->long = $request->long;
+                        $absensi->save();
                         $jurnal->id_user = $request->id_user;
                         $jurnal->tanggal = date('Y-m-d');
                         $jurnal->kegiatan = 'Clock Out / Apel Malam';

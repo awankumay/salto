@@ -22,7 +22,10 @@ trait ActionTable
         $totalFiltered = $totalData;
 
         if(empty($request->input('search.value'))) {
-            if(!empty($id)){
+            if(!empty($id_user) && !empty($date)){
+                $dataModel = $model->GetCurrentData($start, $limit, $order, $dir, $id_user, $date);
+            }
+            else if(!empty($id)){
                 $dataModel = $model->GetCurrentData($start, $limit, $order, $dir, $id);
             }else{
                 $dataModel = $model->GetCurrentData($start, $limit, $order, $dir);

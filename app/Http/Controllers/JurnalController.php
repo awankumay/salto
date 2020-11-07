@@ -7,6 +7,7 @@ use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\JurnalTaruna;
 use App\Traits\ActionTableWithDetail;
+use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
 use DataTables;
@@ -15,6 +16,7 @@ use Auth;
 class JurnalController extends Controller
 {
     use ActionTableWithDetail;
+    use ActionTable;
     /**
      * Create a new controller instance.
      *
@@ -90,19 +92,6 @@ class JurnalController extends Controller
     public function show(Request $request, $id)
     {
         $model  = New JurnalTaruna();
-        if ($request->ajax()) {
-            $columns = array(
-                0=>'id',
-                1=>'nama',
-                2=>'tanggal',
-                3=>'kegiatan',
-                4=>'start',
-                5=>'end',
-                6=>'created_at',
-                7=>'updated_at',
-            );
-            return $this->ActionTable($columns, $model, $request, 'jurnal.edit', 'jurnal-harian-edit', 'jurnal-harian-delete');
-        }
         $jurnal = $model::find($id);
         return view('jurnal.show', compact('jurnal'));
     }
