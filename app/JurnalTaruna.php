@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class JurnalTaruna extends Model
 {
@@ -12,7 +13,7 @@ class JurnalTaruna extends Model
 
     public function GetCount()
     {
-        return JurnalTaruna::count();
+        return JurnalTaruna::groupBy('tanggal')->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir)
@@ -20,6 +21,7 @@ class JurnalTaruna extends Model
         $data = JurnalTaruna::offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
+                            ->groupBy('tanggal')
                             ->get();
         return $data;
     }
@@ -30,12 +32,14 @@ class JurnalTaruna extends Model
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
+                            ->groupBy('tanggal')
                             ->get();
         return $data;
     }
 
     public function GetCountDataFilter($search){
         $data = JurnalTaruna::where('name','LIKE',"%{$search}%")
+                            ->groupBy('tanggal')
                             ->count();
         return $data;
     }

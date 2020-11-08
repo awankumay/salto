@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Absensi extends Model
 {
     //use SoftDeletes;
-    protected $fillable = ['clock_in', 'clock_out', 'file_clock_in', 'file_clock_out', 'id_user', 'created_at', 'updated_at'];
+    protected $fillable = ['clock_in', 'clock_out', 'file_clock_in', 'file_clock_out',
+                             'id_user', 'lat_in', 'long_in', 'lat_out', 'long_out', 
+                             'grade', 'created_at', 'updated_at'];
    // protected $dates = ['deleted_at'];
     protected $table = 'absensi_taruna';
 

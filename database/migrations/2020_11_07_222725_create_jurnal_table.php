@@ -16,9 +16,10 @@ class CreateJurnalTable extends Migration
         Schema::create('jurnal_taruna', function (Blueprint $table) {
             $table->id();
             $table->integer('id_user');
+            $table->integer('grade')->nullable();
             $table->date('tanggal')->nullable();
-            $table->timestamp('start')->nullable();
-            $table->timestamp('end')->nullable();
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->longText('kegiatan');
             $table->integer('status');
             $table->timestamps();

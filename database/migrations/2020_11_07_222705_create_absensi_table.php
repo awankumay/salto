@@ -20,6 +20,11 @@ class CreateAbsensiTable extends Migration
             $table->timestamp('clock_out')->nullable();
             $table->string('file_clock_in')->nullable();
             $table->string('file_clock_out')->nullable();
+            $table->string('lat_in')->nullable();
+            $table->string('long_in')->nullable();
+            $table->string('lat_out')->nullable();
+            $table->string('long_out')->nullable();
+            $table->integer('grade')->nullable();
             $table->timestamps();
         });
     }

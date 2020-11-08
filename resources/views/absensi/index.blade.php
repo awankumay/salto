@@ -121,15 +121,15 @@
                 success: function(data, textStatus, xhr){
                     $("#overlay").fadeOut();
                     toastr.success("Sukses, Clock In Berhasil");
-                    setTimeout(() => {
+                  /*   setTimeout(() => {
                         window.location.reload();
-                    }, 300);
+                    }, 300); */
                 },
                 error : function(data, textStatus, xhr) {
                     $("#overlay").fadeOut();
                     if(data.responseJSON.error){
-                        if(data.responseJSON.error.file){
-                            $('#file-error').text(data.responseJSON.error.file[0])
+                        if(data.responseJSON.error.file_clock_in){
+                            $('#file-error').text(data.responseJSON.error.file_clock_in[0])
                         }
                     }
                 }

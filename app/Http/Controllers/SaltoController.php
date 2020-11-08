@@ -88,19 +88,24 @@ class SaltoController extends Controller
             if($file!=false){
                 try {
                     DB::beginTransaction();
+                        $getUser = User::where('id', $request->id_user)->first();
                         $absensi = new Absensi();
                         $absensi->id_user = $request->id_user;
                         $absensi->clock_in = date('Y-m-d H:i:s');
                         $absensi->file_clock_in = $file;
                         $absensi->created_at = date('Y-m-d H:i:s');
+                        $absensi->lat_in = !empty($request->lat) ? $request->lat : '-' ;
+                        $absensi->long_in = !empty($request->long) ? $request->long : '-' ;
+                        $absensi->grade = !empty($getUser->grade) ? $getUser->grade : null;
                         $absensi->save();
                         $jurnal = New JurnalTaruna();
                         $jurnal->id_user = $request->id_user;
+                        $jurnal->grade = !empty($getUser->grade) ? $getUser->grade : null;
                         $jurnal->tanggal = date('Y-m-d');
                         $jurnal->kegiatan = 'Clock In / Apel Pagi';
                         $jurnal->status = 0;
-                        $jurnal->start = date('Y-m-d H:i:s');
-                        $jurnal->end = date('Y-m-d H:i:s');
+                        $jurnal->start_time = date('Y-m-d H:i:s');
+                        $jurnal->end_time = date('Y-m-d H:i:s');
                         $jurnal->created_at = date('Y-m-d H:i:s');
                         $jurnal->save();
                     DB::commit();
@@ -139,19 +144,25 @@ class SaltoController extends Controller
                 try {
                     $absensi = Absensi::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->first();
                     $jurnal = New JurnalTaruna();
+                    $getUser = User::where('id', $request->id_user)->first();
                     DB::beginTransaction();
-                        $absensi->file_clock_out = $file;
                         $absensi->clock_out = date('Y-m-d H:i:s');
+                        $absensi->file_clock_out = $file;
                         $absensi->updated_at = date('Y-m-d H:i:s');
+                        $absensi->lat_out = !empty($request->lat) ? $request->lat : '-' ;
+                        $absensi->long_out = !empty($request->long) ? $request->long : '-' ;
                         $absensi->update();
                         $jurnal->id_user = $request->id_user;
+                        $jurnal->grade = !empty($getUser->grade) ? $getUser->grade : null;
                         $jurnal->tanggal = date('Y-m-d');
                         $jurnal->kegiatan = 'Clock Out / Apel Malam';
                         $jurnal->status = 1;
-                        $jurnal->start = date('Y-m-d H:i:s');
-                        $jurnal->end = date('Y-m-d H:i:s');
+                        $jurnal->start_time = date('Y-m-d H:i:s');
+                        $jurnal->end_time = date('Y-m-d H:i:s');
                         $jurnal->created_at = date('Y-m-d H:i:s');
                         $jurnal->save();
+                        JurnalTaruna::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->update(['status' => 1]);
+                        
                     DB::commit();
                 } catch (\Throwable $th) {
                     @dd($th);
