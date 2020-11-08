@@ -31,6 +31,10 @@ class SuratIzin extends Authenticatable
     ];
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id';
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
     /**
      * The attributes that should be hidden for arrays.
      *

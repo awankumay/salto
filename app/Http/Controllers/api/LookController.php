@@ -7,6 +7,9 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Content;
 use App\Grade;
+use App\OrangTua;
+use App\WaliAsuhKeluargaAsuh;
+use App\PembinaKeluargaAsuh;
 use App\Provinces;
 use App\Regencies;
 use Illuminate\Support\Facades\Auth;
@@ -263,9 +266,272 @@ class LookController extends BaseController
                 "success" => true,
                 "file" => $file
             ];
-            return $this->sendResponse($result, 'berhasil clock in');
+            return $this->sendResponse($result, 'berhasil clock out');
         }
         
     }
 
+    public function inputjurnal(Request $request)
+    {
+        $data = [];
+        $validator = Validator::make($request->all(), 
+                    [ 
+                        'id_user' => 'required',
+                        'tanggal' => 'required',
+                        'kegiatan' => 'required',
+                        'start_time' => 'required',
+                        'end_time' => 'required',
+                    ]);   
+ 
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+
+        try {
+            DB::beginTransaction();
+            $getUser = User::where('id', $request->id_user)->first();
+            $input = $request->all();
+            Arr::forget($input, array('start_time', 'end_time'));
+            $input['start_time'] = date('Y-m-d').' '.$request->start_time;
+            $input['start_time'] = date('Y-m-d').' '.$request->start_time;
+            $input['created_at'] = date('Y-m-d h:i:s');
+            $input['status'] = 0;
+            $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
+            JurnalTaruna::create($input);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+        }
+        
+    }
+
+
+    public function getjurnal(Request $request){
+        $limit  = 5;
+        $id_user = $request->idUser;
+        $lastDate = !empty($request->lastDate) ? $request->lastDate : date('Y-m-d');
+        $order  = !empty($request->order) ? $request->order : 'jurnal_taruna.tanggal';
+        $search  = !empty($request->search) ? $request->search : '';
+        $dir    = !empty($request->dir) ? $request->dir : 'DESC';
+        $condition = 'jurnal_taruna.tanggal='.$lastDate.'';
+        $getUser = User::find($request->idUser);
+        $roleName = $getUser->getRoleNames()[0];
+
+        if($order=='status'){
+            $order='jurnal_taruna.status';
+        }
+        if($order=='name'){
+            $order='users.name';
+        }
+        if($lastDate==date('Y-m-d')){
+            if($roleName=='Taruna'){
+                $condition  = 'jurnal_taruna.id_user='.$id_user.'';
+                $total      = JurnalTaruna::where('id_user', $id_user)
+                                ->groupBy('jurnal_taruna.tanggal')
+                                ->count();     
+                $count  = $total;
+                $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if($roleName=='OrangTua'){
+                $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition  = 'jurnal_taruna.id_user in('.$getTaruna.')';
+                $total      = JurnalTaruna::whereRaw($condition)
+                                ->groupBy('jurnal_taruna.tanggal')
+                                ->count();     
+                $count  = $total;
+                $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if($roleName=='Wali Asuh'){
+                $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                                ->select('taruna_keluarga_asuh.taruna_id')
+                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition  = 'jurnal_taruna.id_user in('.$getTaruna.')';
+                $total      = JurnalTaruna::whereRaw($condition)
+                                ->groupBy('jurnal_taruna.tanggal')
+                                ->count();     
+                $count  = $total;
+                $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if($roleName=='Pembina'){
+                $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                                ->select('taruna_keluarga_asuh.taruna_id')
+                                ->where('pembina_keluarga_asuh.pembina_id', $id_user)
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition  = 'jurnal_taruna.id_user in('.$getTaruna.')';
+                $total      = JurnalTaruna::whereRaw($condition)
+                                ->groupBy('jurnal_taruna.tanggal')
+                                ->count();     
+                $count  = $total;
+                $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+                $taruna     = DB::table('users')
+                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                                ->select('users.id', 'users.name')
+                                ->where('model_has_roles.role_id', 7)
+                                ->whereNull('users.deleted_at')
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition  = 'jurnal_taruna.id_user in('.$getTaruna.')';
+                $total      = JurnalTaruna::whereRaw($condition)
+                                ->groupBy('jurnal_taruna.tanggal')
+                                ->count();     
+                $count  = $total;
+                $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }
+        }else {
+            if($roleName=='Taruna'){
+                $condition = 'jurnal_taruna.id_user='.$id_user.' AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $total = JurnalTaruna::where('id_user', $id_user)
+                            ->groupBy('jurnal_taruna.tanggal')
+                            ->count();
+                
+                $count = JurnalTaruna::whereRaw($condition)->count();
+                $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if($roleName=='OrangTua'){
+                $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
+                            ->groupBy('jurnal_taruna.tanggal')
+                            ->count();
+                
+                $count = JurnalTaruna::whereRaw($condition)->count();
+                $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }else if('Wali Asuh'){
+                $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                                ->select('taruna_keluarga_asuh.taruna_id')
+                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
+                            ->groupBy('jurnal_taruna.tanggal')
+                            ->count();
+                
+                $count = JurnalTaruna::whereRaw($condition)->count();
+                $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+
+            }else if('Pembina'){
+                $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                                ->select('taruna_keluarga_asuh.taruna_id')
+                                ->where('pembina_keluarga_asuh.pembina_id', $id_user)
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
+                            ->groupBy('jurnal_taruna.tanggal')
+                            ->count();
+                
+                $count = JurnalTaruna::whereRaw($condition)->count();
+                $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+
+            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+                $taruna     = DB::table('users')
+                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                                ->select('users.id', 'users.name')
+                                ->where('model_has_roles.role_id', 7)
+                                ->whereNull('users.deleted_at')
+                                ->get();
+                $tarunaId   = [];
+                foreach ($taruna as $key => $value) {
+                    $tarunaId[]=$value->taruna_id;
+                }
+                $getTaruna  = implode(',',$tarunaId);
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
+                            ->groupBy('jurnal_taruna.tanggal')
+                            ->count();
+                
+                $count = JurnalTaruna::whereRaw($condition)->count();
+                $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+            }
+        }
+        $result =[];
+        foreach ($data as $key => $value) {
+                $result['jurnal'][]= [ 
+                    'name'=>$value->name,
+                    'tanggal'=>$value->tanggal,
+                    'status'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim'
+                ];
+        }
+
+        if($count > $limit){
+            $result['info']['lastDate'] = $data[count($data)-1]->tanggal;
+            $result['info']['loadmore'] = true;
+            $result['info']['dataload'] = count($data);
+            $result['info']['totaldata'] = $total;
+        }else{
+            $result['info']['lastDate'] = date('Y-m-d');
+            $result['info']['loadmore'] = false;
+            $result['info']['dataload'] = count($data);
+            $result['info']['totaldata'] = $total;
+        }
+        $result['info']['limit']  = $limit;
+        return $this->sendResponse($result, 'jurnal load successfully.');
+    }
+
+    public function jurnaltaruna($condition, $limit, $order, $dir)
+    {
+        return JurnalTaruna::join('users', 'users.id', '=', 'jurnal_taruna.id_user')
+        ->whereRaw($condition)
+        ->select('jurnal_taruna.tanggal','users.name', 'jurnal_taruna.status')
+        ->limit($limit)
+        ->orderBy($order,$dir)
+        ->groupBy('jurnal_taruna.tanggal','users.name')
+        ->get();
+    }
+
+    public function getjurnaldetail(Request $request)
+    {
+        $data = [];
+        $date = $request->date;
+        $jurnal = JurnalTaruna::join('users', 'users.id', '=', 'jurnal_taruna.id_user')
+                    ->join('grade_table', 'grade_table.id', '=', 'users.grade')
+                    ->whereRaw('tanggal = ?', $date)
+                    ->select('jurnal_taruna.*', 'users.name as nama_taruna', 'grade_table.grade as nama_grade')
+                    ->get();
+        return $this->sendResponse($jurnal, 'jurnal load successfully.');
+        
+    }
+
+    public function getjurnaldetailbyid(Request $request)
+    {
+        $date = $request->date;
+        $id   = $request->id;
+        $jurnal = JurnalTaruna::whereRaw('tanggal = ?', $date)
+                    ->where('jurnal_taruna.id', $id)
+                    ->first();
+        return $this->sendResponse($jurnal, 'jurnal load successfully.');
+    }
 }

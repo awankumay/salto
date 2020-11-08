@@ -27,7 +27,10 @@ class Content extends Model
         'file'
     ];
     protected $dates = ['deleted_at'];
-
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
     public function Author()
     {
     	return $this->belongsTo(User::class, 'author', 'id');

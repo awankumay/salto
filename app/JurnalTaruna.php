@@ -10,7 +10,10 @@ class JurnalTaruna extends Model
 {
     protected $fillable = ['id_user', 'tanggal', 'start', 'end', 'kegiatan', 'status'];
     protected $table = 'jurnal_taruna';
-
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
     public function GetCount()
     {
         return JurnalTaruna::groupBy('tanggal')->count();

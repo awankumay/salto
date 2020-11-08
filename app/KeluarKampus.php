@@ -16,5 +16,8 @@ class KeluarKampus extends Model
     ];
     protected $primaryKey = 'id';
     protected $dates = ['deleted_at'];
-
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
 }
