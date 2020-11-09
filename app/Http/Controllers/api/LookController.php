@@ -514,6 +514,7 @@ class LookController extends BaseController
         $result =[];
         foreach ($data as $key => $value) {
                 $result['jurnal'][]= [ 
+                    'id_user'=>$value->id_user,
                     'name'=>$value->name,
                     'tanggal'=>$value->tanggal,
                     'status'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim'
@@ -576,10 +577,10 @@ class LookController extends BaseController
     {
         return JurnalTaruna::join('users', 'users.id', '=', 'jurnal_taruna.id_user')
         ->whereRaw($condition)
-        ->select('jurnal_taruna.tanggal','users.name', 'jurnal_taruna.status')
+        ->select('jurnal_taruna.id_user', 'jurnal_taruna.tanggal','users.name', 'jurnal_taruna.status')
         ->limit($limit)
         ->orderBy($order,$dir)
-        ->groupBy('jurnal_taruna.tanggal','users.name')
+        ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal','users.name')
         ->get();
     }
 
