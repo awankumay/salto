@@ -288,7 +288,6 @@ class LookController extends BaseController
         $validator = Validator::make($request->all(), 
                     [ 
                         'id_user' => 'required',
-                        'tanggal' => 'required',
                         'kegiatan' => 'required',
                         'start_time' => 'required',
                         'end_time' => 'required',
@@ -325,6 +324,7 @@ class LookController extends BaseController
                 $input['end_time'] = date_create(date('Y-m-d').' '.$request->end_time);
                 //$input['created_at'] = date('Y-m-d h:i:s');
                 $input['status'] = 0;
+                $input['tanggal'] = date('Y-m-d');
                 $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
                 JurnalTaruna::create($input);
                 DB::commit();
@@ -537,7 +537,24 @@ class LookController extends BaseController
                     ->where('users.id', $id_user)
                     ->select('jurnal_taruna.*', 'users.name as nama_taruna', 'grade_table.grade as nama_grade')
                     ->get();
-        return $this->sendResponse($jurnal, 'jurnal load successfully.');
+        foreach ($jurnal as $key => $value) {
+            $data[]=array(
+                'id'=>$value->id,
+                'id_user'=>$value->id_user,
+                'name'=>$value->nama_taruna,
+                'grade'=>$value->grade,
+                'grade_name'=>$value->nama_grade,
+                'start_time'=>date_format(date_create($value->start_time), 'H:i'),
+                'end_time'=>date_format(date_create($value->end_time), 'H:i'),
+                'kegiatan'=>$value->kegiatan,
+                'status'=> $value->status,
+                'status_name'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim',
+                'created_at'=> date_format(date_create($value->created_at), 'd-m-Y H:i:s'),
+                'udpated_at'=> date_format(date_create($value->udpated_at), 'd-m-Y H:i:s')
+
+            );
+        }
+        return $this->sendResponse($data, 'jurnal load successfully.');
         
     }
 
