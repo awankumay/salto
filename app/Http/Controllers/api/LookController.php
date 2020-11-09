@@ -427,12 +427,11 @@ class LookController extends BaseController
             }
         }else {
             if($roleName=='Taruna'){
-                $condition = 'jurnal_taruna.id_user='.$id_user.' AND jurnal_taruna.tanggal < '.$lastDate.'';
-                $total = JurnalTaruna::where('id_user', $id_user)
-                            ->groupBy('jurnal_taruna.tanggal')
-                            ->count();
+                $condition = 'jurnal_taruna.id_user='.$id_user.' AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
+                $total = JurnalTaruna::whereRaw($condition)
+                            ->count(DB::raw('DISTINCT tanggal')); 
                 
-                $count = JurnalTaruna::whereRaw($condition)->count();
+                $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
@@ -441,12 +440,11 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
                 $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
-                            ->groupBy('jurnal_taruna.tanggal')
-                            ->count();
+                        ->count(DB::raw('DISTINCT tanggal'));
                 
-                $count = JurnalTaruna::whereRaw($condition)->count();
+                $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
             }else if('Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -458,12 +456,11 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
                 $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
-                            ->groupBy('jurnal_taruna.tanggal')
-                            ->count();
+                        ->count(DB::raw('DISTINCT tanggal'));
                 
-                $count = JurnalTaruna::whereRaw($condition)->count();
+                $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
 
             }else if('Pembina'){
@@ -476,12 +473,11 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
                 $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
-                            ->groupBy('jurnal_taruna.tanggal')
-                            ->count();
+                            ->count(DB::raw('DISTINCT tanggal'));
                 
-                $count = JurnalTaruna::whereRaw($condition)->count();
+                $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
 
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
@@ -497,12 +493,11 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < '.$lastDate.'';
+                $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
                 $total = JurnalTaruna::whereRaw('jurnal_taruna.id_user in('.$getTaruna.')')
-                            ->groupBy('jurnal_taruna.tanggal')
-                            ->count();
+                        ->count(DB::raw('DISTINCT tanggal'));
                 
-                $count = JurnalTaruna::whereRaw($condition)->count();
+                $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
             }
         }
