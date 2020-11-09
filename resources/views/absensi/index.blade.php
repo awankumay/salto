@@ -121,9 +121,9 @@
                 success: function(data, textStatus, xhr){
                     $("#overlay").fadeOut();
                     toastr.success("Sukses, Clock In Berhasil");
-                  /*   setTimeout(() => {
+                    setTimeout(() => {
                         window.location.reload();
-                    }, 300); */
+                    }, 300);
                 },
                 error : function(data, textStatus, xhr) {
                     $("#overlay").fadeOut();

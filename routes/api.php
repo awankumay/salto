@@ -23,8 +23,14 @@ Route::get('getberitadetail/id/{id}', 'api\LookController@getberitadetail')->nam
 Route::post('clockin', 'api\LookController@clockin')->name('clockin');
 Route::post('clockout', 'api\LookController@clockout')->name('clockout');
 Route::post('getjurnal', 'api\LookController@getjurnal')->name('getjurnal');
-Route::get('getjurnal/tanggal/{date}', 'api\LookController@getjurnaldetail')->name('getjurnal');
-Route::get('getjurnal/tanggal/{date}/id/{id}', 'api\LookController@getjurnaldetailbyid')->name('getjurnal');
+Route::get('getjurnal/tanggal/{date}/id_user/{id_user}', 'api\LookController@getjurnaldetail')->name('getjurnal');
+Route::get('getjurnal/tanggal/{date}/id/{id}/id_user/{id_user}', 'api\LookController@getjurnaldetailbyid')->name('getjurnal');
+Route::post('inputjurnal', 'api\LookController@inputjurnal')->name('inputjurnal');
+Route::post('deletejurnal', 'api\LookController@deletejurnal')->name('deleterjurnal');
+
+Route::post('getsuratizin', 'api\LookController@getsuratizin')->name('getsuratizin');
+Route::get('getsuratizin/id/{id}', 'api\LookController@suratizindetailbyid')->name('getsuratizin');
+Route::post('inputsuratizin', 'api\LookController@inputsuratizin')->name('inputsuratizin');
 
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');

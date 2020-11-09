@@ -8,11 +8,11 @@ use DB;
 
 class JurnalTaruna extends Model
 {
-    protected $fillable = ['id_user', 'tanggal', 'start', 'end', 'kegiatan', 'status'];
+    protected $fillable = ['id_user', 'tanggal', 'start_time', 'end_time', 'kegiatan', 'status', 'grade'];
     protected $table = 'jurnal_taruna';
     protected $casts = [
-        'created_at'  => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s'
+        'created_at'  => 'datetime:Y-m-d h:i:s',
+        'updated_at' => 'datetime:Y-m-d h:i:s'
     ];
     public function GetCount()
     {
