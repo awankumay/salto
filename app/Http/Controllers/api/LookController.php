@@ -861,7 +861,7 @@ class LookController extends BaseController
         $roleName   = $getUser->getRoleNames()[0];
         if($roleName=='Taruna'){
             $tarunaId   = [];
-            $orangtua   = OrangTua::where('taruna_id', )->get();
+            //$orangtua   = OrangTua::where('taruna_id', )->get();
             return ['id'=>$getUser->id, 'name'=>$getUser->name];
         }else if($roleName=='OrangTua'){
             $taruna         = OrangTua::join('users', 'users.id', '=', 'orang_tua_taruna.taruna_id')
