@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('login', 'api\LoginController@login');
 Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile');
+Route::get('gettaruna/id_user/{id_user}', 'api\LookController@gettaruna')->name('gettaruna');
 Route::post('getdata', 'api\LookController@getdata')->name('getdata');
 Route::get('getslider', 'api\LookController@getslider')->name('getslider');
 Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');

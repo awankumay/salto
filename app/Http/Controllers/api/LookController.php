@@ -350,12 +350,10 @@ class LookController extends BaseController
         $condition = 'jurnal_taruna.tanggal='.$lastDate.'';
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
-
+        $result = [];
+        $result['info']['permission'] = [];
         if($order=='status'){
             $order='jurnal_taruna.status';
-        }
-        if($order=='name'){
-            $order='users.name';
         }
         if($lastDate==date('Y-m-d')){
             if($roleName=='Taruna'){
@@ -364,6 +362,7 @@ class LookController extends BaseController
                                 ->count(DB::raw('DISTINCT tanggal'));     
                 $count  = $total;
                 $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = ['create', 'delete', 'edit'];
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
@@ -433,6 +432,7 @@ class LookController extends BaseController
                 
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = ['create', 'delete', 'edit'];
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
@@ -501,7 +501,6 @@ class LookController extends BaseController
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
             }
         }
-        $result =[];
         foreach ($data as $key => $value) {
                 $result['jurnal'][]= [ 
                     'id_user'=>$value->id_user,
@@ -601,7 +600,8 @@ class LookController extends BaseController
         $condition = 'surat_header.id='.$lastId.'';
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
-
+        $result =[];
+        $result['info']['permission'] = [];
         if($order=='status'){
             $order='surat_header.status';
         }
@@ -618,18 +618,21 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = ['create', 'delete', 'edit'];
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
                     $tarunaId[]=$value->taruna_id;
                 }
+                $tarunaId[] = $id_user;
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'surat_header.id_user in('.$getTaruna.')';
                 $total      = SuratIzin::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -645,6 +648,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -660,6 +664,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -678,6 +683,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }
         }else {
             if($roleName=='Taruna'){
@@ -700,6 +706,7 @@ class LookController extends BaseController
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }else if('Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -716,6 +723,7 @@ class LookController extends BaseController
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
 
             }else if('Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -733,6 +741,7 @@ class LookController extends BaseController
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
 
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
@@ -753,9 +762,9 @@ class LookController extends BaseController
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
+                $result['info']['permission'] = [];
             }
         }
-        $result =[];
         foreach ($data as $key => $value) {
             if($value->status==1){
             }else if ($value->status==0) {
@@ -798,6 +807,12 @@ class LookController extends BaseController
             ->get();
     }
 
+    public function getcategorysurat(Request $request)
+    {
+        $data = [];
+        $getUser = User::find($request->id_user);
+    }
+
     public function suratizindetailbyid(Request $request)
     {
         $id   = $request->id;
@@ -805,6 +820,10 @@ class LookController extends BaseController
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                $data = [];
+                $data['header'] = $getSurat;
+                $data['body']   = $getSuratDetail;
+                return $this->sendResponse($data, 'suratizin load successfully.');
                 break;
             case 2:
                 $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
@@ -834,10 +853,81 @@ class LookController extends BaseController
                 $getSuratDetail = [];
                 break;
         }
-        $data = [];
-        $data['header'] = $getSurat;
-        $data['body']   = $getSuratDetail;
-        return $this->sendResponse($data, 'suratizin load successfully.');
+    }
+
+    public function gettaruna(Request $request)
+    {
+        $getUser    = User::find($request->id_user);
+        $roleName   = $getUser->getRoleNames()[0];
+        if($roleName=='Taruna'){
+            $tarunaId   = [];
+            $orangtua   = OrangTua::where('taruna_id', )->get();
+            return ['id'=>$getUser->id, 'name'=>$getUser->name];
+        }else if($roleName=='OrangTua'){
+            $taruna         = OrangTua::join('users', 'users.id', '=', 'orang_tua_taruna.taruna_id')
+                                ->select('orang_tua_taruna.taruna_id', 'users.name')
+                                ->where('orangtua_id', $id_user)
+                                ->get();
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            $tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            return $tarunaData;
+        }else if($roleName=='Wali Asuh'){
+            $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
+                            ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
+                            ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
+                            ->get();
+
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            $tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            return $tarunaData;
+        }else if($roleName=='Pembina'){
+            $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
+                            ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
+                            ->where('pembina_keluarga_asuh.pembina_id', $id_user)
+                            ->get();
+  
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            $tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            return $tarunaData;
+        }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            $taruna     = DB::table('users')
+                            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                            ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                            ->select('users.id', 'users.name')
+                            ->where('model_has_roles.role_id', 7)
+                            ->whereNull('users.deleted_at')
+                            ->get();
+
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->id;
+                $tarunaWithName[]=['id'=>$value->id, 'name'=>$value->name];
+            }
+            $tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            return $tarunaData;
+        }
     }
     
 }
