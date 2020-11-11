@@ -151,4 +151,20 @@ Breadcrumbs::register('jurnal.show', function ($breadcrumbs, $jurnal) {
     $breadcrumbs->parent('jurnal');
     $breadcrumbs->push($jurnal->id, route('jurnal.show', $jurnal->id));
 });
+Breadcrumbs::register('pengasuhan', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Pengasuhan', route('pengasuhan.index'));
+});
+Breadcrumbs::register('pengasuhan.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('pengasuhan');
+    $breadcrumbs->push('Tambah Pengasuhan', route('pengasuhan.create'));
+});
+Breadcrumbs::register('pengasuhan.edit', function ($breadcrumbs, $pengasuhan) {
+    $breadcrumbs->parent('pengasuhan');
+    $breadcrumbs->push($pengasuhan->id, route('pengasuhan.edit', $pengasuhan->id));
+});
+Breadcrumbs::register('pengasuhan.show', function ($breadcrumbs, $pengasuhan) {
+    $breadcrumbs->parent('pengasuhan');
+    $breadcrumbs->push($pengasuhan->id, route('pengasuhan.show', $pengasuhan->id));
+});
 ?>

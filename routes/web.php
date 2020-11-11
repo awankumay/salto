@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('surat-izin', 'SuratIzinController');
         Route::resource('absensi', 'AbsensiController');
         Route::resource('jurnal', 'JurnalController');
+        Route::resource('pengasuhan', 'PengasuhanController');
         Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');

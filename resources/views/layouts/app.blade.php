@@ -97,7 +97,6 @@
                         @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list'))<a class="collapse-item" href="{{route('permission.index')}}">Kategori Surat</a>@endif
                         @if(auth()->user()->hasPermissionTo('grade-list'))<a class="collapse-item" href="{{route('grade.index')}}">Kategori Grade</a>@endif
                         @if(auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))<a class="collapse-item" href="{{route('keluarga-asuh.index')}}">Data Keluarga Asuh Taruna</a>@endif
-                        @if(auth()->user()->hasPermissionTo('data-pembina-keluarga-asuh-list'))<a class="collapse-item" href="{{route('slider.index')}}">Data Wali Asuh dan Keluarga Asuh</a>@endif
                         </div>
                     </div>
                 </li>
@@ -124,7 +123,7 @@
                         <h6 class="collapse-header">Menu</h6>
                         @if(auth()->user()->hasPermissionTo('prestasi-taruna-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Penghargaan Taruna</a>@endif
                         @if(auth()->user()->hasPermissionTo('hukuman-dinas-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
-                        @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('content.index')}}">Pengasuhan Daring</a>@endif
+                        @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('pengasuhan.index')}}">Pengasuhan Daring</a>@endif
                         @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('content.index')}}">Surat Keterangan</a>@endif
                         @if(auth()->user()->hasPermissionTo('absensi-list'))<a class="collapse-item" href="{{route('absensi.index')}}">Absensi Harian</a>@endif
                         @if(auth()->user()->hasPermissionTo('jurnal-harian-list'))<a class="collapse-item" href="{{route('jurnal.index')}}">Jurnal Harian</a>@endif
@@ -148,7 +147,6 @@
 
                         @if(auth()->user()->hasPermissionTo('kategori-berita-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Kategori</a>@endif
                         @if(auth()->user()->hasPermissionTo('berita-list'))<a class="collapse-item" href="{{route('content.index')}}">Konten</a>@endif
-                        @if(auth()->user()->hasPermissionTo('banner-list'))<a class="collapse-item" href="{{route('slider.index')}}">Banner</a>@endif
                         </div>
                     </div>
                 </li>
