@@ -566,6 +566,8 @@ class LookController extends BaseController
                     ->where('jurnal_taruna.id', $id)
                     ->where('jurnal_taruna.id_user', $id_user)
                     ->first();
+        $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
+        $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
         return $this->sendResponse($jurnal, 'jurnal load successfully.');
     }
 
