@@ -506,7 +506,8 @@ class LookController extends BaseController
                     'id_user'=>$value->id_user,
                     'name'=>$value->name,
                     'tanggal'=>$value->tanggal,
-                    'status'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim'
+                    'status_name'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim',
+                    'status'=> $value->status
                 ];
         }
 
@@ -808,7 +809,8 @@ class LookController extends BaseController
                 'tanggal'=>$value->tanggal,
                 'jenis_surat'=>$value->category,
                 'id_category'=>$value->id_category,
-                'status'=> $status,
+                'status_name'=> $status,
+                'status'=> $value->status,
                 'download'=> $download,
                 'permission'=>$dataPermission
             ];
