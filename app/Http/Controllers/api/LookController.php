@@ -899,6 +899,8 @@ class LookController extends BaseController
     public function gettaruna(Request $request, $option=null)
     {
         $getUser    = User::find($request->id_user);
+        $option     = $option;
+    
         $roleName   = $getUser->getRoleNames()[0];
         if($roleName=='Taruna'){
             $tarunaId   = [];
@@ -969,7 +971,7 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
         }
-        if($option){
+        if($option!=1){
             $tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
         }else{
