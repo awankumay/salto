@@ -19,7 +19,7 @@ class TarunaKeluargaAsuh extends Model
 
     public function GetCount($id)
     {
-        return TarunaKeluargaAsuh::where('id', $id)->count();
+        return TarunaKeluargaAsuh::where('keluarga_asuh_id', $id)->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir, $id)

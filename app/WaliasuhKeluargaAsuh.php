@@ -19,7 +19,7 @@ class WaliasuhKeluargaAsuh extends Model
 
     public function GetCount($id)
     {
-        return WaliasuhKeluargaAsuh::where('id', $id)->count();
+        return WaliasuhKeluargaAsuh::where('keluarga_asuh_id', $id)->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir, $id)

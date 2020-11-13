@@ -19,7 +19,7 @@ class PembinaKeluargaAsuh extends Model
 
     public function GetCount($id)
     {
-        return PembinaKeluargaAsuh::where('id', $id)->count();
+        return PembinaKeluargaAsuh::where('keluarga_asuh_id', $id)->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir, $id)
