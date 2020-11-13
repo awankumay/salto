@@ -577,6 +577,9 @@ class LookController extends BaseController
         $id   = $request->id;
         $id_user = $request->idUser;
         $jurnal = JurnalTaruna::where('id', $id)->where('id_user', $id_user)->first();
+        if(empty($jurnal)){
+            return $this->sendResponseFalse($data, 'jurnal not found.');
+        }
         $jurnal->delete();
         return $this->sendResponse($data, 'jurnal delete successfully.');
     }
@@ -599,11 +602,11 @@ class LookController extends BaseController
         $order  = !empty($request->order) ? $request->order : 'surat_header.id';
         $search  = !empty($request->search) ? $request->search : '';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
+        $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'surat_header.id='.$lastId.'';
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
-        $result['info']['permission'] = [];
         if($order=='status'){
             $order='surat_header.status';
         }
@@ -613,14 +616,30 @@ class LookController extends BaseController
         if($order=='id'){
             $order='surat_header.id';
         }
+
+        $permission = [];
+        foreach ($getUser->getAllPermissions() as $key => $vals) {
+            $permission[]=$vals->name;
+        }
+        $listPermission = $this->setcategoryperizinan($permission);
+        $getCategoryId = [];
+        foreach ($listPermission as $key => $vals) {
+            $getCategoryId[] = $vals['id'];
+        }
         if($lastId==0){
             if($roleName=='Taruna'){
-                $condition  = 'surat_header.id_user='.$id_user.'';
-                $total      = SuratIzin::where('id_user', $id_user)
-                                ->count();     
+                $id = [];
+                $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
+                foreach ($orangtua as $key => $value) {
+                    $id[]=$value->orangtua_id;
+                }
+                $id[]=$id_user;
+                $getTaruna  = implode(',',$id);
+                $condition  = 'surat_header.id_user in('.$getTaruna.')';
+                $total      =  SuratIzin::whereRaw($condition)
+                                ->count();   
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = ['create', 'delete', 'edit'];
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
@@ -634,7 +653,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -650,7 +669,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -666,7 +685,7 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -685,11 +704,11 @@ class LookController extends BaseController
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }
         }else {
             if($roleName=='Taruna'){
-                $condition = 'surat_header.id_user='.$id_user.' AND surat_header.id < '.$lastId.'';
+                $condition = 'surat_header.id_user='.$id_user.' AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::where('id_user', $id_user)
                             ->count();
                 
@@ -702,13 +721,13 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id < '.$lastId.'';
+                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::whereRaw('surat_header.id_user in('.$getTaruna.')')
                             ->count();
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }else if('Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
@@ -719,13 +738,13 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id < '.$lastId.'';
+                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::whereRaw('surat_header.id_user in('.$getTaruna.')')
                             ->count();
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
 
             }else if('Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -737,13 +756,13 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id < '.$lastId.'';
+                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::whereRaw('surat_header.id_user in('.$getTaruna.')')
                             ->count();
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
 
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
@@ -758,29 +777,42 @@ class LookController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id < '.$lastId.'';
+                $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::whereRaw('surat_header.id_user in('.$getTaruna.')')
                             ->count();
                 
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
-                $result['info']['permission'] = [];
+               
             }
         }
         foreach ($data as $key => $value) {
             if($value->status==1){
+                $status='Disetujui';
+                $download = 'link_download';
             }else if ($value->status==0) {
                 $status='Belum Disetuji';
+                $download = '-';
             }else{
                 $status='Tidak Disetuji';
+                $download = '-';
             }
-                $result['suratizin'][]= [ 
-                    'id'=>$value->id,
-                    'name'=>$value->name,
-                    'tanggal'=>$value->tanggal,
-                    'jenis_surat'=>$value->category,
-                    'status'=> $status
-                ];
+            $dataPermission = [];
+       
+            if(in_array($value->id_category, $getCategoryId)){
+                $dataPermission = ['edit', 'delete'];
+            }
+            $result['suratizin'][]= [ 
+                'id'=>$value->id,
+                'name'=>$value->name,
+                'tanggal'=>$value->tanggal,
+                'jenis_surat'=>$value->category,
+                'id_category'=>$value->id_category,
+                'status'=> $status,
+                'download'=> $download,
+                'permission'=>$dataPermission
+            ];
+                
         }
 
         if($count > $limit){
@@ -803,16 +835,21 @@ class LookController extends BaseController
         return SuratIzin::join('users', 'users.id', '=', 'surat_header.id_user')
             ->join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id')
+            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id', 'surat_header.id_category as id_category')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
     }
 
-    public function getcategorysurat(Request $request)
+    public function getsuratizincategory(Request $request)
     {
-        $data = [];
         $getUser = User::find($request->id_user);
+        $permission = [];
+        foreach ($getUser->getAllPermissions() as $key => $vals) {
+            $permission[]=$vals->name;
+        }
+        $data = $this->setcategoryperizinan($permission);
+        return $this->sendResponse($data, 'surat izin category load successfully.');
     }
 
     public function suratizindetailbyid(Request $request)
@@ -930,6 +967,65 @@ class LookController extends BaseController
             $tarunaData['taruna']   = $tarunaWithName;
             return $tarunaData;
         }
+    }
+
+    public function setcategoryperizinan($permission)
+    {
+        $category=[];
+        $data=[];
+        if (in_array('surat-izin-orang-tua-sakit-create', $permission)) {
+            $category[]=['id'=>6, 
+                        'name'=>'Orang Tua Sakit', 
+                        'form'=>['keperluan', 'tujuan']
+                        ];
+        }
+        if (in_array('surat-izin-orang-tua-meninggal-create', $permission)) {
+            $category[]=['id'=>5, 
+                        'name'=>'Pemakaman Keluarga',
+                        'form'=>['keperluan', 'tujuan']];
+        }
+        if (in_array('surat-izin-pernikahan-saudara-create', $permission)) {
+            $category[]=['id'=>4, 
+                        'name'=>'Pernikahan Saudara',
+                        'form'=>['keperluan', 'tujuan']];
+        }
+        if (in_array('surat-izin-kegiatan-pesiar-create', $permission)) {
+            $category[]=['id'=>9, 
+                        'name'=>'Kegiatan Pesiar',
+                        'form'=>['keperluan', 'tujuan']];
+        }
+        if (in_array('surat-izin-rawat-inap-create', $permission)) {
+            $category[]=['id'=>1, 
+                          'name'=>'Izin Sakit', 
+                          'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
+                        ];
+        }
+        if (in_array('surat-izin-training-create', $permission)) {
+            $category[]=['id'=>3, 
+                        'name'=>'Training Center',
+                        'form'=>['nm_tc', 'pelatih']];
+        }
+        if (in_array('surat-izin-keluar-kampus-create', $permission)) {
+            $category[]=['id'=>2, 
+                         'name'=>'Keluar Kampus',
+                         'form'=>['keperluan', 'pendamping']
+                        ];
+        }
+        if (in_array('surat-izin-kegiatan-dalam-create', $permission)) {
+            $category[]=['id'=>8, 
+                        'name'=>'Kegiatan Dalam',
+                        'form'=>['keperluan', 'tujuan']];
+        }
+        if (in_array('surat-tugas-create', $permission)) {
+            $category[]=['id'=>7, 
+                        'name'=>'Tugas',
+                        'form'=>['keperluan', 'tujuan']];
+        }
+        asort($category);
+        foreach ($category as $key => $value) {
+            $data[]=$value;
+        }
+        return $data;
     }
     
 }

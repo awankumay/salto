@@ -19,7 +19,6 @@ Route::get('gettaruna/id_user/{id_user}', 'api\LookController@gettaruna')->name(
 Route::post('getdata', 'api\LookController@getdata')->name('getdata');
 Route::get('getslider', 'api\LookController@getslider')->name('getslider');
 Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');
-Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');
 Route::get('getberitadetail/id/{id}', 'api\LookController@getberitadetail')->name('getberitadetail');
 Route::post('clockin', 'api\LookController@clockin')->name('clockin');
 Route::post('clockout', 'api\LookController@clockout')->name('clockout');
@@ -30,6 +29,7 @@ Route::post('inputjurnal', 'api\LookController@inputjurnal')->name('inputjurnal'
 Route::post('deletejurnal', 'api\LookController@deletejurnal')->name('deleterjurnal');
 
 Route::post('getsuratizin', 'api\LookController@getsuratizin')->name('getsuratizin');
+Route::get('getsuratizincategory/id_user/{id_user}', 'api\LookController@getsuratizincategory')->name('getsuratizincategory');
 Route::get('getsuratizin/id/{id}', 'api\LookController@suratizindetailbyid')->name('getsuratizin');
 Route::post('inputsuratizin', 'api\LookController@inputsuratizin')->name('inputsuratizin');
 

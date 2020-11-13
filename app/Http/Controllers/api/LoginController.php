@@ -66,11 +66,12 @@ class LoginController extends BaseController
                 return $this->sendResponse($success, 'User login successfully.');
             }else{
                 $success['id'] =  $username;
-                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+                return $this->sendResponseFalse('Unauthorised.', ['error'=>'Unauthorised']);
             }
         } else {
             //they sent their username instead 
-            if(Auth::attempt(['stb' => $username, 'password' => $password])){
+            $user = User::where('stb', $username)->whereRaw('stb is not null')->first();
+            if(!empty($user->stb) && Auth::attempt(['stb' => $username, 'password' => $password])){
                 $user = Auth::user(); 
                 $success['profile'] =  $user;
                 $roles = $user->getRoleNames();
@@ -85,7 +86,7 @@ class LoginController extends BaseController
                 return $this->sendResponse($success, 'User login successfully.');
             }else{
                 $success['id'] =   $username;
-                return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+                return $this->sendResponseFalse('Unauthorised.', ['error'=>'Unauthorised']);
             }
         }
     }
