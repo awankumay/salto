@@ -49,7 +49,35 @@ class LoginController extends BaseController
     {
         $username = $request->username;
         $password = $request->password;
-        if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
+        $input    = $request->all();
+
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'stb';
+        if(auth()->attempt(array($fieldType => $input['username'], 'password' => $input['password'], 'status' => 1))){
+                $user = Auth::user(); 
+                $success['profile'] =  $user;
+                $roles = $user->getRoleNames();
+                $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
+                $success['permission'] = [];
+                foreach ($user->getAllPermissions() as $key => $vals) {
+                    $success['permission'][]=$vals->name;
+                }
+                $success['user_id'] = $user->id;
+                $success['token'] =  $user->createToken('MyApp')->accessToken;
+                return $this->sendResponse($success, 'User login successfully.'); 
+        }else{
+                $success['id'] =  $username;
+                return $this->sendResponseFalse('Unauthorised.', ['error'=>'Unauthorised']);
+        }
+       /*  if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
             //user sent their email 
             if(Auth::attempt(['email' => $username, 'password' => $password])){
                 $user = Auth::user(); 
@@ -88,7 +116,7 @@ class LoginController extends BaseController
                 $success['id'] =   $username;
                 return $this->sendResponseFalse('Unauthorised.', ['error'=>'Unauthorised']);
             }
-        }
+        } */
     }
 
     public function logout(Request $request)

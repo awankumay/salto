@@ -665,7 +665,7 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'surat_header.id_user in('.$getTaruna.')';
-                $total      = SuratIziin::whereRaw($condition)
+                $total      = SuratIzin::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
@@ -696,11 +696,11 @@ class LookController extends BaseController
                                 ->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                    $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'surat_header.id_user in('.$getTaruna.')';
-                $total      = JurnalTaruna::whereRaw($condition)
+                $total      = SuratIzin::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
@@ -728,7 +728,7 @@ class LookController extends BaseController
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
                
-            }else if('Wali Asuh'){
+            }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
@@ -746,7 +746,7 @@ class LookController extends BaseController
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
                
 
-            }else if('Pembina'){
+            }else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -774,7 +774,7 @@ class LookController extends BaseController
                                 ->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                    $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
