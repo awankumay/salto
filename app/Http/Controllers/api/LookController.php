@@ -896,14 +896,15 @@ class LookController extends BaseController
         }
     }
 
-    public function gettaruna(Request $request)
+    public function gettaruna(Request $request, $option=null)
     {
         $getUser    = User::find($request->id_user);
         $roleName   = $getUser->getRoleNames()[0];
         if($roleName=='Taruna'){
             $tarunaId   = [];
             //$orangtua   = OrangTua::where('taruna_id', )->get();
-            return ['id'=>$getUser->id, 'name'=>$getUser->name];
+            $tarunaData['taruna'] = ['id'=>$getUser->id, 'name'=>$getUser->name];
+            return $tarunaData;
         }else if($roleName=='OrangTua'){
             $taruna         = OrangTua::join('users', 'users.id', '=', 'orang_tua_taruna.taruna_id')
                                 ->select('orang_tua_taruna.taruna_id', 'users.name')
@@ -915,9 +916,9 @@ class LookController extends BaseController
                 $tarunaId[]=$value->taruna_id;
                 $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
             }
-            $tarunaData['id']       = implode(',',$tarunaId);
+            //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
-            return $tarunaData;
+            //return $tarunaData;
         }else if($roleName=='Wali Asuh'){
             $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
@@ -931,9 +932,9 @@ class LookController extends BaseController
                 $tarunaId[]=$value->taruna_id;
                 $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
             }
-            $tarunaData['id']       = implode(',',$tarunaId);
+            //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
-            return $tarunaData;
+            //return $tarunaData;
         }else if($roleName=='Pembina'){
             $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
@@ -947,9 +948,9 @@ class LookController extends BaseController
                 $tarunaId[]=$value->taruna_id;
                 $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
             }
-            $tarunaData['id']       = implode(',',$tarunaId);
+            //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
-            return $tarunaData;
+            //return $tarunaData;
         }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
             $taruna     = DB::table('users')
                             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
@@ -965,10 +966,16 @@ class LookController extends BaseController
                 $tarunaId[]=$value->id;
                 $tarunaWithName[]=['id'=>$value->id, 'name'=>$value->name];
             }
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+        }
+        if($option){
             $tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
-            return $tarunaData;
+        }else{
+            $tarunaData['taruna']   = $tarunaWithName;
         }
+        return $tarunaData;
     }
 
     public function setcategoryperizinan($permission)
