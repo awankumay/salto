@@ -22,6 +22,7 @@ use App\WaliAsuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Provinces;
 use App\Regencies;
+use App\Permission;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
@@ -892,14 +893,58 @@ class LookController extends BaseController
     {
         $id   = $request->id;
         $getSurat = SuratIzin::where('id', $id)->first();
+        $getCategory = Permission::where('id', $getSurat->id_category)->first();
+        $getUser = User::find($request->id_user);
+        $author = User::find($getSurat->id_user);
+        $permission = [];
+        foreach ($getUser->getAllPermissions() as $key => $vals) {
+            $permission[]=$vals->name;
+        }
         $data = [];
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
-                if(!empty())
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keluhan'=>$getSuratDetail->keluhan,
+                        'diagnosa'=>$getSuratDetail->diagnosa,
+                        'rekomendasi'=>$getSuratDetail->rekomendasi,
+                        'dokter'=>$getSuratDetail->dokter,
+                        'permission'=>$this->checkapprovepermission(1, $permission),
+                        'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
+                    );
+                }
                 break;
             case 2:
                 $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keluhan,
+                        'pendamping'=>$getSuratDetail->diagnosa,
+                        'permission'=>$this->checkapprovepermission(2, $permission),
+                        'form'=>['keperluan', 'pendamping']
+                    );
+                }
                 break;
             case 3:
                 $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
@@ -926,9 +971,6 @@ class LookController extends BaseController
                 $getSuratDetail = [];
                 break;
         }
-        $data = [];
-        $data['header'] = $getSurat;
-        $data['body']   = $getSuratDetail;
         return $this->sendResponse($data, 'surat izin detail load successfully.');
     }
 

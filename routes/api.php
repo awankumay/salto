@@ -33,7 +33,7 @@ Route::post('deletejurnal', 'api\LookController@deletejurnal')->name('deleterjur
 
 Route::post('getsuratizin', 'api\LookController@getsuratizin')->name('getsuratizin');
 Route::get('getsuratizincategory/id_user/{id_user}', 'api\LookController@getsuratizincategory')->name('getsuratizincategory');
-Route::get('getsuratizin/id/{id}', 'api\LookController@suratizindetailbyid')->name('getsuratizin');
+Route::get('getsuratizin/id/{id}/id_user/{id_user}', 'api\LookController@suratizindetailbyid')->name('getsuratizin');
 Route::post('inputsuratizin', 'api\LookController@inputsuratizin')->name('inputsuratizin');
 
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
