@@ -27,7 +27,8 @@ class SuratIzin extends Authenticatable
         'id_user', 'id_category', 'status', 'user_approve_level_1', 'user_approve_level_2', 
         'date_approve_level_1', 'date_approve_level_2', 'reason_level_1', 'reason_level_2',
         'user_created', 'user_updated', 'user_deleted', 'deleted_at', 'created_at', 'updated_at',
-        'photo', 'status_level_1', 'status_level_2', 'grade', 'start', 'end'
+        'photo', 'status_level_1', 'status_level_2', 'grade', 'start', 'end', 'user_disposisi', 'date_disposisi',
+        'status_disposisi', 'reason_disposisi'
     ];
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id';

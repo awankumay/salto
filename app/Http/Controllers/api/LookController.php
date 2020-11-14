@@ -895,6 +895,7 @@ class LookController extends BaseController
         $getSurat = SuratIzin::join('users as author', 'author.id', '=', 'surat_header.id_user')
                                     ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'surat_header.user_approve_level_1')
                                     ->leftjoin('users as user_approve_2', 'user_approve_2.id', '=', 'surat_header.user_approve_level_2')
+                                    ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'surat_header.user_disposisi')
                                     ->select('surat_header.id as id', 
                                             'surat_header.id_user as id_user',
                                             'author.name as nama_taruna',
@@ -909,8 +910,10 @@ class LookController extends BaseController
                                             'user_approve_2.name as user_approve_2',
                                             'surat_header.date_approve_level_2 as date_approve_2',
                                             'surat_header.reason_level_2 as user_reason_2',
-                                            'surat_header.user_disposisi as user_disposisi',
-                                            'surat_header.date_disposisi as date_disposisi'
+                                            'user_disposisi.name as user_disposisi',
+                                            'surat_header.date_disposisi as date_disposisi',
+                                            'surat_header.status_disposisi as status_disposisi',
+                                            'surat_header.reason_disposisi as reason_disposisi'
                                             )
                                     ->where('surat_header.id', $id)
                                     ->first();
@@ -927,6 +930,14 @@ class LookController extends BaseController
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
+                    
+                    if($getSurat->status_disposisi==1){
+                        $status_disposisi = 'Disposisi';
+                    }else if ($getSurat->status_disposisi==0) {
+                        $status_disposisi = 'Belum Disposisi';
+                    }else {
+                        $status_disposisi = 'Disposisi Ditolak';
+                    }
                     $data = array(
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
@@ -949,6 +960,8 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
@@ -978,6 +991,8 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'pendamping']
@@ -1006,6 +1021,10 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['nm_tc', 'pelatih']
@@ -1034,6 +1053,10 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1062,6 +1085,10 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1090,6 +1117,10 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1118,6 +1149,8 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1146,6 +1179,8 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1174,6 +1209,8 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_dispoisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1189,7 +1226,8 @@ class LookController extends BaseController
                 $data['user_approve_2']=$getSurat->user_approve_2;
                 $data['date_approve_2']=$getSurat->date_approve_2;
                 $data['user_reason_2']=$getSurat->user_reason_2;
-                if($roleName=='Direktur' && $data['status']!=1){
+                $data['menginap']='Izin Menginap';
+                if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
                     $data['show_persetujuan'] = true;
                 }
             }
@@ -1197,7 +1235,7 @@ class LookController extends BaseController
         if($roleName=='Pembina' && $data['status']!=1){
             $data['show_disposisi'] = true;
         }
-        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1){
+        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $data['status_disposisi']==1){
             $data['show_persetujuan'] = true;
         }
         return $this->sendResponse($data, 'surat izin detail load successfully.');
@@ -1258,14 +1296,18 @@ class LookController extends BaseController
                     $input['start'] = $request->start.' '.$request->start_time;
                     $input['end']   = $request->end.' '.$request->end_time;
                     $input['status'] = 1;
+                    $input['status_disposisi'] = 1;
                     $input['status_level_1'] = 1;
                     $input['status_level_2'] = 1;
                     $input['reason_level_1'] = 'Surat izin dibuatkan superadmin';
                     $input['reason_level_2'] = 'Surat izin dibuatkan superadmin';
+                    $input['reason_disposisi'] = 'Surat izin dibuatkan superadmin';
+                    $input['user_disposisi'] = $request->id_user;
                     $input['user_approve_level_1'] = $request->id_user;
                     $input['user_approve_level_2'] = $request->id_user;
                     $input['date_approve_level_1'] = date('Y-m-d H:i:s');
                     $input['date_approve_level_2'] = date('Y-m-d H:i:s');
+                    $input['date_disposisi'] = date('Y-m-d H:i:s');
                     $input['grade'] = $getUser->grade;
                 }else{     
                     $input['status'] = 0;
@@ -1452,24 +1494,29 @@ class LookController extends BaseController
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 Arr::forget($input, array('file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
-                $currentUser = Auth::user();
-                if($currentUser->getRoleNames()[0]!='Taruna'){
+                $getUser = User::where('id', $request->id_user)->first();
+                if($getUser->getRoleNames()[0]!='Taruna'){
                     $input['start'] = $request->start.' '.$request->start_time;
                     $input['end']   = $request->end.' '.$request->end_time;
                     $input['status'] = 1;
+                    $input['status_disposisi'] = 1;
                     $input['status_level_1'] = 1;
                     $input['status_level_2'] = 1;
                     $input['reason_level_1'] = 'Surat izin dibuatkan superadmin';
                     $input['reason_level_2'] = 'Surat izin dibuatkan superadmin';
+                    $input['reason_disposisi'] = 'Surat izin dibuatkan superadmin';
+                    $input['user_disposisi'] = $request->id_user;
                     $input['user_approve_level_1'] = $request->id_user;
                     $input['user_approve_level_2'] = $request->id_user;
                     $input['date_approve_level_1'] = date('Y-m-d H:i:s');
                     $input['date_approve_level_2'] = date('Y-m-d H:i:s');
+                    $input['date_disposisi'] = date('Y-m-d H:i:s');
             
                 }else{     
                     $input['status'] = $suratIzin->status;
                     $input['status_level_1'] = $suratIzin->status_level_1;
                     $input['status_level_2'] = $suratIzin->status_level_2;
+                    $input['status_disposisi'] = 0;
                
                 }
                 
@@ -1615,61 +1662,129 @@ class LookController extends BaseController
             return $this->sendResponseFalse($data, 'surat izin create successfully.');
         }
     }
+
     public function deletesuratizin(Request $request)
     {
-        $suratIzin = SuratIzin::where('id_user', $request->id_user)->where('id', $request->id)->first();
-        try {
-            DB::beginTransaction();
-               // $this->DeleteImage($suratIzin->photo, config('app.documentImagePath'));
-                $suratIzin->user_deleted = $request->id_user;
-                $suratIzin->save();
-                $suratIzin->delete();
-                switch ($suratIzin->id_category) {
-                    case 1:
-                        $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 2:
-                        $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 3:
-                        $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 4:
-                        $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 5:
-                        $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 6:
-                        $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 7:
-                        $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 8:
-                        $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    case 9:
-                        $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
-                        break;
-                    default:
-                        $getSuratDetail = [];
-                        break;
-                }
-                if(!empty($getSuratDetail)){
-                    $getSuratDetail->user_deleted = $request->id_user;
-                    $getSuratDetail->save();
-                    $getSuratDetail->delete();
-                }
-            DB::commit();
-            $data['status'] = true;
-            return $this->sendResponse($data, 'surat izin delete successfully.');
-        } catch (\Throwable $th) {
-            DB::rollback();
+        $suratIzin = SuratIzin::where('id_user', $request->id_user)->where('id', $request->id)->where('status', 0)->first();
+        if(!empty($suratIzin)){
+            try {
+                DB::beginTransaction();
+                   // $this->DeleteImage($suratIzin->photo, config('app.documentImagePath'));
+                    $suratIzin->user_deleted = $request->id_user;
+                    $suratIzin->save();
+                    $suratIzin->delete();
+                    switch ($suratIzin->id_category) {
+                        case 1:
+                            $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 2:
+                            $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 3:
+                            $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 4:
+                            $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 5:
+                            $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 6:
+                            $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 7:
+                            $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 8:
+                            $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        case 9:
+                            $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            break;
+                        default:
+                            $getSuratDetail = [];
+                            break;
+                    }
+                    if(!empty($getSuratDetail)){
+                        $getSuratDetail->user_deleted = $request->id_user;
+                        $getSuratDetail->save();
+                        $getSuratDetail->delete();
+                    }
+                DB::commit();
+                $data['status'] = true;
+                return $this->sendResponse($data, 'surat izin delete successfully.');
+            } catch (\Throwable $th) {
+                DB::rollback();
+                $data['status'] = false;
+                return $this->sendResponseFalse($data, 'surat izin delete failure.');
+            }
             $data['status'] = false;
             return $this->sendResponseFalse($data, 'surat izin delete failure.');
         }
     }
+
+    public function disposisisuratizin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'tanggal' => 'required',
+            'status' => 'required',
+            'reason' => 'required'
+        ]);
+        $data['status']=false;
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+        $suratIzin = SuratIzin::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $suratIzin->user_disposisi=$request->id_user;
+        $suratIzin->date_disposisi=$request->tanggal;
+        $suratIzin->reason_disposisi=$request->reason;
+        $suratIzin->status=$request->status;
+        $suratIzin->save();
+        $data['status'] = true;
+        return $this->sendResponse($data, 'disposisi surat izin success');
+    }
+
+    public function approvesuratizin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'tanggal' => 'required',
+            'status' => 'required',
+            'reason' => 'required'
+        ]);
+        $data['status']=false;
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+        $suratIzin = SuratIzin::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
+            $suratIzin->status_level_1=$request->id_user;
+            $suratIzin->date_approve_level_1=$request->tanggal;
+            $suratIzin->status_level_1=$request->status;
+            $suratIzin->reason_level_1=$request->reason;
+            if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
+                $suratIzin->status=1;
+            }
+            $suratIzin->save();
+        }
+        if($getUser->getRoleNames()[0]=='Direktur'){
+            $suratIzin->status_level_2=$request->id_user;
+            $suratIzin->date_approve_level_2=$request->tanggal;
+            $suratIzin->status_level_2=$request->status;
+            $suratIzin->reason_level_2=$request->reason;
+            $suratIzin->status=1;
+            $suratIzin->save();
+        }
+        $data['status'] = true;
+        return $this->sendResponse($data, 'approve surat izin success');
+    }
+    
 
     public function gettaruna(Request $request, $option=null)
     {
