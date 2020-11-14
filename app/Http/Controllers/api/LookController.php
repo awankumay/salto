@@ -172,6 +172,30 @@ class LookController extends BaseController
 
     }
 
+    public function checkabsen($request)
+    {
+        $absensi = Absensi::where('id_user', $request->id_user)->whereRaw('DATE(created_at) = ?', date('Y-m-d'))->first();
+        $data = [];
+        if(empty($absensi)){
+            $data['clock_in'] = true;
+            $data['clock_out'] = true;
+        }else{
+            if(!empty($absensi)){
+                $data['clock_in'] = !empty($absensi->clock_in) ? $absensi->clock_in : true;
+                $data['clock_out'] = !empty($absensi->clock_out) ? $absensi->clock_out : true;
+            }
+        }
+        return $data;
+    }
+
+    public function getabsen(Request $request)
+    {
+        $data = $this->checkabsen($request);
+        return $this->sendResponse($data, 'berhasil check absensi');
+
+    }
+
+
     public function clockin(Request $request)
     {
         $data = [];
@@ -190,7 +214,7 @@ class LookController extends BaseController
                 try {
                     DB::beginTransaction();
                     $getUser = User::where('id', $request->id_user)->first();
-                    $absensi = new Absensi();
+                    $absensi = New Absensi();
                     $absensi->id_user = $request->id_user;
                     $absensi->clock_in = date('Y-m-d H:i:s');
                     $absensi->file_clock_in = $file;
@@ -256,7 +280,7 @@ class LookController extends BaseController
                     $jurnal->id_user = $request->id_user;
                     $jurnal->grade = !empty($getUser->grade) ? $getUser->grade : null;
                     $jurnal->tanggal = date('Y-m-d');
-                    $jurnal->kegiatan = 'Clock Out / Apel Malam';
+                    $jurnal->kegiatan = 'Clock Out';
                     $jurnal->status = 1;
                     $jurnal->start_time = date('Y-m-d H:i:s');
                     $jurnal->end_time = date('Y-m-d H:i:s');
@@ -554,6 +578,7 @@ class LookController extends BaseController
 
             );
         }
+        $data['clock_out'] = $this->checkabsen($request);
         return $this->sendResponse($data, 'jurnal load successfully.');
         
     }
@@ -709,10 +734,16 @@ class LookController extends BaseController
             }
         }else {
             if($roleName=='Taruna'){
-                $condition = 'surat_header.id_user='.$id_user.' AND surat_header.id '.$diff.' '.$lastId.'';
-                $total = SuratIzin::where('id_user', $id_user)
-                            ->count();
-                
+                $id = [];
+                $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
+                foreach ($orangtua as $key => $value) {
+                    $id[]=$value->orangtua_id;
+                }
+                $id[]=$id_user;
+                $getTaruna  = implode(',',$id);
+                $condition  = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
+                $total      =  SuratIzin::whereRaw($condition)
+                                ->count();  
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
             }else if($roleName=='OrangTua'){
@@ -799,10 +830,11 @@ class LookController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-       
             if(in_array($value->id_category, $getCategoryId)){
                 $dataPermission = ['edit', 'delete'];
             }
+                $permissionApprove = $this->checkapprovepermission($value->id_category, $permission);
+                $dataPermission [] = $permissionApprove;
             $result['suratizin'][]= [ 
                 'id'=>$value->id,
                 'name'=>$value->name,
@@ -1038,6 +1070,37 @@ class LookController extends BaseController
             $data[]=$value;
         }
         return $data;
+    }
+
+    public function checkapprovepermission($id, $permission){
+        $data = '';
+        if (in_array('surat-izin-orang-tua-sakit-approve', $permission) && $id==6) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-orang-tua-meninggal-approve', $permission) && $id==5) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-pernikahan-saudara-approve', $permission) && $id==4) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-kegiatan-pesiar-approve', $permission) && $id==9) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-rawat-inap-approve', $permission) && $id==1) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-training-approve', $permission) && $id==3) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-keluar-kampus-approve', $permission) && $id==2) {
+            $data = 'approve';
+        }
+        if (in_array('surat-izin-kegiatan-dalam-approve', $permission) && $id==8) {
+            $data = 'approve';
+        }
+        if (in_array('surat-tugas-approve', $permission) && $id==7) {
+            $data = 'approve';
+        }
     }
     
 }
