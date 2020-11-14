@@ -235,7 +235,7 @@ class LookController extends BaseController
                         'id_user' => 'required',
                         'file_clock_out' => 'required|mimes:jpg,jpeg,png|max:2048',
                     ]);   
- 
+        $data = [];
         if ($validator->fails()) {          
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                        
         }  
@@ -858,13 +858,10 @@ class LookController extends BaseController
     {
         $id   = $request->id;
         $getSurat = SuratIzin::where('id', $id)->first();
+        $data = [];
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
-                $data = [];
-                $data['header'] = $getSurat;
-                $data['body']   = $getSuratDetail;
-                return $this->sendResponse($data, 'suratizin load successfully.');
                 break;
             case 2:
                 $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
@@ -894,6 +891,10 @@ class LookController extends BaseController
                 $getSuratDetail = [];
                 break;
         }
+        $data = [];
+        $data['header'] = $getSurat;
+        $data['body']   = $getSuratDetail;
+        return $this->sendResponse($data, 'surat izin detail load successfully.');
     }
 
     public function gettaruna(Request $request, $option=null)
