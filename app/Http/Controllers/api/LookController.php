@@ -1729,7 +1729,8 @@ class LookController extends BaseController
             'id_user' => 'required',
             'tanggal' => 'required',
             'status' => 'required',
-            'reason' => 'required'
+            'reason' => 'required',
+            'id'=>'required'
         ]);
         $data['status']=false;
         if ($validator->fails()) {
@@ -1753,7 +1754,8 @@ class LookController extends BaseController
             'id_user' => 'required',
             'tanggal' => 'required',
             'status' => 'required',
-            'reason' => 'required'
+            'reason' => 'required',
+            'id'=>'required'
         ]);
         $data['status']=false;
         if ($validator->fails()) {
