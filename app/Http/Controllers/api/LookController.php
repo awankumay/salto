@@ -834,7 +834,9 @@ class LookController extends BaseController
                 $dataPermission = ['edit', 'delete'];
             }
                 $permissionApprove = $this->checkapprovepermission($value->id_category, $permission);
-                $dataPermission [] = $permissionApprove;
+                if(!empty($permissionApprove)){
+                    $dataPermission [] = $permissionApprove;
+                }
             $result['suratizin'][]= [ 
                 'id'=>$value->id,
                 'name'=>$value->name,
@@ -894,6 +896,7 @@ class LookController extends BaseController
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty())
                 break;
             case 2:
                 $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
@@ -1101,6 +1104,8 @@ class LookController extends BaseController
         if (in_array('surat-tugas-approve', $permission) && $id==7) {
             $data = 'approve';
         }
+
+        return $data;
     }
     
 }
