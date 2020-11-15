@@ -22,35 +22,25 @@
 		Jl. Raya Gandul No.4, Cinere, Depok 16512 Telp. (021) 7538421<br>
 		website: <u>www.poltekip.ac.id</u><hr>
 		
+	@if($data['template']==1)
 	<p align="center">
-		<b> SURAT IZIN SAKIT </b><br>
+		<b> {{$data['category_name']}} </b><br>
 		<b> POLITEKNIK ILMU PEMASYARAKATAN</b><br><br>
 	<p>
-	
 	<table cellpadding="5" border="1" width="100%" align="center">
 			<tr style="background-color:#b7b7b7">
-				<td>No</td>
-				<td>NAMA</td>
-				<td>NO STB</td>
-				<td>KELUHAN</td>
-				<td>DIAGNOSA</td>
-				<td>REKOMENDASI</td>
-				<td>DOKTER</td>
-				<td>TANGGAL</td>
+			@foreach($data['header'] as $header)
+				<td>{{$header}}</td>
+			@endforeach
 			</tr>
             <tr>
-                    <td>No</td>
-                    <td>NAMA</td>
-                    <td>NO STB</td>
-                    <td>KELUHAN</td>
-                    <td>DIAGNOSA</td>
-                    <td>REKOMENDASI</td>
-                    <td>DOKTER</td>
-                    <td>TANGGAL</td>
+			@foreach($data['body'] as $body)
+				<td>{{$body}}</td>
+			@endforeach
             </tr>
 	</table>
 	<p align="center" style="margin-left:40%">
-		Depok, <!--  --><br>
+		Depok, {{$data['tanggal_cetak']}}<!--  --><br>
 		Ka. Sub Bagian Ketarunaan,<br>
         <!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
         <br><br>
@@ -58,7 +48,79 @@
 		<br><b><u>JAUHAR MUSTOFA</u></b><br>
 		NIP. 197906092000121001<br>
 	</p>
+	@elseif($data['template']==2)
+	<p align=center>
+		<b><u> SURAT IZIN </u></b><br>
+		<b> Nomor: SDM.5.SM.09.03 - {{$data['id_surat_cetak']}} </b><br>
+		
+	<p align=justify>
+		&emsp;&emsp;&emsp; Sehubungan dengan Surat dari Permohonan Orangtua tanggal {{$data['created_at']}} tentang permohonan izin, dengan ini Direktur Politeknik Ilmu Pemasyarakatan Badan Pengembangan Sumber Daya Manusia Hukum dan Hak Asasi Manusia Kementerian Hukum dan Hak Asasi Manusia Republik Indonesia memberikan izin kepada :<br>
+	<br>
+	<style>
+		table{
+			border-collapse: collapse;
+		}
+		table, th, td{
+			border: 0px;
+			border-spacing: 0px;
+		}
+		hr {
+		  width: 100% solid black;
+		border: 1px solid black;
+		}
+	</style>
+	<table cellpadding="5" border="1" width="100%" align="center">
+		<thead>
+			
+		</thead>
+		<tbody>
+			<tr align="left">
+			<th>{{$data['header'][0]}} </th><td>{{$data['body'][0]}}</td>
+			</tr>
+			<tr align="left">
+			<th>{{$data['header'][1]}}</th><td>{{$data['body'][1]}}</td>
+			</tr>
+			<tr align="left">
+			<th>{{$data['header'][2]}}</th><td>{{$data['body'][2]}}</td>
+			</tr>
+			<tr align="left">
+			<th>{{$data['header'][3]}}</th><td>{{$data['body'][3]}}</td>
+			</tr>
+
+			<tr align="left">
+			<th>Ijin berlaku pada :</td>
+			</tr>
+			
+			<tr align="left">
+			<th>Tanggal Awal</th><td>{{$data['body'][4]}}</td>
+			</tr>
+			
+			<tr align="left">
+			<th>Tanggal Akhir</th><td>{{$data['body'][5]}}</td>
+			</tr>
+		
+		</tbody>
+	</table>
+	
+	<p align=justify>
+		&emsp;&emsp;&emsp;Terlambat masuk kampus dinyatakan indisipliner dan akan dikenakan sanksi administratif kepegawaian dan sanksi akademik.
+	<br>
+	<p align=justify>
+		&emsp;&emsp;&emsp;Demikian Izin ini diberikan untuk dapat dipergunakan sebagaimana mestinya dan kepada pihak yang terkait dimohon bantuan seperlunya.
+	<br>
+	
+	<p align=left style="margin-left:60%">
+		Depok, {{$data['tanggal_cetak']}}<br>
+		Direktur,<br>
+		<img src="direktur_spesimen.png"  alt="Logo" /> 
+		<br><b><u>Dr. Rachmayanthy, Bc.IP., SH., M.Si</u></b><br>
+		NIP. 196904261992032001<br>
+	</p>
+	
+	<p align=left style="margin-left:5%">
+		<img src="qr_dir.png"  alt="Logo" /> 
+	</p>
+	@endif
 </body>  
 </html> 
-<!-- <meta http-equiv=refresh content=0;url=index.php?hl=izin_sakit> -->
 @endif

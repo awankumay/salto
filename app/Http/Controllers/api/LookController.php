@@ -2023,15 +2023,18 @@ class LookController extends BaseController
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'category_name'=>$getCategory->nama_menu,
-                        'tanggal_cetak'=>Carbon::now()->isoFormat('dddd', 'D MMMM Y'),
+                        'id_category'=>$getSurat->id_category,
+                        'name'=>$author->name,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'header'=>['No', 'Nama', 'STB', 'Keluhan', 'Diagnosa', 'Rekomendasi', 'Dokter', 'Tanggal'],
                         'body'=>['1', $author->name, $author->stb, $getSuratDetail->keluhan, $getSuratDetail->diagnosa, 
-                                    $getSuratDetail->rekomendasi, $getSuratDetail->dokter, date_format(date_create($getSurat->start), 'd-m-Y H:i').'-'.date_format(date_create($getSurat->end), 'd-m-Y H:i')]
+                                    $getSuratDetail->rekomendasi, $getSuratDetail->dokter, date_format(date_create($getSurat->start), 'd-m-Y H:i').' sd '.date_format(date_create($getSurat->end), 'd-m-Y H:i')],
+                        'template'=>1
                     );
                 }
 
@@ -2040,29 +2043,19 @@ class LookController extends BaseController
                 $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keluhan,
-                        'pendamping'=>$getSuratDetail->diagnosa,
-                        'permission'=>$this->checkapprovepermission(2, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'pendamping']
+                        'header'=>['No', 'Nama', 'STB', 'Keperluan', 'Jam Mulai', 'Jam Akhir', 'Pendamping', 'Tanggal'],
+                        'body'=>['1', $author->name, $author->stb, $getSuratDetail->keperluan, date_format(date_create($getSurat->start), 'H:i'), date_format(date_create($getSurat->end), 'H:i'), $getSuratDetail->pendamping, 
+                                   date_format(date_create($getSurat->created_at), 'd-m-Y H:i')],
+                        'template'=>1
                     );
                 }
                 break;
@@ -2070,31 +2063,20 @@ class LookController extends BaseController
                 $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'nm_tc'=>$getSuratDetail->nm_tc,
-                        'pelatih'=>$getSuratDetail->pelatih,
-                        'permission'=>$this->checkapprovepermission(3, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['nm_tc', 'pelatih']
+                        'header'=>['No', 'Nama', 'STB', 'Training Center', 'Jam Mulai', 'Jam Akhir', 'Pelatih', 'Tanggal'],
+                        'body'=>['1', $author->name, $author->stb, $getSuratDetail->nm_tc, date_format(date_create($getSurat->start), 'H:i'), date_format(date_create($getSurat->end), 'H:i'), $getSuratDetail->pelatih, 
+                                   date_format(date_create($getSurat->created_at), 'd-m-Y H:i')],
+                        'template'=>1
+                     
                     );
                 }
                 break;
@@ -2102,31 +2084,15 @@ class LookController extends BaseController
                 $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(4, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
+                        'template'=>2,
+                        'id_surat_cetak'=>$getSurat->id+1
                     );
                 }
                 break;
@@ -2134,31 +2100,15 @@ class LookController extends BaseController
                 $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(5, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
+                        'template'=>2,
+                        'id_surat_cetak'=>$getSurat->id+1
                     );
                 }
                 break;
@@ -2166,31 +2116,15 @@ class LookController extends BaseController
                 $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(6, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
+                        'template'=>2,
+                        'id_surat_cetak'=>$getSurat->id+1
                     );
                 }
                 break;
@@ -2198,29 +2132,14 @@ class LookController extends BaseController
                 $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(7, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
+                        'template'=>1
                     );
                 }
                 break;
@@ -2228,29 +2147,14 @@ class LookController extends BaseController
                 $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(8, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
+                        'template'=>1
                     );
                 }
                 break;
@@ -2258,29 +2162,15 @@ class LookController extends BaseController
                 $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
-                        'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keperluan'=>$getSuratDetail->keperluan,
-                        'tujuan'=>$getSuratDetail->tujuan,
-                        'permission'=>$this->checkapprovepermission(9, $permission),
-                        'user_approve_1' =>$getSurat->user_approve_1,
-                        'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keperluan', 'tujuan']
+                        'created_at'=>$getSurat->created_at,
+                        'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
+                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
+                        'template'=>1
+         
                     );
                 }
                 break;
