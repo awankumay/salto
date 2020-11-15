@@ -2295,7 +2295,7 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_dispoisi,
+                        'status_disposisi'=>$status_disposisi,
                         'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
