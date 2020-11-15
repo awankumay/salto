@@ -917,6 +917,10 @@ class LookController extends BaseController
                                             )
                                     ->where('surat_header.id', $id)
                                     ->first();
+        $data = [];
+        if(empty($getSurat)){
+            return $this->sendResponseFalse($data, 'Surat Izin Not Found or Deleted');
+        }
         $getCategory = Permission::where('id', $getSurat->id_category)->first();
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
@@ -925,7 +929,7 @@ class LookController extends BaseController
         foreach ($getUser->getAllPermissions() as $key => $vals) {
             $permission[]=$vals->name;
         }
-        $data = [];
+     
         if($getSurat->status_disposisi==1){
             $status_disposisi = 'Disposisi';
         }else if ($getSurat->status_disposisi==0) {
@@ -941,7 +945,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
-                        'photo'=>$author->photo,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -973,6 +977,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1001,6 +1006,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1031,6 +1037,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1061,6 +1068,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1091,6 +1099,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1121,6 +1130,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1149,6 +1159,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1177,6 +1188,7 @@ class LookController extends BaseController
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
                         'name'=>$author->name,
+                        'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/".$getSurat->photo : '',
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
@@ -1239,9 +1251,7 @@ class LookController extends BaseController
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'start' => 'required',
-            'start_time' => 'required',
             'end' => 'required',
-            'end_time' => 'required',
             'id_category' =>'required',
             'keluhan'=>'required_if:id_category,1',
             'keperluan'=>'required_if:id_category,2|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
@@ -1442,9 +1452,7 @@ class LookController extends BaseController
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'start' => 'required',
-            'start_time' => 'required',
             'end' => 'required',
-            'end_time' => 'required',
             'id_category' =>'required',
             'keluhan'=>'required_if:id_category,1',
             'keperluan'=>'required_if:id_category,2|required_if:id_category,4|required_if:id_category,5|required_if:id_category,6|required_if:id_category,7|required_if:id_category,8|required_if:id_category,9',
@@ -1952,10 +1960,12 @@ class LookController extends BaseController
     public function cetaksurat(Request $request){
         $data = [];
         $data = $this->datasuratizin($request);
-        $pdf = app()->make('dompdf.wrapper');
-        $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
-        \Storage::put(config('app.documentImagePath'), $pdf->output());
-        return $pdf->download($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
+        if(!empty($data)){
+            $pdf = app()->make('dompdf.wrapper');
+            $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
+            //\Storage::put(config('app.documentImagePath'), $pdf->output());
+            return $pdf->stream($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
+        }
     }
 
     public function triggercetak(Request $request){
@@ -1989,6 +1999,10 @@ class LookController extends BaseController
                                             )
                                     ->where('surat_header.id', $id)
                                     ->first();
+        $data = [];
+        if(empty($getSurat)){
+            return $data;
+        }
         $getCategory = Permission::where('id', $getSurat->id_category)->first();
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
@@ -1997,7 +2011,6 @@ class LookController extends BaseController
         foreach ($getUser->getAllPermissions() as $key => $vals) {
             $permission[]=$vals->name;
         }
-        $data = [];
         if($getSurat->status_disposisi==1){
             $status_disposisi = 'Disposisi';
         }else if ($getSurat->status_disposisi==0) {
@@ -2010,32 +2023,15 @@ class LookController extends BaseController
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id'=>$getSurat->id,
-                        'id_user'=>$getSurat->id_user,
-                        'name'=>$author->name,
-                        'photo'=>$author->photo,
-                        'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
-                        'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
-                        'keluhan'=>$getSuratDetail->keluhan,
-                        'diagnosa'=>$getSuratDetail->diagnosa,
-                        'rekomendasi'=>$getSuratDetail->rekomendasi,
-                        'dokter'=>$getSuratDetail->dokter,
-                        'permission'=>$this->checkapprovepermission(1, $permission),
+                        'tanggal_cetak'=>Carbon::now()->isoFormat('dddd', 'D MMMM Y'),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
-                        'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
-                        'show_disposisi' =>false,
-                        'show_persetujuan' =>false,
-                        'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
+                        'header'=>['No', 'Nama', 'STB', 'Keluhan', 'Diagnosa', 'Rekomendasi', 'Dokter', 'Tanggal'],
+                        'body'=>['1', $author->name, $author->stb, $getSuratDetail->keluhan, $getSuratDetail->diagnosa, 
+                                    $getSuratDetail->rekomendasi, $getSuratDetail->dokter, date_format(date_create($getSurat->start), 'd-m-Y H:i').'-'.date_format(date_create($getSurat->end), 'd-m-Y H:i')]
                     );
                 }
 
