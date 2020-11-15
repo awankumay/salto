@@ -1954,7 +1954,8 @@ class LookController extends BaseController
         $data = $this->datasuratizin($request);
         $pdf = app()->make('dompdf.wrapper');
         $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
-        return $pdf->stream($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
+        \Storage::put(config('app.documentImagePath'), $pdf->output());
+        return $pdf->download($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
     }
 
     public function triggercetak(Request $request){

@@ -14,9 +14,9 @@ class AddTimesToSuratHeader extends Migration
     public function up()
     {
         Schema::table('surat_header', function (Blueprint $table) {
-            $table->timestamp('grade')->nullable();
             $table->timestamp('start')->nullable();
-            $table->integer('end')->nullable();
+            $table->timestamp('end')->nullable();
+            $table->integer('grade')->nullable();
         });
     }
 
