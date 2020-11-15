@@ -926,18 +926,17 @@ class LookController extends BaseController
             $permission[]=$vals->name;
         }
         $data = [];
+        if($getSurat->status_disposisi==1){
+            $status_disposisi = 'Disposisi';
+        }else if ($getSurat->status_disposisi==0) {
+            $status_disposisi = 'Belum Disposisi';
+        }else {
+            $status_disposisi = 'Disposisi Ditolak';
+        }
         switch ($getSurat->id_category) {
             case 1:
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
-                    
-                    if($getSurat->status_disposisi==1){
-                        $status_disposisi = 'Disposisi';
-                    }else if ($getSurat->status_disposisi==0) {
-                        $status_disposisi = 'Belum Disposisi';
-                    }else {
-                        $status_disposisi = 'Disposisi Ditolak';
-                    }
                     $data = array(
                         'id'=>$getSurat->id,
                         'id_user'=>$getSurat->id_user,
