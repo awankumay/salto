@@ -1209,7 +1209,7 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'status_disposisi'=>$status_dispoisi,
+                        'status_disposisi'=>$status_disposisi,
                         'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
@@ -1961,6 +1961,363 @@ class LookController extends BaseController
             $data = 'approve';
         }
 
+        return $data;
+    }
+
+    public function cetaksurat(Request $request){
+        $data = [];
+        $data = $this->datasuratizin($request);
+        $pdf = app()->make('dompdf.wrapper');
+        $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
+        return $pdf->stream($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
+    }
+
+    public function triggercetak(Request $request){
+        return view('triggercetak');
+    }
+    public function datasuratizin($request)
+    {
+        $id   = $request->id;
+        $getSurat = SuratIzin::join('users as author', 'author.id', '=', 'surat_header.id_user')
+                                    ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'surat_header.user_approve_level_1')
+                                    ->leftjoin('users as user_approve_2', 'user_approve_2.id', '=', 'surat_header.user_approve_level_2')
+                                    ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'surat_header.user_disposisi')
+                                    ->select('surat_header.id as id', 
+                                            'surat_header.id_user as id_user',
+                                            'author.name as nama_taruna',
+                                            'surat_header.photo as photo',
+                                            'surat_header.id_category as id_category',
+                                            'surat_header.status as status',
+                                            'surat_header.start as start',
+                                            'surat_header.end as end',
+                                            'user_approve_1.name as user_approve_1',
+                                            'surat_header.date_approve_level_1 as date_approve_1',
+                                            'surat_header.reason_level_1 as user_reason_1',
+                                            'user_approve_2.name as user_approve_2',
+                                            'surat_header.date_approve_level_2 as date_approve_2',
+                                            'surat_header.reason_level_2 as user_reason_2',
+                                            'user_disposisi.name as user_disposisi',
+                                            'surat_header.date_disposisi as date_disposisi',
+                                            'surat_header.status_disposisi as status_disposisi',
+                                            'surat_header.reason_disposisi as reason_disposisi'
+                                            )
+                                    ->where('surat_header.id', $id)
+                                    ->first();
+        $getCategory = Permission::where('id', $getSurat->id_category)->first();
+        $getUser = User::find($request->id_user);
+        $roleName = $getUser->getRoleNames()[0];
+        $author = User::find($getSurat->id_user);
+        $permission = [];
+        foreach ($getUser->getAllPermissions() as $key => $vals) {
+            $permission[]=$vals->name;
+        }
+        $data = [];
+        switch ($getSurat->id_category) {
+            case 1:
+                $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    
+                    if($getSurat->status_disposisi==1){
+                        $status_disposisi = 'Disposisi';
+                    }else if ($getSurat->status_disposisi==0) {
+                        $status_disposisi = 'Belum Disposisi';
+                    }else {
+                        $status_disposisi = 'Disposisi Ditolak';
+                    }
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'photo'=>$author->photo,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keluhan'=>$getSuratDetail->keluhan,
+                        'diagnosa'=>$getSuratDetail->diagnosa,
+                        'rekomendasi'=>$getSuratDetail->rekomendasi,
+                        'dokter'=>$getSuratDetail->dokter,
+                        'permission'=>$this->checkapprovepermission(1, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
+                    );
+                }
+
+                break;
+            case 2:
+                $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keluhan,
+                        'pendamping'=>$getSuratDetail->diagnosa,
+                        'permission'=>$this->checkapprovepermission(2, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'pendamping']
+                    );
+                }
+                break;
+            case 3:
+                $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'nm_tc'=>$getSuratDetail->nm_tc,
+                        'pelatih'=>$getSuratDetail->pelatih,
+                        'permission'=>$this->checkapprovepermission(3, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['nm_tc', 'pelatih']
+                    );
+                }
+                break;
+            case 4:
+                $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(4, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            case 5:
+                $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(5, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            case 6:
+                $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(6, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            case 7:
+                $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(7, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            case 8:
+                $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(8, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_disposisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            case 9:
+                $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
+                if(!empty($getSurat) && !empty($getSuratDetail)){
+                    $data = array(
+                        'id'=>$getSurat->id,
+                        'id_user'=>$getSurat->id_user,
+                        'name'=>$author->name,
+                        'id_category'=>$getSurat->id_category,
+                        'category_name'=>$getCategory->nama_menu,
+                        'status'=>$getSurat->status,
+                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
+                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
+                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
+                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'permission'=>$this->checkapprovepermission(9, $permission),
+                        'user_approve_1' =>$getSurat->user_approve_1,
+                        'date_approve_1' =>$getSurat->date_approve_1,
+                        'user_reason_1' => $getSurat->user_reason_1,
+                        'user_disposisi'=>$getSurat->user_disposisi,
+                        'date_disposisi'=>$getSurat->date_disposisi,
+                        'status_disposisi'=>$status_dispoisi,
+                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'show_disposisi' =>false,
+                        'show_persetujuan' =>false,
+                        'form'=>['keperluan', 'tujuan']
+                    );
+                }
+                break;
+            default:
+                $getSuratDetail = [];
+                break;
+        }
+        if(strtotime(date_format(date_create($getSurat->end), 'Y-m-d')) > strtotime(date_format(date_create($getSurat->start), 'Y-m-d'))){
+            if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
+                $data['user_approve_2']=$getSurat->user_approve_2;
+                $data['date_approve_2']=$getSurat->date_approve_2;
+                $data['user_reason_2']=$getSurat->user_reason_2;
+                $data['menginap']='Izin Menginap';
+                if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
+                    $data['show_persetujuan'] = true;
+                }
+            }
+        }
         return $data;
     }
     
