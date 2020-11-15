@@ -946,10 +946,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keluhan'=>$getSuratDetail->keluhan,
                         'diagnosa'=>$getSuratDetail->diagnosa,
                         'rekomendasi'=>$getSuratDetail->rekomendasi,
@@ -979,10 +977,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keluhan,
                         'pendamping'=>$getSuratDetail->diagnosa,
                         'permission'=>$this->checkapprovepermission(2, $permission),
@@ -1009,10 +1005,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'nm_tc'=>$getSuratDetail->nm_tc,
                         'pelatih'=>$getSuratDetail->pelatih,
                         'permission'=>$this->checkapprovepermission(3, $permission),
@@ -1041,10 +1035,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(4, $permission),
@@ -1073,10 +1065,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(5, $permission),
@@ -1105,10 +1095,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(6, $permission),
@@ -1137,10 +1125,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(7, $permission),
@@ -1167,10 +1153,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(8, $permission),
@@ -1197,10 +1181,8 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>date_format(date_create($getSurat->start), 'Y-m-d'),
-                        'start_time'=>date_format(date_create($getSurat->start), 'H:i'),
-                        'end'=>date_format(date_create($getSurat->end), 'Y-m-d'),
-                        'end_time'=>date_format(date_create($getSurat->end), 'H:i'),
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'keperluan'=>$getSuratDetail->keperluan,
                         'tujuan'=>$getSuratDetail->tujuan,
                         'permission'=>$this->checkapprovepermission(9, $permission),
@@ -1237,6 +1219,9 @@ class LookController extends BaseController
         }
         if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $data['status_disposisi']==1){
             $data['show_persetujuan'] = true;
+        }
+        if($getSurat['status']==1){
+            $data['download'] = \URL::to('/').'/api/cetaksuratizin/id/'.$request->id.'/id_user/'.$request->id_user;
         }
         return $this->sendResponse($data, 'surat izin detail load successfully.');
     }
@@ -1293,8 +1278,8 @@ class LookController extends BaseController
                 $getUser = User::where('id', $request->id_user)->first();
 
                 if($getUser->getRoleNames()[0]!='Taruna'){
-                    $input['start'] = $request->start.' '.$request->start_time;
-                    $input['end']   = $request->end.' '.$request->end_time;
+                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
                     $input['status'] = 1;
                     $input['status_disposisi'] = 1;
                     $input['status_level_1'] = 1;
@@ -1313,7 +1298,9 @@ class LookController extends BaseController
                     $input['status'] = 0;
                     $input['status_level_1'] = 0;
                     $input['status_level_2'] = 0;
-                    $input['grade'] = $getUser->grade;   
+                    $input['grade'] = $getUser->grade;
+                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
                 }
                 
                 $id = DB::table('surat_header')->insertGetId($input);
@@ -1675,31 +1662,31 @@ class LookController extends BaseController
                     $suratIzin->delete();
                     switch ($suratIzin->id_category) {
                         case 1:
-                            $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = IzinSakit::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 2:
-                            $getSuratDetail = KeluarKampus::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = KeluarKampus::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 3:
-                            $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = TrainingCenter::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 4:
-                            $getSuratDetail = PernikahanSaudara::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = PernikahanSaudara::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 5:
-                            $getSuratDetail = PemakamanKeluarga::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = PemakamanKeluarga::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 6:
-                            $getSuratDetail = OrangTuaSakit::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = OrangTuaSakit::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 7:
-                            $getSuratDetail = Tugas::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = Tugas::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 8:
-                            $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = KegiatanDalam::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         case 9:
-                            $getSuratDetail = KegiatanPesiar::where('id_surat', $id)->where('id_user', $suratIzin->id_user)->first();
+                            $getSuratDetail = KegiatanPesiar::where('id_surat', $request->id)->where('id_user', $suratIzin->id_user)->first();
                             break;
                         default:
                             $getSuratDetail = [];
@@ -1727,7 +1714,6 @@ class LookController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tanggal' => 'required',
             'status' => 'required',
             'reason' => 'required',
             'id'=>'required'

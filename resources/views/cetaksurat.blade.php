@@ -52,8 +52,9 @@
 	<p align="center" style="margin-left:40%">
 		Depok, <!--  --><br>
 		Ka. Sub Bagian Ketarunaan,<br>
-		<!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
-		<img src="assets/img/jauhar.png"  alt="Logo" /> 
+        <!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
+        <br><br>
+		<img src="jauhar.png"  alt="Logo" /> 
 		<br><b><u>JAUHAR MUSTOFA</u></b><br>
 		NIP. 197906092000121001<br>
 	</p>
