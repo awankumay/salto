@@ -23,6 +23,7 @@ use App\PembinaKeluargaAsuh;
 use App\Provinces;
 use App\Regencies;
 use App\Permission;
+use App\Prestasi;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
@@ -440,7 +441,7 @@ class LookController extends BaseController
                                 ->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                    $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'jurnal_taruna.id_user in('.$getTaruna.')';
@@ -471,7 +472,7 @@ class LookController extends BaseController
                 
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
-            }else if('Wali Asuh'){
+            }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
@@ -488,7 +489,7 @@ class LookController extends BaseController
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
 
-            }else if('Pembina'){
+            }else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -515,7 +516,7 @@ class LookController extends BaseController
                                 ->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                    $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'jurnal_taruna.id_user in('.$getTaruna.') AND jurnal_taruna.tanggal < \''.$lastDate.'\'';
@@ -1826,7 +1827,7 @@ class LookController extends BaseController
                 $id = [];
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
-                $condition  = 'surat_header.id_user = $id_user)';
+                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
                 $total      =  Prestasi::whereRaw($condition)
                                 ->count();   
                 $count  = $total;
@@ -1856,7 +1857,7 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Penghargaan::whereRaw($condition)
+                $total      = Prestasi::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
@@ -1872,7 +1873,7 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Penghargaan::whereRaw($condition)
+                $total      = Prestasi::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
@@ -1891,7 +1892,7 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Penghargaan::whereRaw($condition)
+                $total      = Prestasi::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
                 $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
@@ -1900,16 +1901,12 @@ class LookController extends BaseController
         }else {
             if($roleName=='Taruna'){
                 $id = [];
-                $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
-                foreach ($orangtua as $key => $value) {
-                    $id[]=$value->orangtua_id;
-                }
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
                 $condition  = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total      =  Penghargaan::whereRaw($condition)
+                $total      =  Prestasi::whereRaw($condition)
                                 ->count();  
-                $count = Penghargaan::whereRaw($condition)->count();
+                $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
@@ -1919,10 +1916,10 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Penghargaan::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Penghargaan::whereRaw($condition)->count();
+                $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
                
             }else if($roleName=='Wali Asuh'){
@@ -1936,10 +1933,10 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Penghargaan::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Penghargaan::whereRaw($condition)->count();
+                $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
                
 
@@ -1954,10 +1951,10 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Penghargaan::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Penghargaan::whereRaw($condition)->count();
+                $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
                
 
@@ -1975,10 +1972,10 @@ class LookController extends BaseController
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Penghargaan::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Penghargaan::whereRaw($condition)->count();
+                $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
                
             }
@@ -1986,7 +1983,6 @@ class LookController extends BaseController
         foreach ($data as $key => $value) {
             if($value->status==1){
                 $status='Disetujui';
-                $download = 'link_download';
             }else if ($value->status==0) {
                 $status='Belum Disetuji';
                 $download = '-';
@@ -1995,22 +1991,17 @@ class LookController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(in_array($value->id_category, $getCategoryId) && $value->status!=1){
+            if($roleName=='Taruna' || $roleName=='Super Admin'){
                 $dataPermission = ['edit', 'delete'];
             }
-                $permissionApprove = $this->checkapprovepermission($value->id_category, $permission);
-                if(!empty($permissionApprove)){
-                    $dataPermission [] = $permissionApprove;
-                }
-            $result['suratizin'][]= [ 
+
+            $result['penghargaan'][]= [ 
                 'id'=>$value->id,
                 'name'=>$value->name,
                 'tanggal'=>$value->tanggal,
-                'jenis_surat'=>$value->category,
-                'id_category'=>$value->id_category,
                 'status_name'=> $status,
                 'status'=> $value->status,
-                'download'=> $download,
+                'keterangan'=> substr($value->keterangan, 0, 40).'...',
                 'permission'=>$dataPermission
             ];
                 
@@ -2028,10 +2019,10 @@ class LookController extends BaseController
             $result['info']['totaldata'] = $total;
         }
         $result['info']['limit']  = $limit;
-        return $this->sendResponse($result, 'surat izin load successfully.');
+        return $this->sendResponse($result, 'prestasi izin load successfully.');
     }
 
-    public function prestasitaruna($condition, $limit, $order, $dir)
+    public function penghargaantaruna($condition, $limit, $order, $dir)
     {
         return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
             ->whereRaw($condition)
