@@ -1234,6 +1234,11 @@ class LookController extends BaseController
         if($getSurat['status']==1){
             $data['download'] = \URL::to('/').'/api/cetaksuratizin/id/'.$request->id.'/id_user/'.$request->id_user;
         }
+        $data['start_hi'] = date('d/m/Y H:i', strtotime($getSurat->start));
+        $data['start_date'] = date('d/m/Y', strtotime($getSurat->start));
+        $data['end_hi'] = date('d/m/Y H:i', strtotime($getSurat->end));
+        $data['end_date'] = date('d/m/Y', strtotime($getSurat->end));
+     
         return $this->sendResponse($data, 'surat izin detail load successfully.');
     }
 
@@ -1966,6 +1971,7 @@ class LookController extends BaseController
             //\Storage::put(config('app.documentImagePath'), $pdf->output());
             return $pdf->stream($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf");
         }
+            return;
     }
 
     public function triggercetak(Request $request){
