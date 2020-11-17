@@ -35,12 +35,13 @@ Route::post('getsuratizin', 'api\LookController@getsuratizin')->name('getsuratiz
 Route::get('getsuratizincategory/id_user/{id_user}', 'api\LookController@getsuratizincategory')->name('getsuratizincategory');
 Route::get('getsuratizin/id/{id}/id_user/{id_user}', 'api\LookController@suratizindetailbyid')->name('getsuratizin');
 Route::post('inputsuratizin', 'api\LookController@inputsuratizin')->name('inputsuratizin');
-Route::post('inputsuratizin', 'api\LookController@inputsuratizin')->name('inputsuratizin');
 Route::post('deletesuratizin', 'api\LookController@deletesuratizin')->name('deletesuratizin');
 Route::post('disposisisuratizin', 'api\LookController@disposisisuratizin')->name('disposisisuratizin');
 Route::post('approvesuratizin', 'api\LookController@approvesuratizin')->name('approvesuratizin');
 Route::get('cetaksuratizin/id/{id}/id_user/{id_user}', 'api\LookController@cetaksurat')->name('cetaksuratizin');
 Route::get('triggercetak', 'api\LookController@triggercetak')->name('triggercetak');
+
+Route::post('getprestasi', 'api\LookController@getprestasi')->name('getprestasi');
 
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');

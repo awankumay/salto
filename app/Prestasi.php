@@ -10,9 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use DB;
 use Auth;
-use OrangTua;
 
-class SuratIzin extends Authenticatable
+class Prestasi extends Authenticatable
 {
     #use Notifiable;
     use HasRoles;
@@ -23,13 +22,30 @@ class SuratIzin extends Authenticatable
      *
      * @var array
      */
-    protected $table = 'surat_header';
+    protected $table = 'tb_penghargaan';
     protected $fillable = [
-        'id_user', 'id_category', 'status', 'user_approve_level_1', 'user_approve_level_2', 
-        'date_approve_level_1', 'date_approve_level_2', 'reason_level_1', 'reason_level_2',
-        'user_created', 'user_updated', 'user_deleted', 'deleted_at', 'created_at', 'updated_at',
-        'photo', 'status_level_1', 'status_level_2', 'grade', 'start', 'end', 'user_disposisi', 'date_disposisi',
-        'status_disposisi', 'reason_disposisi'
+        'stb', 
+        'keterangan', 
+        'tingkat', 
+        'tempat', 
+        'waktu', 
+        'status', 
+        'user_disposisi', 
+        'date_disposisi',
+        'status_disposisi', 
+        'reason_disposisi', 
+        'user_approve_level_1',
+        'date_approve_level_1',  
+        'status_level_1', 
+        'reason_level_1',
+        'user_created', 
+        'user_updated', 
+        'user_deleted', 
+        'deleted_at', 
+        'created_at', 
+        'updated_at', 
+        'photo', 
+        'grade'
     ];
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id';
@@ -55,14 +71,7 @@ class SuratIzin extends Authenticatable
         if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return SuratIzin::count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
-                $id = [];
-                $orangtua   = OrangTua::where('taruna_id', $currentUser->id)->get();
-                foreach ($orangtua as $key => $value) {
-                    $id[]=$value->orangtua_id;
-                }
-                $id[]=$currentUser->id;
-                //$getTaruna  = implode(',',$id);
-            return SuratIzin::whereIn('id_user', $id)->count();
+            return SuratIzin::where('user_created', $currentUser->id)->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.user_created')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
