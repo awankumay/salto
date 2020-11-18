@@ -950,8 +950,6 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>$getCategory->nama_menu,
                         'status'=>$getSurat->status,
-                        'start'=>$getSurat->start,
-                        'end'=>$getSurat->end,
                         'keluhan'=>$getSuratDetail->keluhan,
                         'diagnosa'=>$getSuratDetail->diagnosa,
                         'rekomendasi'=>$getSuratDetail->rekomendasi,
@@ -1114,8 +1112,6 @@ class LookController extends BaseController
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'user_disposisi'=>$getSurat->user_disposisi,
-                        'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
                         'reason_disposisi'=>$getSurat->user_disposisi,
                         'show_disposisi' =>false,
@@ -1240,11 +1236,17 @@ class LookController extends BaseController
         if($getSurat['status']==1){
             $data['download'] = \URL::to('/').'/api/cetaksuratizin/id/'.$request->id.'/id_user/'.$request->id_user;
         }
+        $data['start'] = date('Y-m-d H:i', strtotime($getSurat->start));
+        $data['end'] = date('Y-m-d H:i', strtotime($getSurat->end));
         $data['start_hi'] = date('d/m/Y H:i', strtotime($getSurat->start));
         $data['start_date'] = date('d/m/Y', strtotime($getSurat->start));
         $data['end_hi'] = date('d/m/Y H:i', strtotime($getSurat->end));
         $data['end_date'] = date('d/m/Y', strtotime($getSurat->end));
-     
+      /*   asort($data);
+        $sortData = [];
+        foreach ($data as $key => $value) {
+            $sortData[$key]=$value;
+        } */
         return $this->sendResponse($data, 'surat izin detail load successfully.');
     }
 
@@ -2215,10 +2217,10 @@ class LookController extends BaseController
         if(!empty($data)){
             $pdf = app()->make('dompdf.wrapper');
             $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
-            //\Storage::put(config('app.documentImagePath'), $pdf->output());
-            $name = $data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf";
-            $pdf->stream($name);
-            $link =  \URL::to('/')."/storage/".config('app.documentImagePath')."/".$data['category_name'].'-'.$data['name'].'-'.date('d-m-Y').".pdf";
+            $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y')).".pdf";
+            \Storage::put("/storage/".config('app.documentImagePath').$name, $pdf->output());
+            //$pdf->stream($name);
+            $link =  \URL::to('/')."/storage/".config('app.documentImagePath')."/".$name;
             $res['link'] = $link;
             return $this->sendResponse($res, 'link surat generate success');
         }
