@@ -1746,7 +1746,7 @@ class LookController extends BaseController
                                 ->where('status', 0)
                                 ->first();
         $suratIzin->user_disposisi=$request->id_user;
-        $suratIzin->date_disposisi=$request->tanggal;
+        $suratIzin->date_disposisi=date('Y-m-d H:i:s');
         $suratIzin->reason_disposisi=$request->reason;
         $suratIzin->status=$request->status;
         $suratIzin->save();
@@ -1758,7 +1758,6 @@ class LookController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tanggal' => 'required',
             'status' => 'required',
             'reason' => 'required',
             'id'=>'required'
@@ -1773,7 +1772,7 @@ class LookController extends BaseController
         $getUser = User::where('id', $request->id_user)->first();
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
             $suratIzin->status_level_1=$request->id_user;
-            $suratIzin->date_approve_level_1=$request->tanggal;
+            $suratIzin->date_approve_level_1=date('Y-m-d H:i:s');
             $suratIzin->status_level_1=$request->status;
             $suratIzin->reason_level_1=$request->reason;
             if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
@@ -1783,7 +1782,7 @@ class LookController extends BaseController
         }
         if($getUser->getRoleNames()[0]=='Direktur'){
             $suratIzin->status_level_2=$request->id_user;
-            $suratIzin->date_approve_level_2=$request->tanggal;
+            $suratIzin->date_approve_level_2=date('Y-m-d H:i:s');
             $suratIzin->status_level_2=$request->status;
             $suratIzin->reason_level_2=$request->reason;
             $suratIzin->status=1;
