@@ -1750,7 +1750,7 @@ class LookController extends BaseController
         $suratIzin->user_disposisi=$request->id_user;
         $suratIzin->date_disposisi=date('Y-m-d H:i:s');
         $suratIzin->reason_disposisi=$request->reason;
-        $suratIzin->status=$request->status;
+        $suratIzin->status_disposisi=$request->status;
         $suratIzin->save();
         $data['status'] = true;
         return $this->sendResponse($data, 'disposisi surat izin success');
@@ -1782,7 +1782,7 @@ class LookController extends BaseController
             }
             $suratIzin->save();
         }
-        if($getUser->getRoleNames()[0]=='Direktur'){
+        if($getUser->getRoleNames()[0]=='Direktur' || $getUser->getRoleNames()[0]=='Super Admin'){
             $suratIzin->status_level_2=$request->id_user;
             $suratIzin->date_approve_level_2=date('Y-m-d H:i:s');
             $suratIzin->status_level_2=$request->status;
@@ -1792,247 +1792,6 @@ class LookController extends BaseController
         }
         $data['status'] = true;
         return $this->sendResponse($data, 'approve surat izin success');
-    }
-    
-    public function getprestasi(Request $request){
-        $limit  = 5;
-        $id_user = $request->idUser;
-        $lastId = !empty($request->lastId) ? $request->lastId : 0;
-        $order  = !empty($request->order) ? $request->order : 'surat_header.id';
-        $search  = !empty($request->search) ? $request->search : '';
-        $dir    = !empty($request->dir) ? $request->dir : 'DESC';
-        $diff   = ($dir=='DESC') ? '<' : '>';
-        $condition = 'tb_penghargaan.id='.$lastId.'';
-        $getUser = User::find($request->idUser);
-        $roleName = $getUser->getRoleNames()[0];
-        $result =[];
-        if($order=='status'){
-            $order='tb_penghargaan.status';
-        }
-        if($order=='name'){
-            $order='users.name';
-        }
-        if($order=='id'){
-            $order='tb_penghargaan.id';
-        }
-
-        $permission = [];
-        foreach ($getUser->getAllPermissions() as $key => $vals) {
-            $permission[]=$vals->name;
-        }
-        $listPermission = $this->setcategoryperizinan($permission);
-        $getCategoryId = [];
-        foreach ($listPermission as $key => $vals) {
-            $getCategoryId[] = $vals['id'];
-        }
-        if($lastId==0){
-            if($roleName=='Taruna'){
-                $id = [];
-                $id[]=$id_user;
-                $getTaruna  = implode(',',$id);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      =  Prestasi::whereRaw($condition)
-                                ->count();   
-                $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
-                $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $tarunaId[] = $id_user;
-                $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }else if($roleName=='Wali Asuh'){
-                $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                                ->select('taruna_keluarga_asuh.taruna_id')
-                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }else if($roleName=='Pembina'){
-                $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                                ->select('taruna_keluarga_asuh.taruna_id')
-                                ->where('pembina_keluarga_asuh.pembina_id', $id_user)
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
-                $taruna     = DB::table('users')
-                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
-                                ->select('users.id', 'users.name')
-                                ->where('model_has_roles.role_id', 7)
-                                ->whereNull('users.deleted_at')
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }
-        }else {
-            if($roleName=='Taruna'){
-                $id = [];
-                $id[]=$id_user;
-                $getTaruna  = implode(',',$id);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total      =  Prestasi::whereRaw($condition)
-                                ->count();  
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
-                $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
-                            ->count();
-                
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }else if($roleName=='Wali Asuh'){
-                $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                                ->select('taruna_keluarga_asuh.taruna_id')
-                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
-                            ->count();
-                
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-
-            }else if($roleName=='Pembina'){
-                $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                                ->select('taruna_keluarga_asuh.taruna_id')
-                                ->where('pembina_keluarga_asuh.pembina_id', $id_user)
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
-                            ->count();
-                
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
-                $taruna     = DB::table('users')
-                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
-                                ->select('users.id', 'users.name')
-                                ->where('model_has_roles.role_id', 7)
-                                ->whereNull('users.deleted_at')
-                                ->get();
-                $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->id;
-                }
-                $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
-                            ->count();
-                
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-               
-            }
-        }
-        foreach ($data as $key => $value) {
-            if($value->status==1){
-                $status='Disetujui';
-            }else if ($value->status==0) {
-                $status='Belum Disetuji';
-                $download = '-';
-            }else{
-                $status='Tidak Disetuji';
-                $download = '-';
-            }
-            $dataPermission = [];
-            if($roleName=='Taruna' || $roleName=='Super Admin'){
-                $dataPermission = ['edit', 'delete'];
-            }
-
-            $result['penghargaan'][]= [ 
-                'id'=>$value->id,
-                'name'=>$value->name,
-                'tanggal'=>$value->tanggal,
-                'status_name'=> $status,
-                'status'=> $value->status,
-                'keterangan'=> substr($value->keterangan, 0, 40).'...',
-                'permission'=>$dataPermission
-            ];
-                
-        }
-
-        if($count > $limit){
-            $result['info']['lastId'] = $data[count($data)-1]->id;
-            $result['info']['loadmore'] = true;
-            $result['info']['dataload'] = count($data);
-            $result['info']['totaldata'] = $total;
-        }else{
-            $result['info']['lastId'] = 0;
-            $result['info']['loadmore'] = false;
-            $result['info']['dataload'] = count($data);
-            $result['info']['totaldata'] = $total;
-        }
-        $result['info']['limit']  = $limit;
-        return $this->sendResponse($result, 'prestasi izin load successfully.');
-    }
-
-    public function penghargaantaruna($condition, $limit, $order, $dir)
-    {
-        return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
-            ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_penghargaan.created_at))as tanggal"),'users.name', 'tb_penghargaan.status', 'tb_penghargaan.keterangan', 'tb_penghargaan.id as id')
-            ->limit($limit)
-            ->orderBy($order,$dir)
-            ->get();
     }
 
     public function gettaruna(Request $request, $option=null)
@@ -2234,6 +1993,7 @@ class LookController extends BaseController
     public function triggercetak(Request $request){
         return view('triggercetak');
     }
+
     public function datasuratizin($request)
     {
         $id   = $request->id;

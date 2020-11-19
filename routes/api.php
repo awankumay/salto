@@ -41,7 +41,8 @@ Route::post('approvesuratizin', 'api\LookController@approvesuratizin')->name('ap
 Route::get('cetaksuratizin/id/{id}/id_user/{id_user}', 'api\LookController@cetaksurat')->name('cetaksuratizin');
 Route::get('triggercetak', 'api\LookController@triggercetak')->name('triggercetak');
 
-Route::post('getprestasi', 'api\LookController@getprestasi')->name('getprestasi');
+Route::post('getprestasi', 'api\MonitoringController@getprestasi')->name('getprestasi');
+Route::get('getprestasidetail/id/{id}/id_user/{id_user}', 'api\MonitoringController@getprestasidetail')->name('getprestasidetail');
 
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');
