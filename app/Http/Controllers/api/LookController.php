@@ -963,7 +963,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keluhan', 'diagnosa', 'rekomendasi', 'dokter']
@@ -993,7 +993,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'pendamping']
@@ -1024,7 +1024,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['nm_tc', 'pelatih']
@@ -1055,7 +1055,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1086,7 +1086,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1115,7 +1115,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1144,7 +1144,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1173,7 +1173,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
@@ -1202,7 +1202,7 @@ class LookController extends BaseController
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
-                        'reason_disposisi'=>$getSurat->user_disposisi,
+                        'reason_disposisi'=>$getSurat->reason_disposisi,
                         'show_disposisi' =>false,
                         'show_persetujuan' =>false,
                         'form'=>['keperluan', 'tujuan']
