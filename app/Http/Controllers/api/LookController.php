@@ -1243,7 +1243,7 @@ class LookController extends BaseController
                 $data['permission'] = [];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $getSurat->status_disposisi==1){
+        if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
@@ -1781,7 +1781,7 @@ class LookController extends BaseController
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
-            $suratIzin->status_level_1=$request->id_user;
+            $suratIzin->user_approve_level_1=$request->id_user;
             $suratIzin->date_approve_level_1=date('Y-m-d H:i:s');
             $suratIzin->status_level_1=$request->status;
             $suratIzin->reason_level_1=$request->reason;
@@ -1791,7 +1791,7 @@ class LookController extends BaseController
             $suratIzin->save();
         }
         if($getUser->getRoleNames()[0]=='Direktur' || $getUser->getRoleNames()[0]=='Super Admin'){
-            $suratIzin->status_level_2=$request->id_user;
+            $suratIzin->user_approve_level_2=$request->id_user;
             $suratIzin->date_approve_level_2=date('Y-m-d H:i:s');
             $suratIzin->status_level_2=$request->status;
             $suratIzin->reason_level_2=$request->reason;
