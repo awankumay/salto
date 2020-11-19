@@ -31,6 +31,8 @@ use App\Absensi;
 use App\JurnalTaruna;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
+
 class LookController extends BaseController
 {
     use ImageTrait;
@@ -211,7 +213,7 @@ class LookController extends BaseController
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }  
         if ($files = $request->file('file_clock_in')) {
-            $file = $this->UploadImage($request->file_clock_in, config('app.documentImagePath'));
+            $file = $this->UploadImage($request->file_clock_in, config('app.documentImagePath').'/absensi/');
             if($file!=false){
                 try {
                     DB::beginTransaction();
@@ -266,7 +268,7 @@ class LookController extends BaseController
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                        
         }  
         if ($files = $request->file('file_clock_out')) {
-            $file = $this->UploadImage($request->file_clock_out, config('app.documentImagePath'));
+            $file = $this->UploadImage($request->file_clock_out, config('app.documentImagePath').'/absensi/');
             if($file!=false){
                 try {
                     $absensi = Absensi::whereRaw('DATE(created_at) = ?', date('Y-m-d'))->where('id_user', $request->id_user)->first();
@@ -2216,10 +2218,13 @@ class LookController extends BaseController
         if(!empty($data)){
             $pdf = app()->make('dompdf.wrapper');
             $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
-            $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('d-m-Y')).".pdf";
-            \Storage::put("/storage/".config('app.documentImagePath').$name, $pdf->output());
-            //$pdf->stream($name);
-            $link =  \URL::to('/')."/storage/".config('app.documentImagePath')."/".$name;
+            $content = $pdf->download()->getOriginalContent();
+            $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('dmyhis')).".pdf";
+            Storage::put('public/'.config('app.documentImagePath').'/temp/'.$name, $content) ;
+           
+            //\Storage::put(config('app.documentImagePath').$name, $pdf->output());
+            //$data->storeAs('public/'.config('app.documentImagePath'), $file_name);
+            $link =  \URL::to('/').'/storage/'.config('app.documentImagePath').'/temp/'.$name;
             $res['link'] = $link;
             return $this->sendResponse($res, 'link surat generate success');
         }
