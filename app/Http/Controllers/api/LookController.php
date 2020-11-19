@@ -910,9 +910,11 @@ class LookController extends BaseController
                                             'user_approve_1.name as user_approve_1',
                                             'surat_header.date_approve_level_1 as date_approve_1',
                                             'surat_header.reason_level_1 as user_reason_1',
+                                            'surat_header.status_level_1 as status_level_1',
                                             'user_approve_2.name as user_approve_2',
                                             'surat_header.date_approve_level_2 as date_approve_2',
                                             'surat_header.reason_level_2 as user_reason_2',
+                                            'surat_header.status_level_2 as status_level_2',
                                             'user_disposisi.name as user_disposisi',
                                             'surat_header.date_disposisi as date_disposisi',
                                             'surat_header.status_disposisi as status_disposisi',
@@ -959,6 +961,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(1, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -989,6 +992,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(2, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1018,6 +1022,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(3, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1049,6 +1054,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(4, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1080,6 +1086,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(5, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1111,6 +1118,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(6, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1140,6 +1148,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(7, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1198,6 +1207,7 @@ class LookController extends BaseController
                         'permission'=>$this->checkapprovepermission(9, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_reason_1' => $getSurat->user_reason_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
@@ -1217,6 +1227,7 @@ class LookController extends BaseController
             if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
                 $data['user_approve_2']=$getSurat->user_approve_2;
                 $data['date_approve_2']=$getSurat->date_approve_2;
+                $data['status_level_2']=$getSurat->status_level_2;
                 $data['user_reason_2']=$getSurat->user_reason_2;
                 $data['menginap']='Izin Menginap';
                 if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
@@ -1232,7 +1243,7 @@ class LookController extends BaseController
                 $data['permission'] = [];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $data['status_disposisi']==1){
+        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
