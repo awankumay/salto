@@ -192,7 +192,7 @@
                 {data: 'file_clock_in', name: 'file_clock_in',
                     render:function(row, type, val, meta){
                         if(val.file_clock_in){
-                            return "<img src=\"" + "/storage/{{config('app.documentImagePath')}}/"+val.file_clock_in+ "\" height=\"100\"/>";
+                            return "<img src=\"" + "/storage/{{config('app.documentImagePath')}}/absensi/"+val.file_clock_in+ "\" height=\"100\"/>";
                         }else{
                             return "-";
                         }
@@ -202,7 +202,7 @@
                 {data: 'file_clock_out', name: 'file_clock_out',
                     render:function(row, type, val, meta){
                         if(val.file_clock_out){
-                            return "<img src=\"" + "/storage/{{config('app.documentImagePath')}}/"+val.file_clock_out+ "\" height=\"100\"/>";
+                            return "<img src=\"" + "/storage/{{config('app.documentImagePath')}}/absensi/"+val.file_clock_out+ "\" height=\"100\"/>";
                         }else{
                             return "-";
                         }
