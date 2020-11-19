@@ -984,8 +984,8 @@ class LookController extends BaseController
                         'status'=>$getSurat->status,
                         'start'=>$getSurat->start,
                         'end'=>$getSurat->end,
-                        'keperluan'=>$getSuratDetail->keluhan,
-                        'pendamping'=>$getSuratDetail->diagnosa,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'pendamping'=>$getSuratDetail->pendamping,
                         'permission'=>$this->checkapprovepermission(2, $permission),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
@@ -1556,7 +1556,6 @@ class LookController extends BaseController
                                  'user_updated'=>$input['user_updated'],
                                  'updated_at'=>$input['updated_at']
                                  
-                                 
                                 ];
                     $table->update($dataDetail);
                 }
@@ -1737,7 +1736,6 @@ class LookController extends BaseController
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'status' => 'required',
-            'reason' => 'required',
             'id'=>'required'
         ]);
         $data['status']=false;
@@ -1761,7 +1759,6 @@ class LookController extends BaseController
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'status' => 'required',
-            'reason' => 'required',
             'id'=>'required'
         ]);
         $data['status']=false;
