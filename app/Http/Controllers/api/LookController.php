@@ -660,8 +660,10 @@ class LookController extends BaseController
             if($roleName=='Taruna'){
                 $id = [];
                 $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
-                foreach ($orangtua as $key => $value) {
-                    $id[]=$value->orangtua_id;
+                if(!empty($orangtua)){
+                    foreach ($orangtua as $key => $value) {
+                        $id[]=$value->orangtua_id;
+                    }
                 }
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
@@ -673,8 +675,10 @@ class LookController extends BaseController
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                if(!empty($taruna)){
+                    foreach ($taruna as $key => $value) {
+                        $tarunaId[]=$value->taruna_id;
+                    }
                 }
                 $tarunaId[] = $id_user;
                 $getTaruna  = implode(',',$tarunaId);
@@ -740,8 +744,10 @@ class LookController extends BaseController
             if($roleName=='Taruna'){
                 $id = [];
                 $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
-                foreach ($orangtua as $key => $value) {
-                    $id[]=$value->orangtua_id;
+                if(!empty($orangtua)){
+                    foreach ($orangtua as $key => $value) {
+                        $id[]=$value->orangtua_id;
+                    }
                 }
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
@@ -753,8 +759,10 @@ class LookController extends BaseController
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                if(!empty($taruna)){
+                    foreach ($taruna as $key => $value) {
+                        $tarunaId[]=$value->taruna_id;
+                    }
                 }
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
@@ -1239,7 +1247,7 @@ class LookController extends BaseController
             $data['show_disposisi'] = true;
         }
         if(($roleName=='Taruna') || ($roleName=='Orang Tua')) {
-            if($getSurat->id_user!=$request->id_user){
+            if($getSurat->user_created!=$request->user_created){
                 $data['permission'] = [];
             }
         }
@@ -1287,6 +1295,7 @@ class LookController extends BaseController
             'nm_tc'=>'required_if:id_category,3',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
+        $data=[];
         $data['status'] = false;
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
@@ -1307,7 +1316,9 @@ class LookController extends BaseController
                     }
                 }
                 $request->request->add(['user_created'=> $request->id_user]);
+                $request->request->add(['user_updated'=> $request->id_user]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
+                $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 Arr::forget($input, array('file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $getUser = User::where('id', $request->id_user)->first();
@@ -1329,11 +1340,19 @@ class LookController extends BaseController
                     $input['date_approve_level_2'] = date('Y-m-d H:i:s');
                     $input['date_disposisi'] = date('Y-m-d H:i:s');
                     $input['grade'] = $getUser->grade;
-                }else{     
+                }else{    
+                    if($getUser->getRoleNames()[0]=='Orang Tua'){
+                        $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
+                        if(empty($taruna)){
+                            return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                        }
+                        $getUser    = User::where('id', $taruna->taruna_id)->first();
+                    }
                     $input['status'] = 0;
                     $input['status_level_1'] = 0;
                     $input['status_level_2'] = 0;
                     $input['grade'] = $getUser->grade;
+                    $input['id_user'] = $getUser->id;
                     $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
                     $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
                 }
@@ -1532,11 +1551,22 @@ class LookController extends BaseController
                     $input['date_approve_level_2'] = date('Y-m-d H:i:s');
                     $input['date_disposisi'] = date('Y-m-d H:i:s');
             
-                }else{     
+                }else{   
+                    if($getUser->getRoleNames()[0]=='Orang Tua'){
+                        $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
+                        if(empty($taruna)){
+                            return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                        }
+                        $getUser    = User::where('id', $taruna->taruna_id)->first();
+                    }  
                     $input['status'] = $suratIzin->status;
                     $input['status_level_1'] = $suratIzin->status_level_1;
                     $input['status_level_2'] = $suratIzin->status_level_2;
                     $input['status_disposisi'] = 0;
+                    $input['grade'] = $getUser->grade;
+                    $input['id_user'] = $getUser->id;
+                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
                
                 }
                 

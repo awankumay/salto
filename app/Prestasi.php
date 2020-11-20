@@ -24,6 +24,7 @@ class Prestasi extends Authenticatable
      */
     protected $table = 'tb_penghargaan';
     protected $fillable = [
+        'id_user', 
         'stb', 
         'keterangan', 
         'tingkat', 
