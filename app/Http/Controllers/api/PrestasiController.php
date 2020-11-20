@@ -252,8 +252,10 @@ class PrestasiController extends BaseController
         $getSurat = Prestasi::join('users as author', 'author.id', '=', 'tb_penghargaan.id_user')
                                     ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_penghargaan.user_approve_level_1')
                                     ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'tb_penghargaan.user_disposisi')
+                                    ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_penghargaan.grade')
                                     ->select('tb_penghargaan.id as id', 
                                             'tb_penghargaan.id_user as id_user',
+                                            'tb_penghargaan.stb as stb',
                                             'author.name as nama_taruna',
                                             'tb_penghargaan.photo as photo',
                                             'tb_penghargaan.keterangan as keterangan',
@@ -269,7 +271,8 @@ class PrestasiController extends BaseController
                                             'user_disposisi.name as user_disposisi',
                                             'tb_penghargaan.date_disposisi as date_disposisi',
                                             'tb_penghargaan.status_disposisi as status_disposisi',
-                                            'tb_penghargaan.reason_disposisi as reason_disposisi'
+                                            'tb_penghargaan.reason_disposisi as reason_disposisi',
+                                            'grade.grade as grade'
                                             )
                                     ->where('tb_penghargaan.id', $id)
                                     ->where('tb_penghargaan.id_user', $request->id_user)
@@ -285,6 +288,7 @@ class PrestasiController extends BaseController
             'id_user'=>$getSurat->id_user,
             'stb'=>$getSurat->stb,
             'name'=>$getSurat->nama_taruna,
+            'grade'=>$getSurat->grade,
             'keterangan'=>$getSurat->keterangan,
             'tingkat'=>$getSurat->tingkat,
             'tempat'=>$getSurat->tempat,
@@ -292,7 +296,7 @@ class PrestasiController extends BaseController
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'status'=>$getSurat->status,
-            'status_name'=>$getSurat->status!=1 ? 'Disetujui' : 'Tidak Disetujui',
+            'status_name'=>$getSurat->status==1 ? 'Disetujui' : 'Tidak Disetujui',
             'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/prestasi/".$getSurat->photo : '',
             'form'=>['keterangan', 'tingkat', 'tempat', 'waktu'],
             'status_disposisi'=> $getSurat->status_disposisi,
@@ -304,8 +308,12 @@ class PrestasiController extends BaseController
             'status_level_1'=>$getSurat->status_level_1,
             'reason_level_1'=>$getSurat->reason_level_1,
             'show_disposisi'=>false,
-            'show_approve'=>false
+            'show_approve'=>false,
+            'download'=>'-'
         );
+        if(!empty($request->cetak)){
+            return $data;
+        }
         if($getSurat->status_disposisi==1){
             $status_disposisi = 'Disposisi';
         }else if ($getSurat->status_disposisi==0) {
@@ -314,7 +322,7 @@ class PrestasiController extends BaseController
             $status_disposisi = 'Disposisi Ditolak';
         }
     
-        if($roleName=='Pembina' && $data['status']!=1){
+        if($roleName=='Pembina' && $getSurat->status!=1){
             $data['show_disposisi'] = true;
         }
         if(($roleName=='Taruna')) {
@@ -322,11 +330,11 @@ class PrestasiController extends BaseController
                 $data['permission'] = [];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $data['status']!=1 && $data['status_disposisi']==1){
+        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
-            $data['download'] = '-';
+            $data['download'] = \URL::to('/').'/api/cetakprestasi/id/'.$request->id.'/id_user/'.$request->id_user;
         }
 
         return $this->sendResponse($data, 'prestasi load successfully.');
@@ -491,5 +499,91 @@ class PrestasiController extends BaseController
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
+    }
+
+    public function cetakprestasi(Request $request){
+        $data   = [];
+        $res    = [];
+        $request->request->add(['cetak'=> true]);
+        $getData   = $this->prestasidetail($request);
+        $data   = array(
+            'name'=>$getData['name'],
+            'category_name'=>'DATA PENGHARGAAN',
+            'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
+            'user_approve_1' =>$getData['user_approve_1'],
+            'date_approve_1' =>$getData['date_approve_1'],
+            'header'=>['No', 'Nama', 'No.STB', 'Keterangan Penghargaan', 'Tingkat', 'Tempat', 'Waktu', 'Tanggal Pengajuan'],
+            'body'=>['1', $getData['name'], $getData['stb'], $getData['keterangan'], $getData['tingkat'], $getData['tempat'], $getData['waktu'], $getData['created_at_bi']],
+            'template'=>1
+        );
+        if($getData['status']==0){
+            return $this->sendResponse($res, 'link surat generate failure');
+        }
+        if(!empty($getData)){
+            $pdf = app()->make('dompdf.wrapper');
+            $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
+            /* $content = $pdf->download()->getOriginalContent();
+            $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('dmyhis')).".pdf";
+            Storage::put('public/'.config('app.documentImagePath').'/temp/'.$name, $content) ;
+           
+            //\Storage::put(config('app.documentImagePath').$name, $pdf->output());
+            //$data->storeAs('public/'.config('app.documentImagePath'), $file_name);
+            $link =  \URL::to('/').'/storage/'.config('app.documentImagePath').'/temp/'.$name;
+            $res['link'] = $link; */
+            return $pdf->stream();
+        }
+           return $this->sendResponse($res, 'link surat generate failure');
+    }
+
+    public function disposisiprestasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+        $prestasi = Prestasi::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $prestasi->user_disposisi=$request->id_user;
+        $prestasi->date_disposisi=date('Y-m-d H:i:s');
+        $prestasi->reason_disposisi=$request->reason;
+        $prestasi->status_disposisi=$request->status;
+        $prestasi->save();
+        $data['status'] = true;
+        return $this->sendResponse($data, 'disposisi prestasi success');
+    }
+
+    public function approveprestasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+        $prestasi = Prestasi::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $prestasi->user_approve_level_1=$request->id_user;
+            $prestasi->date_approve_level_1=date('Y-m-d H:i:s');
+            $prestasi->status_level_1=$request->status;
+            $prestasi->status=$request->status;
+            $prestasi->reason_level_1=$request->reason;
+            $prestasi->save();
+            $data['status'] = true;
+            return $this->sendResponse($data, 'approve prestasi success');
+        }
+            $data['status'] = false;
+            return $this->sendResponseFalse($data, 'approve prestasi failure');
     }
 }

@@ -30,7 +30,7 @@
 	<table cellpadding="5" border="1" width="100%" align="center">
 			<tr style="background-color:#b7b7b7">
 			@foreach($data['header'] as $header)
-				<td>{{$header}}</td>
+				<td style="font-weight:bolder;text-transform:uppercase;">{{$header}}</td>
 			@endforeach
 			</tr>
             <tr>

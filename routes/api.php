@@ -45,6 +45,9 @@ Route::post('getprestasi', 'api\PrestasiController@getprestasi')->name('getprest
 Route::get('getprestasi/id/{id}/id_user/{id_user}', 'api\PrestasiController@prestasidetail')->name('getprestasi');
 Route::post('inputprestasi', 'api\PrestasiController@inputprestasi')->name('inputprestasi');
 Route::post('deleteprestasi', 'api\PrestasiController@deleteprestasi')->name('deleteprestasi');
+Route::post('disposisiprestasi', 'api\PrestasiController@disposisiprestasi')->name('disposisiprestasi');
+Route::post('approveprestasi', 'api\PrestasiController@approveprestasi')->name('approveprestasi');
+Route::get('cetakprestasi/id/{id}/id_user/{id_user}', 'api\PrestasiController@cetakprestasi')->name('cetakprestasi');
 
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');

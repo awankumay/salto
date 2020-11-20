@@ -1816,7 +1816,7 @@ class LookController extends BaseController
             $suratIzin->status_level_1=$request->status;
             $suratIzin->reason_level_1=$request->reason;
             if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
-                $suratIzin->status=1;
+                $suratIzin->status=$request->status;
             }
             $suratIzin->save();
         }
@@ -1825,7 +1825,7 @@ class LookController extends BaseController
             $suratIzin->date_approve_level_2=date('Y-m-d H:i:s');
             $suratIzin->status_level_2=$request->status;
             $suratIzin->reason_level_2=$request->reason;
-            $suratIzin->status=1;
+            $suratIzin->status=$request->status;
             $suratIzin->save();
         }
         $data['status'] = true;
