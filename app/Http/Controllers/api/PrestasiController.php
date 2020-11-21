@@ -275,7 +275,6 @@ class PrestasiController extends BaseController
                                             'grade.grade as grade'
                                             )
                                     ->where('tb_penghargaan.id', $id)
-                                    ->where('tb_penghargaan.id_user', $request->id_user)
                                     ->first();
         $data = [];
         if(empty($getSurat)){

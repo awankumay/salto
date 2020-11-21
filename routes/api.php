@@ -49,6 +49,14 @@ Route::post('disposisiprestasi', 'api\PrestasiController@disposisiprestasi')->na
 Route::post('approveprestasi', 'api\PrestasiController@approveprestasi')->name('approveprestasi');
 Route::get('cetakprestasi/id/{id}/id_user/{id_user}', 'api\PrestasiController@cetakprestasi')->name('cetakprestasi');
 
+Route::post('getsuket', 'api\SuketController@getsuket')->name('getsuket');
+Route::get('getsuket/id/{id}/id_user/{id_user}', 'api\SuketController@suketdetail')->name('getsuket');
+Route::post('inputsuket', 'api\SuketController@inputsuket')->name('inputsuket');
+Route::post('deletesuket', 'api\SuketController@deletesuket')->name('deletesuket');
+Route::post('disposisisuket', 'api\SuketController@disposisisuket')->name('disposisisuket');
+Route::post('approvesuket', 'api\SuketController@approvesuket')->name('approvesuket');
+Route::get('cetaksuket/id/{id}/id_user/{id_user}', 'api\SuketController@cetaksuket')->name('cetaksuket');
+
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');
 Route::get('/ok', 'api\LookController@test')->name('ok');

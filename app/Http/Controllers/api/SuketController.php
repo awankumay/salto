@@ -10,6 +10,7 @@ use App\OrangTua;
 use App\WaliAsuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Prestasi;
+use App\Suket;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
@@ -17,43 +18,49 @@ use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
-class PrestasiController extends BaseController
+class SuketController extends BaseController
 {
     use ImageTrait;
     
-    public function getprestasi(Request $request){
+    public function getsuket(Request $request){
         $limit  = 5;
         $id_user = $request->idUser;
         $lastId = !empty($request->lastId) ? $request->lastId : 0;
-        $order  = !empty($request->order) ? $request->order : 'tb_penghargaan.id';
+        $order  = !empty($request->order) ? $request->order : 'tb_suket.id';
         $search  = !empty($request->search) ? $request->search : '';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
         $diff   = ($dir=='DESC') ? '<' : '>';
-        $condition = 'tb_penghargaan.id='.$lastId.'';
+        $condition = 'tb_suket.id='.$lastId.'';
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
         if($order=='status'){
-            $order='tb_penghargaan.status';
+            $order='tb_suket.status';
         }
         if($order=='name'){
             $order='users.name';
         }
         if($order=='id'){
-            $order='tb_penghargaan.id';
+            $order='tb_suket.id';
         }
 
         $permission = [];
         if($lastId==0){
             if($roleName=='Taruna'){
                 $id = [];
+                $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
+                if(!empty($orangtua)){
+                    foreach ($orangtua as $key => $value) {
+                        $id[]=$value->orangtua_id;
+                    }
+                }
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      =  Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.')';
+                $total      =  Suket::whereRaw($condition)
                                 ->count();   
                 $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $data   = $this->sukettaruna($condition, $limit, $order, $dir);
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
@@ -64,11 +71,11 @@ class PrestasiController extends BaseController
                 }
                 $tarunaId[] = $id_user;
                 $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.')';
+                $total      = Suket::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -80,11 +87,11 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.')';
+                $total      = Suket::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -96,11 +103,11 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.')';
+                $total      = Suket::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
@@ -115,36 +122,44 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.')';
-                $total      = Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.')';
+                $total      = Suket::whereRaw($condition)
                                 ->count();     
                 $count  = $total;
-                $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }
         }else {
             if($roleName=='Taruna'){
                 $id = [];
+                $orangtua   = OrangTua::where('taruna_id', $id_user)->get();
+                if(!empty($orangtua)){
+                    foreach ($orangtua as $key => $value) {
+                        $id[]=$value->orangtua_id;
+                    }
+                }
                 $id[]=$id_user;
                 $getTaruna  = implode(',',$id);
-                $condition  = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total      =  Prestasi::whereRaw($condition)
+                $condition  = 'tb_suket.id_user in('.$getTaruna.') AND tb_suket.id '.$diff.' '.$lastId.'';
+                $total      =  Suket::whereRaw($condition)
                                 ->count();  
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $count = Suket::whereRaw($condition)->count();
+                $data = $this->sukettaruna($condition, $limit, $order, $dir);
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
-                foreach ($taruna as $key => $value) {
-                    $tarunaId[]=$value->taruna_id;
+                if(!empty($taruna)){
+                    foreach ($taruna as $key => $value) {
+                        $tarunaId[]=$value->taruna_id;
+                    }
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $condition = 'tb_suket.id_user in('.$getTaruna.') AND tb_suket.id '.$diff.' '.$lastId.'';
+                $total = Suket::whereRaw('tb_suket.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $count = Suket::whereRaw($condition)->count();
+                $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }else if($roleName=='Wali Asuh'){
                 $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -156,12 +171,12 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $condition = 'tb_suket.id_user in('.$getTaruna.') AND tb_suket.id '.$diff.' '.$lastId.'';
+                $total = Suket::whereRaw('tb_suket.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $count = Suket::whereRaw($condition)->count();
+                $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
 
             }else if($roleName=='Pembina'){
@@ -174,12 +189,12 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->taruna_id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $condition = 'tb_suket.id_user in('.$getTaruna.') AND tb_suket.id '.$diff.' '.$lastId.'';
+                $total = Suket::whereRaw('tb_suket.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $count = Suket::whereRaw($condition)->count();
+                $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
 
             }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
@@ -195,12 +210,12 @@ class PrestasiController extends BaseController
                     $tarunaId[]=$value->id;
                 }
                 $getTaruna  = implode(',',$tarunaId);
-                $condition = 'tb_penghargaan.id_user in('.$getTaruna.') AND tb_penghargaan.id '.$diff.' '.$lastId.'';
-                $total = Prestasi::whereRaw('tb_penghargaan.id_user in('.$getTaruna.')')
+                $condition = 'tb_suket.id_user in('.$getTaruna.') AND tb_suket.id '.$diff.' '.$lastId.'';
+                $total = Suket::whereRaw('tb_suket.id_user in('.$getTaruna.')')
                             ->count();
                 
-                $count = Prestasi::whereRaw($condition)->count();
-                $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
+                $count = Suket::whereRaw($condition)->count();
+                $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
             }
         }
@@ -215,17 +230,22 @@ class PrestasiController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if($roleName=='Taruna' || $roleName=='Super Admin'){
+            if($roleName=='Taruna' || $roleName=='Super Admin' || $roleName=='Orang Tua'){
                 $dataPermission = ['edit', 'delete'];
+                if($roleName=='Taruna' || $roleName=='Orang Tua'){
+                    if($value->id_user!=$request->id_user){
+                        $dataPermission = [];
+                    }
+                }
             }
 
-            $result['penghargaan'][]= [ 
+            $result['suket'][]= [ 
                 'id'=>$value->id,
                 'name'=>$value->name,
                 'tanggal'=>$value->tanggal,
                 'status_name'=> $status,
                 'status'=> $value->status,
-                'keterangan'=> substr($value->keterangan, 0, 40).'...',
+                'keperluan'=> substr($value->keperluan, 0, 40).'...',
                 'permission'=>$dataPermission
             ];
                 
@@ -243,43 +263,48 @@ class PrestasiController extends BaseController
             $result['info']['totaldata'] = $total;
         }
         $result['info']['limit']  = $limit;
-        return $this->sendResponse($result, 'prestasi load successfully.');
+        return $this->sendResponse($result, 'suket load successfully.');
     }
 
-    public function prestasidetail(Request $request)
+    public function suketdetail(Request $request)
     {
         $id   = $request->id;
-        $getSurat = Prestasi::join('users as author', 'author.id', '=', 'tb_penghargaan.id_user')
-                                    ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_penghargaan.user_approve_level_1')
-                                    ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'tb_penghargaan.user_disposisi')
-                                    ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_penghargaan.grade')
-                                    ->select('tb_penghargaan.id as id', 
-                                            'tb_penghargaan.id_user as id_user',
-                                            'tb_penghargaan.stb as stb',
+        $getSurat = Suket::join('users as author', 'author.id', '=', 'tb_suket.id_user')
+                                    ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_suket.user_approve_level_1')
+                                    ->leftjoin('users as user_approve_2', 'user_approve_2.id', '=', 'tb_suket.user_approve_level_2')
+                                    ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'tb_suket.user_disposisi')
+                                    ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_suket.grade')
+                                    ->select('tb_suket.id as id', 
+                                            'tb_suket.id_user as id_user',
+                                            'tb_suket.stb as stb',
                                             'author.name as nama_taruna',
-                                            'tb_penghargaan.photo as photo',
-                                            'tb_penghargaan.keterangan as keterangan',
-                                            'tb_penghargaan.tingkat as tingkat',
-                                            'tb_penghargaan.tempat as tempat',
-                                            'tb_penghargaan.waktu as waktu',
-                                            'tb_penghargaan.status as status',
-                                            'tb_penghargaan.updated_at as updated_at',
+                                            'tb_suket.photo as photo',
+                                            'tb_suket.ttl as ttl',
+                                            'tb_suket.orangtua as orangtua',
+                                            'tb_suket.pekerjaan as pekerjaan',
+                                            'tb_suket.status as status',
+                                            'tb_suket.alamat as alamat',
+                                            'tb_suket.keperluan as keperluan',
+                                            'tb_suket.updated_at as updated_at',
                                             'user_approve_1.name as user_approve_1',
-                                            'tb_penghargaan.date_approve_level_1 as date_approve_1',
-                                            'tb_penghargaan.reason_level_1 as user_reason_1',
-                                            'tb_penghargaan.status_level_1 as status_level_1',
+                                            'tb_suket.date_approve_level_1 as date_approve_1',
+                                            'tb_suket.reason_level_1 as user_reason_1',
+                                            'tb_suket.status_level_1 as status_level_1',
+                                            'user_approve_2.name as user_approve_2',
+                                            'tb_suket.date_approve_level_2 as date_approve_2',
+                                            'tb_suket.reason_level_2 as user_reason_2',
+                                            'tb_suket.status_level_2 as status_level_2',
                                             'user_disposisi.name as user_disposisi',
-                                            'tb_penghargaan.date_disposisi as date_disposisi',
-                                            'tb_penghargaan.status_disposisi as status_disposisi',
-                                            'tb_penghargaan.reason_disposisi as reason_disposisi',
+                                            'tb_suket.date_disposisi as date_disposisi',
+                                            'tb_suket.status_disposisi as status_disposisi',
+                                            'tb_suket.reason_disposisi as reason_disposisi',
                                             'grade.grade as grade'
                                             )
-                                    ->where('tb_penghargaan.id', $id)
-                                    ->where('tb_penghargaan.id_user', $request->id_user)
+                                    ->where('tb_suket.id', $id)
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseFalse($data, 'Penghargaan Not Found or Deleted');
+            return $this->sendResponseFalse($data, 'Suket Not Found or Deleted');
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
@@ -289,16 +314,16 @@ class PrestasiController extends BaseController
             'stb'=>$getSurat->stb,
             'name'=>$getSurat->nama_taruna,
             'grade'=>$getSurat->grade,
-            'keterangan'=>$getSurat->keterangan,
-            'tingkat'=>$getSurat->tingkat,
-            'tempat'=>$getSurat->tempat,
-            'waktu'=>$getSurat->waktu,
+            'ttl'=>$getSurat->ttl,
+            'orangtua'=>$getSurat->orangtua,
+            'pekerjaan'=>$getSurat->pekerjaan,
+            'alamat'=>$getSurat->alamat,
+            'keperluan'=>$getSurat->keperluan,
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'status'=>$getSurat->status,
-            'status_name'=>$getSurat->status==1 ? 'Disetujui' : 'Tidak Disetujui',
-            'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/prestasi/".$getSurat->photo : '',
-            'form'=>['keterangan', 'tingkat', 'tempat', 'waktu'],
+            'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/suket/".$getSurat->photo : '',
+            'form'=>['ttl', 'orangtua', 'pekerjaan', 'alamat', 'keperluan'],
             'status_disposisi'=> $getSurat->status_disposisi,
             'user_disposisi'=>$getSurat->user_disposisi,
             'date_disposisi'=>$getSurat->date_disposisi,
@@ -307,6 +332,10 @@ class PrestasiController extends BaseController
             'date_approve_1'=>$getSurat->date_approve_1,
             'status_level_1'=>$getSurat->status_level_1,
             'reason_level_1'=>$getSurat->reason_level_1,
+            'user_approve_2'=>$getSurat->user_approve_2,
+            'date_approve_2'=>$getSurat->date_approve_2,
+            'status_level_2'=>$getSurat->status_level_2,
+            'reason_level_2'=>$getSurat->reason_level_2,
             'show_disposisi'=>false,
             'show_approve'=>false,
             'download'=>'-'
@@ -321,42 +350,50 @@ class PrestasiController extends BaseController
         }else {
             $status_disposisi = 'Disposisi Ditolak';
         }
+        if($getSurat->status==1){
+            $data['status_name'] = 'Disetujui';
+        }else if ($getSurat->status==0) {
+            $data['status_name'] = 'Belum Disetujui';
+        }else {
+            $data['status_name'] = 'Tidak Disetujui';
+        }
     
-        if($roleName=='Pembina' && $getSurat->status!=1){
+        if($roleName=='Pembina' && $data['status']!=1){
             $data['show_disposisi'] = true;
         }
-        if(($roleName=='Taruna')) {
-            if($getSurat->id_user!=$request->id_user){
+        if(($roleName=='Taruna') || ($roleName=='Orang Tua')) {
+            if($getSurat->user_created!=$request->user_created){
                 $data['permission'] = [];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){
+        if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetakprestasi/id/'.$request->id.'/id_user/'.$request->id_user;
+            $data['download'] = \URL::to('/').'/api/cetaksuket/id/'.$request->id.'/id_user/'.$request->id_user;
         }
 
-        return $this->sendResponse($data, 'prestasi load successfully.');
+        return $this->sendResponse($data, 'suket load successfully.');
     }
 
-    public function inputprestasi(Request $request)
+    public function inputsuket(Request $request)
     {
         if(!empty($request->id)){
-            return $this->updateprestasi($request);
+            return $this->updatesuket($request);
         }else {
-            return $this->saveprestasi($request);
+            return $this->savesuket($request);
         }
     }
 
-    public function saveprestasi($request)
+    public function savesuket($request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tingkat' =>'required',
-            'tempat' =>'required',
-            'keterangan' =>'required',
-            'waktu' => 'required',
+            'ttl' =>'required',
+            'orangtua' =>'required',
+            'pekerjaan' =>'required',
+            'alamat' =>'required',
+            'keperluan' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
@@ -366,7 +403,7 @@ class PrestasiController extends BaseController
         }
 
         if($request->file!==null){
-            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
+            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
@@ -386,37 +423,46 @@ class PrestasiController extends BaseController
                 $input = $request->all();
                 Arr::forget($input, array('file', 'waktu'));
                 $getUser = User::where('id', $request->id_user)->first();
-                $input['grade'] = $getUser->grade;
-                $input['id_user'] = $getUser->id;
-                $input['stb']   = $getUser->stb;
+                if($getUser->getRoleNames()[0]=='Orang Tua'){
+                    $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
+                    if(empty($taruna)){
+                        return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                    }
+                    $getUser    = User::where('id', $taruna->taruna_id)->first();
+                }
+                $input['grade']             = $getUser->grade;
+                $input['nama']              = $getUser->name;
+                $input['id_user']           = $getUser->id;
+                $input['stb']               = $getUser->stb;
                 $input['status_disposisi']  = 0;
-                $input['status_level_1']   = 0;
-                $input['status']   = 0;
-                $input['waktu'] = date('Y-m-d h:i:s', strtotime($request->waktu));
-                Prestasi::create($input);
+                $input['status_level_1']    = 0;
+                $input['status_level_2']    = 0;
+                $input['status']            = 0;
+                Suket::create($input);
 
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'prestasi create successfully.');
+            return $this->sendResponse($data, 'suket create successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
             if($image!=false){
-                $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
+                $this->DeleteImage($image, config('app.documentImagePath').'/suket/');
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi create failure.');
+            return $this->sendResponseFalse($data, 'suket create failure.');
         }
 
     }
 
-    public function updateprestasi(Request $request)
+    public function updatesuket(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tingkat' =>'required',
-            'tempat' =>'required',
-            'keterangan' =>'required',
-            'waktu' => 'required',
+            'ttl' =>'required',
+            'orangtua' =>'required',
+            'pekerjaan' =>'required',
+            'alamat' =>'required',
+            'keperluan' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
@@ -426,7 +472,7 @@ class PrestasiController extends BaseController
         }
 
         if($request->file!==null){
-            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
+            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
@@ -435,83 +481,92 @@ class PrestasiController extends BaseController
         try {
 
             DB::beginTransaction();
-            $prestasi = Prestasi::where('id_user', $request->id_user)->where('id', $request->id)->first();
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
             $getUser = User::where('id', $request->id_user)->first();
-            $input['grade'] = $getUser->grade;
+            if($getUser->getRoleNames()[0]=='Orang Tua'){
+                $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
+                if(empty($taruna)){
+                    return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                }
+                $getUser    = User::where('id', $taruna->taruna_id)->first();
+                $suket      = Suket::where('id_user', $getUser->id)->where('id', $request->id)->first();
+            }
+            $input['grade']     = $getUser->grade;
+            $input['id_user']   = $getUser->id;
+            $input['nama']      = $getUser->name;
+            $input['stb']       = $getUser->stb;
             if(isset($image)){
                 if($image!=false){
                     $request->request->add(['photo'=> $image]);
-                    $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
+                    $this->DeleteImage($suket->photo, config('app.documentImagePath').'/suket/');
                 }
             }
             $input = $request->all();
             $input['status']   = 0;
             $input['status_disposisi']  = 0;
             $input['status_level_1']   = 0;
-            $prestasi->update($input);
+            $input['status_level_2']   = 0;
+            $suket->update($input);
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'prestasi updated successfully.');
+            return $this->sendResponse($data, 'suket updated successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
             if(isset($image)){
                 if($image!=false){
-                    $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
+                    $this->DeleteImage($image, config('app.documentImagePath').'/suket/');
                 }
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi failure updated.');
+            return $this->sendResponseFalse($data, 'suket failure updated.');
 
         }
     
     }
 
-    public function deleteprestasi(Request $request)
+    public function deletesuket(Request $request)
     {
-        $prestasi = Prestasi::where('id_user', $request->id_user)->where('id', $request->id)->first();
+        $suket = Suket::where('user_created', $request->id_user)->where('id', $request->id)->first();
         $data=[];
         try {
             DB::beginTransaction();
-            if($prestasi->photo){
-                $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
+            if($suket->photo){
+                $this->DeleteImage($suket->photo, config('app.documentImagePath').'/suket/');
             }
-            $prestasi->user_deleted = $request->id_user;
-            $prestasi->save();
-            $prestasi->delete();
+            $suket->user_deleted = $request->id_user;
+            $suket->save();
+            $suket->delete();
             DB::commit();
             $data['status']=true;
-            return $this->sendResponse($data, 'prestasi deleted successfully.');
+            return $this->sendResponse($data, 'suket deleted successfully.');
         } catch (\Throwable $th) {
             DB::rollback();
             $data['status']=false;
-            return $this->sendResponseFalse($data, 'prestasi deleted failure.');
+            return $this->sendResponseFalse($data, 'suket deleted failure.');
         }
-        return $this->sendResponse($result, 'prestasi delete successfully.');
+        return $this->sendResponse($result, 'suket delete successfully.');
     }
 
-    public function penghargaantaruna($condition, $limit, $order, $dir)
+    public function sukettaruna($condition, $limit, $order, $dir)
     {
-        return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
+        return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_penghargaan.created_at))as tanggal"),'users.name', 'tb_penghargaan.status', 'tb_penghargaan.keterangan', 'tb_penghargaan.id as id')
+            ->select(DB::raw("(DATE(tb_suket.updated_at))as tanggal"),'users.name', 'tb_suket.keperluan', 'tb_suket.status', 'tb_suket.id as id')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
     }
 
-    public function cetakprestasi(Request $request){
+    public function cetaksuket(Request $request){
         $data   = [];
         $res    = [];
         $request->request->add(['cetak'=> true]);
-        $getData   = $this->prestasidetail($request);
+        $getData   = $this->suketdetail($request);
         $data   = array(
             'name'=>$getData['name'],
             'category_name'=>'DATA PENGHARGAAN',
-            'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
-            'user_approve_1' =>$getData['user_approve_1'],
-            'date_approve_1' =>$getData['date_approve_1'],
+            'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_2'])->isoFormat('D MMMM Y'),
             'header'=>['No', 'Nama', 'No.STB', 'Keterangan Penghargaan', 'Tingkat', 'Tempat', 'Waktu', 'Tanggal Pengajuan'],
             'body'=>['1', $getData['name'], $getData['stb'], $getData['keterangan'], $getData['tingkat'], $getData['tempat'], $getData['waktu'], $getData['created_at_bi']],
             'template'=>1
@@ -535,7 +590,7 @@ class PrestasiController extends BaseController
            return $this->sendResponse($res, 'link surat generate failure');
     }
 
-    public function disposisiprestasi(Request $request)
+    public function disposisisuket(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
@@ -546,19 +601,19 @@ class PrestasiController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $prestasi = Prestasi::where('id', $request->id)
+        $suket = Suket::where('id', $request->id)
                                 ->where('status', 0)
                                 ->first();
-        $prestasi->user_disposisi=$request->id_user;
-        $prestasi->date_disposisi=date('Y-m-d H:i:s');
-        $prestasi->reason_disposisi=$request->reason;
-        $prestasi->status_disposisi=$request->status;
-        $prestasi->save();
+        $suket->user_disposisi=$request->id_user;
+        $suket->date_disposisi=date('Y-m-d H:i:s');
+        $suket->reason_disposisi=$request->reason;
+        $suket->status_disposisi=$request->status;
+        $suket->save();
         $data['status'] = true;
-        return $this->sendResponse($data, 'disposisi prestasi success');
+        return $this->sendResponse($data, 'disposisi suket success');
     }
 
-    public function approveprestasi(Request $request)
+    public function approvesuket(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
@@ -569,21 +624,32 @@ class PrestasiController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $prestasi = Prestasi::where('id', $request->id)
+        $suket = Suket::where('id', $request->id)
                                 ->where('status', 0)
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
-            $prestasi->user_approve_level_1=$request->id_user;
-            $prestasi->date_approve_level_1=date('Y-m-d H:i:s');
-            $prestasi->status_level_1=$request->status;
-            $prestasi->status=$request->status;
-            $prestasi->reason_level_1=$request->reason;
-            $prestasi->save();
+            $suket->user_approve_level_1=$request->id_user;
+            $suket->date_approve_level_1=date('Y-m-d H:i:s');
+            $suket->status_level_1=$request->status;
+            $suket->reason_level_1=$request->reason;
+            $suket->save();
             $data['status'] = true;
-            return $this->sendResponse($data, 'approve prestasi success');
+            return $this->sendResponse($data, 'approve suket success');
         }
+
+        if($getUser->getRoleNames()[0]=='Direktur' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $suket->user_approve_level_2=$request->id_user;
+            $suket->date_approve_level_2=date('Y-m-d H:i:s');
+            $suket->status_level_2=$request->status;
+            $suket->reason_level_2=$request->reason;
+            $suket->status=$request->status;
+            $suket->save();
+            $data['status'] = true;
+            return $this->sendResponse($data, 'approve suket success');
+        }
+
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'approve prestasi failure');
+            return $this->sendResponseFalse($data, 'approve suket failure');
     }
 }
