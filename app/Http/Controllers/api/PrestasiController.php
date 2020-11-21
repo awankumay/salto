@@ -333,7 +333,7 @@ class PrestasiController extends BaseController
             $data['show_disposisi'] = true;
         }
         if(($roleName=='Taruna')) {
-            if($getSurat->id_user!=$request->id_user){
+            if($getSurat->id_user!=$request->id_user && $getSurat->status!=1){
                 $data['permission'] = [];
             }
         }
