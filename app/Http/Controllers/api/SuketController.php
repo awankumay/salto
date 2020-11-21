@@ -337,7 +337,7 @@ class SuketController extends BaseController
             'status_level_2'=>$getSurat->status_level_2,
             'reason_level_2'=>$getSurat->reason_level_2,
             'show_disposisi'=>false,
-            'show_approve'=>false,
+            'show_persetujuan'=>false,
             'download'=>'-'
         );
         if(!empty($request->cetak)){
