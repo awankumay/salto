@@ -223,6 +223,7 @@ class PrestasiController extends BaseController
                 'id'=>$value->id,
                 'name'=>$value->name,
                 'tanggal'=>$value->tanggal,
+                'waktu'=>$value->waktu,
                 'status_name'=> $status,
                 'status'=> $value->status,
                 'keterangan'=> substr($value->keterangan, 0, 40).'...',
@@ -295,7 +296,6 @@ class PrestasiController extends BaseController
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'status'=>$getSurat->status,
-            'status_name'=>$getSurat->status==1 ? 'Disetujui' : 'Tidak Disetujui',
             'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/prestasi/".$getSurat->photo : '',
             'form'=>['keterangan', 'tingkat', 'tempat', 'waktu'],
             'status_disposisi'=> $getSurat->status_disposisi,
@@ -319,6 +319,14 @@ class PrestasiController extends BaseController
             $status_disposisi = 'Belum Disposisi';
         }else {
             $status_disposisi = 'Disposisi Ditolak';
+        }
+
+        if($getSurat->status==1){
+            $data['status_name'] = 'Disetujui';
+        }else if ($getSurat->status==0) {
+            $data['status_name'] = 'Belum Disetujui';
+        }else {
+            $data['status_name'] = 'Tidak Disetujui';
         }
     
         if($roleName=='Pembina' && $getSurat->status!=1){
