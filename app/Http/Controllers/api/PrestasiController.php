@@ -215,7 +215,7 @@ class PrestasiController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status==1){
+            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status!=1){
                 $dataPermission = ['edit', 'delete'];
             }
 
