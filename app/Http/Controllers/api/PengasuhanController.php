@@ -213,6 +213,8 @@ class PengasuhanController extends BaseController
             'password'=>$getSurat->password,
             'start_time'=>$getSurat->start_time,
             'end_time'=>$getSurat->end_time,
+            'start_time_bi'=>date('Y-m-d H:i', $getSurat->start_time),
+            'end_time_bi'=>date('Y-m-d H:i', $getSurat->end_time),
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'form'=>['judul', 'media', 'id_media', 'password', 'start_time', 'end_time']
@@ -241,10 +243,10 @@ class PengasuhanController extends BaseController
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'media' =>'required',
-            'start_time' =>'required',
-            'end_time' =>'required',
             'id_media' =>'required',
             'password' =>'required',
+            'start_time' =>'required',
+            'end_time' =>'required',
             'judul' => 'required'
         ]);
         $data=[];
@@ -252,35 +254,36 @@ class PengasuhanController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
         try {
             DB::beginTransaction();
+                $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+                                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
+                                                ->select('keluarga_asuh.id', 'keluarga_asuh.name')
+                                                ->first();
+                if(empty($getKeluargaAsuh)){
+                    return $this->sendResponseFalse($data, 'keluarga asuh not found');   
+                }
+         
                 $request->request->add(['user_created'=> $request->id_user]);
                 $request->request->add(['user_updated'=> $request->id_user]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                //Arr::forget($input, array('file', 'waktu'));
-                $getUser = User::where('id', $request->id_user)->first();
-                $input['grade'] = $getUser->grade;
-                $input['id_user'] = $getUser->id;
-                $input['stb']   = $getUser->stb;
-                $input['status_disposisi']  = 0;
-                $input['status_level_1']   = 0;
-                $input['status']   = 0;
-                $input['waktu'] = date('Y-m-d h:i:s', strtotime($request->waktu));
-                Prestasi::create($input);
+                $input['id_user'] = $request->id_user;
+                $input['keluarga_asuh']   = $getKeluargaAsuh->name;
+                $input['keluarga_asuh_id']   = $getKeluargaAsuh->id;
+                $input['start_time'] = date('Y-m-d H:i:s', strtotime($request->start_time));
+                $input['end_time'] = date('Y-m-d H:i:s', strtotime($request->end_time));
+                Pengasuhan::create($input);
 
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'prestasi create successfully.');
+            return $this->sendResponse($data, 'pengasuhan create successfully.');
         } catch (\Throwable $th) {
+            //@dd($th->getMessage());
             DB::rollBack();
-            if($image!=false){
-                $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
-            }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi create failure.');
+            return $this->sendResponseFalse($data, 'pengasuhan create failure.');
         }
 
     }
@@ -289,56 +292,46 @@ class PengasuhanController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tingkat' =>'required',
-            'tempat' =>'required',
-            'keterangan' =>'required',
-            'waktu' => 'required',
-            'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
+            'media' =>'required',
+            'id_media' =>'required',
+            'password' =>'required',
+            'start_time' =>'required',
+            'end_time' =>'required',
+            'judul' => 'required'
         ]);
         $data=[];
         $data['status'] = false;
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
-        if($request->file!==null){
-            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
-            if($image==false){
-                return $this->sendResponseFalse($data, 'failed upload');  
-            }
-        }
-
         try {
 
             DB::beginTransaction();
-            $prestasi = Prestasi::where('id_user', $request->id_user)->where('id', $request->id)->first();
+            $pengasuhan = Pengasuhan::where('id_user', $request->id_user)->where('id', $request->id)->first();
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
-            $getUser = User::where('id', $request->id_user)->first();
-            $input['grade'] = $getUser->grade;
-            if(isset($image)){
-                if($image!=false){
-                    $request->request->add(['photo'=> $image]);
-                    $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
-                }
+            $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
+                                ->select('keluarga_asuh.id', 'keluarga_asuh.name')
+                                ->first();
+            if(empty($getKeluargaAsuh)){
+                return $this->sendResponseFalse($data, 'keluarga asuh not found');   
             }
             $input = $request->all();
-            $input['status']   = 0;
-            $input['status_disposisi']  = 0;
-            $input['status_level_1']   = 0;
-            $prestasi->update($input);
+            $input['id_user'] = $request->id_user;
+            $input['keluarga_asuh']   = $getKeluargaAsuh->name;
+            $input['keluarga_asuh_id']   = $getKeluargaAsuh->id;
+            $input['start_time'] = date('Y-m-d H:i:s', strtotime($request->start_time));
+            $input['end_time'] = date('Y-m-d H:i:s', strtotime($request->end_time));
+
+            $pengasuhan->update($input);
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'prestasi updated successfully.');
+            return $this->sendResponse($data, 'pengasuhan updated successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
-            if(isset($image)){
-                if($image!=false){
-                    $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
-                }
-            }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi failure updated.');
+            return $this->sendResponseFalse($data, 'pengasuhan failure updated.');
 
         }
     
