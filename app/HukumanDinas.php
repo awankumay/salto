@@ -27,10 +27,8 @@ class HukumanDinas extends Authenticatable
         'stb', 'keterangan', 'tingkat', 'hukuman', 'waktu', 
         'status', 'datetime', 'photo', 'grade', 'id_taruna', 'start_time', 'end_time', 
         'id_user', 'created_at', 'updated_at', 'user_created', 'user_updated', 'deleted_at', 'user_deleted',
-        'user_approve_level_1', 'user_approve_level_2', 
-        'date_approve_level_1', 'date_approve_level_2', 
-        'reason_level_1', 'reason_level_2',
-        'status_level_1', 'status_level_2'  
+        'user_approve_level_1', 'user_approve_level_2',
+        'reason_level_1', 'reason_level_2'
     ];
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id';

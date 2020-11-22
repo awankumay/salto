@@ -334,7 +334,7 @@ class LookController extends BaseController
                 Arr::forget($input, array('start_time', 'end_time'));
                 $input['start_time'] = date_create(date('Y-m-d').' '.$request->start_time);
                 $input['end_time'] = date_create(date('Y-m-d').' '.$request->end_time);
-                //$input['updated_at'] = date('Y-m-d h:i:s');
+                //$input['updated_at'] = date('Y-m-d H:i:s');
                 $input['status'] = 0;
                 $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
                 $jurnal->update($input);
@@ -350,7 +350,7 @@ class LookController extends BaseController
                 Arr::forget($input, array('start_time', 'end_time'));
                 $input['start_time'] = date_create(date('Y-m-d').' '.$request->start_time);
                 $input['end_time'] = date_create(date('Y-m-d').' '.$request->end_time);
-                //$input['created_at'] = date('Y-m-d h:i:s');
+                //$input['created_at'] = date('Y-m-d H:i:s');
                 $input['status'] = 0;
                 $input['tanggal'] = date('Y-m-d');
                 $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
@@ -1325,8 +1325,8 @@ class LookController extends BaseController
                 $getUser = User::where('id', $request->id_user)->first();
 
                 if($getUser->getRoleNames()[0]!='Taruna'){
-                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
-                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
+                    $input['start'] = date('Y-m-d H:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d H:i:s', strtotime($request->end));
                     $input['status'] = 1;
                     $input['status_disposisi'] = 1;
                     $input['status_level_1'] = 1;
@@ -1354,8 +1354,8 @@ class LookController extends BaseController
                     $input['status_level_2'] = 0;
                     $input['grade'] = $getUser->grade;
                     $input['id_user'] = $getUser->id;
-                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
-                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
+                    $input['start'] = date('Y-m-d H:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d H:i:s', strtotime($request->end));
                 }
                 
                 $id = DB::table('surat_header')->insertGetId($input);
@@ -1566,8 +1566,8 @@ class LookController extends BaseController
                     $input['status_disposisi'] = 0;
                     $input['grade'] = $getUser->grade;
                     $input['id_user'] = $getUser->id;
-                    $input['start'] = date('Y-m-d h:i:s', strtotime($request->start));
-                    $input['end']   = date('Y-m-d h:i:s', strtotime($request->end));
+                    $input['start'] = date('Y-m-d H:i:s', strtotime($request->start));
+                    $input['end']   = date('Y-m-d H:i:s', strtotime($request->end));
                
                 }
                 

@@ -400,7 +400,7 @@ class PrestasiController extends BaseController
                 $input['status_disposisi']  = 0;
                 $input['status_level_1']   = 0;
                 $input['status']   = 0;
-                $input['waktu'] = date('Y-m-d h:i:s', strtotime($request->waktu));
+                $input['waktu'] = date('Y-m-d H:i:s', strtotime($request->waktu));
                 Prestasi::create($input);
 
             DB::commit();

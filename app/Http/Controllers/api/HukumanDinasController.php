@@ -207,29 +207,28 @@ class HukumanDinasController extends BaseController
     public function hukdisdetail(Request $request)
     {
         $id   = $request->id;
-        $getSurat = Prestasi::join('users as author', 'author.id', '=', 'tb_penghargaan.id_user')
-                                    ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_penghargaan.user_approve_level_1')
-                                    ->leftjoin('users as user_disposisi', 'user_disposisi.id', '=', 'tb_penghargaan.user_disposisi')
-                                    ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_penghargaan.grade')
-                                    ->select('tb_penghargaan.id as id', 
-                                            'tb_penghargaan.id_user as id_user',
-                                            'tb_penghargaan.stb as stb',
-                                            'author.name as nama_taruna',
-                                            'tb_penghargaan.photo as photo',
-                                            'tb_penghargaan.keterangan as keterangan',
-                                            'tb_penghargaan.tingkat as tingkat',
-                                            'tb_penghargaan.tempat as tempat',
-                                            'tb_penghargaan.waktu as waktu',
-                                            'tb_penghargaan.status as status',
-                                            'tb_penghargaan.updated_at as updated_at',
+        $getSurat = Prestasi::join('users as taruna', 'taruna.id', '=', 'tb_hukdis.id_taruna')
+                                    ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_hukdis.user_approve_level_1')
+                                    ->leftjoin('users as user_approve_2', 'user_approve_2.id', '=', 'tb_hukdis.user_approve_level_2')
+                                    ->leftjoin('users as pembina', 'id_user.id', '=', 'tb_hukdis.id_user')
+                                    ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_hukdis.grade')
+                                    ->select('tb_hukdis.id as id', 
+                                            'tb_hukdis.id_user as id_user',
+                                            'tb_hukdis.stb as stb',
+                                            'taruna.name as nama_taruna',
+                                            'pembina.name as nama_pembina',
+                                            'tb_hukdis.photo as photo',
+                                            'tb_hukdis.keterangan as keterangan',
+                                            'tb_hukdis.tingkat as tingkat',
+                                            'tb_hukdis.hukuman as hukuman',
+                                            'tb_hukdis.start_time as start_time',
+                                            'tb_hukdis.end_time as end_time',
+                                            'tb_hukdis.status as status',
+                                            'tb_hukdis.updated_at as updated_at',
                                             'user_approve_1.name as user_approve_1',
-                                            'tb_penghargaan.date_approve_level_1 as date_approve_1',
-                                            'tb_penghargaan.reason_level_1 as user_reason_1',
-                                            'tb_penghargaan.status_level_1 as status_level_1',
-                                            'user_disposisi.name as user_disposisi',
-                                            'tb_penghargaan.date_disposisi as date_disposisi',
-                                            'tb_penghargaan.status_disposisi as status_disposisi',
-                                            'tb_penghargaan.reason_disposisi as reason_disposisi',
+                                            'tb_hukdis.date_approve_level_1 as date_approve_1',
+                                            'tb_hukdis.reason_level_1 as user_reason_1',
+                                            'tb_hukdis.status_level_1 as status_level_1',
                                             'grade.grade as grade'
                                             )
                                     ->where('tb_penghargaan.id', $id)
@@ -244,38 +243,30 @@ class HukumanDinasController extends BaseController
             'id'=>$getSurat->id,
             'id_user'=>$getSurat->id_user,
             'stb'=>$getSurat->stb,
-            'name'=>$getSurat->nama_taruna,
+            'nama_taruna'=>$getSurat->nama_taruna,
             'grade'=>$getSurat->grade,
             'keterangan'=>$getSurat->keterangan,
             'tingkat'=>$getSurat->tingkat,
-            'tempat'=>$getSurat->tempat,
-            'waktu'=>$getSurat->waktu,
+            'hukuman'=>$getSurat->hukuman,
+            'start_time'=>date('Y-m-d H:i', strtotime($getSurat->start_time)),
+            'end_time'=>date('Y-m-d H:i', strtotime($getSurat->end_time)),
+            'start_time_bi'=>date('d-m-Y H:i', strtotime($getSurat->start_time)),
+            'end_time_bi'=>date('d-m-Y H:i', strtotime($getSurat->end_time)),
+            'nama_pembina'=>$getSurat->nama_pembina,
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'status'=>$getSurat->status,
-            'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/prestasi/".$getSurat->photo : '',
-            'form'=>['keterangan', 'tingkat', 'tempat', 'waktu'],
-            'status_disposisi'=> $getSurat->status_disposisi,
-            'user_disposisi'=>$getSurat->user_disposisi,
-            'date_disposisi'=>$getSurat->date_disposisi,
-            'reason_disposisi'=>$getSurat->reason_disposisi,
+            'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/hukdis/".$getSurat->photo : '',
+            'form'=>['keterangan', 'tingkat', 'hukuman', 'id_taruna', 'start_time', 'end_time', 'id_user'],
             'user_approve_1'=>$getSurat->user_approve_1,
             'date_approve_1'=>$getSurat->date_approve_1,
             'status_level_1'=>$getSurat->status_level_1,
             'reason_level_1'=>$getSurat->reason_level_1,
-            'show_disposisi'=>false,
-            'show_approve'=>false,
+            'show_persetujuan'=>false,
             'download'=>'-'
         );
         if(!empty($request->cetak)){
             return $data;
-        }
-        if($getSurat->status_disposisi==1){
-            $status_disposisi = 'Disposisi';
-        }else if ($getSurat->status_disposisi==0) {
-            $status_disposisi = 'Belum Disposisi';
-        }else {
-            $status_disposisi = 'Disposisi Ditolak';
         }
 
         if($getSurat->status==1){
@@ -285,20 +276,15 @@ class HukumanDinasController extends BaseController
         }else {
             $data['status_name'] = 'Tidak Disetujui';
         }
-    
-        if($roleName=='Pembina' && $getSurat->status!=1){
-            $data['show_disposisi'] = true;
+        $data['permission'] = [];
+        if($roleName=='Pembina' && $getSurat->status_level_1!=1){
+            $data['permission'] = ['edit', 'delete'];
         }
-        if(($roleName=='Taruna')) {
-            if($getSurat->id_user!=$request->id_user && $getSurat->status!=1){
-                $data['permission'] = [];
-            }
-        }
-        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){
+        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $roleName=='Super Admin'){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetakprestasi/id/'.$request->id.'/id_user/'.$request->id_user;
+            $data['download'] = \URL::to('/').'/api/cetakhukdis/id/'.$request->id.'/id_user/'.$request->id_user;
         }
 
         return $this->sendResponse($data, 'prestasi load successfully.');
@@ -317,10 +303,12 @@ class HukumanDinasController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
+            'id_taruna' => 'required',
             'tingkat' =>'required',
-            'tempat' =>'required',
+            'hukuman' =>'required',
             'keterangan' =>'required',
-            'waktu' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
@@ -348,39 +336,40 @@ class HukumanDinasController extends BaseController
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('file', 'waktu'));
-                $getUser = User::where('id', $request->id_user)->first();
-                $input['grade'] = $getUser->grade;
-                $input['id_user'] = $getUser->id;
-                $input['stb']   = $getUser->stb;
-                $input['status_disposisi']  = 0;
-                $input['status_level_1']   = 0;
-                $input['status']   = 0;
-                $input['waktu'] = date('Y-m-d h:i:s', strtotime($request->waktu));
-                Prestasi::create($input);
+                Arr::forget($input, array('file'));
+                $getTaruna = User::where('id', $request->id_taruna)->first();
+                $input['grade']             = $getTaruna->grade;
+                $input['stb']               = $getTaruna->stb;
+                $input['status_level_1']    = 0;
+                $input['status']            = 0;
+                $input['start_time']        = date('Y-m-d H:i:s', strtotime($request->start_time));
+                $input['end_time']          = date('Y-m-d H:i:s', strtotime($request->end_time));
+                HukumanDinas::create($input);
 
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'prestasi create successfully.');
+            return $this->sendResponse($data, 'hukdis create successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
             if($image!=false){
                 $this->DeleteImage($image, config('app.documentImagePath').'/hukdis/');
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi create failure.');
+            return $this->sendResponseFalse($data, 'hukdis create failure.');
         }
 
     }
 
-    public function updateprestasi(Request $request)
+    public function updatehukdis(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
+            'id_taruna' => 'required',
             'tingkat' =>'required',
-            'tempat' =>'required',
+            'hukuman' =>'required',
             'keterangan' =>'required',
-            'waktu' => 'required',
+            'start_time' => 'required',
+            'end_time' => 'required',
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
@@ -399,11 +388,11 @@ class HukumanDinasController extends BaseController
         try {
 
             DB::beginTransaction();
-            $prestasi = Prestasi::where('id_user', $request->id_user)->where('id', $request->id)->first();
+            $prestasi = HukumanDinas::where('id_user', $request->id_user)->where('id', $request->id)->first();
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
-            $getUser = User::where('id', $request->id_user)->first();
-            $input['grade'] = $getUser->grade;
+            $getTaruna = User::where('id', $request->id_taruna)->first();
+            $input['grade'] = $getTaruna->grade;
             if(isset($image)){
                 if($image!=false){
                     $request->request->add(['photo'=> $image]);
@@ -465,11 +454,11 @@ class HukumanDinasController extends BaseController
             ->get();
     }
 
-    public function cetakprestasi(Request $request){
+    public function cetakhukdis(Request $request){
         $data   = [];
         $res    = [];
         $request->request->add(['cetak'=> true]);
-        $getData   = $this->prestasidetail($request);
+        $getData   = $this->hukdisdetail($request);
         $data   = array(
             'name'=>$getData['name'],
             'category_name'=>'DATA PENGHARGAAN',
@@ -499,7 +488,7 @@ class HukumanDinasController extends BaseController
            return $this->sendResponse($res, 'link surat generate failure');
     }
 
-    public function disposisiprestasi(Request $request)
+    public function approvehukdis(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
@@ -510,44 +499,21 @@ class HukumanDinasController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $prestasi = Prestasi::where('id', $request->id)
-                                ->where('status', 0)
-                                ->first();
-        $prestasi->user_disposisi=$request->id_user;
-        $prestasi->date_disposisi=date('Y-m-d H:i:s');
-        $prestasi->reason_disposisi=$request->reason;
-        $prestasi->status_disposisi=$request->status;
-        $prestasi->save();
-        $data['status'] = true;
-        return $this->sendResponse($data, 'disposisi prestasi success');
-    }
-
-    public function approveprestasi(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'id_user' => 'required',
-            'status' => 'required',
-            'id'=>'required'
-        ]);
-        $data['status']=false;
-        if ($validator->fails()) {
-            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
-        }
-        $prestasi = Prestasi::where('id', $request->id)
+        $hukdis = HukumanDinas::where('id', $request->id)
                                 ->where('status', 0)
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
-            $prestasi->user_approve_level_1=$request->id_user;
-            $prestasi->date_approve_level_1=date('Y-m-d H:i:s');
-            $prestasi->status_level_1=$request->status;
-            $prestasi->status=$request->status;
-            $prestasi->reason_level_1=$request->reason;
-            $prestasi->save();
+            $hukdis->user_approve_level_1=$request->id_user;
+            $hukdis->date_approve_level_1=date('Y-m-d H:i:s');
+            $hukdis->status_level_1=$request->status;
+            $hukdis->status=$request->status;
+            $hukdis->reason_level_1=$request->reason;
+            $hukdis->save();
             $data['status'] = true;
-            return $this->sendResponse($data, 'approve prestasi success');
+            return $this->sendResponse($data, 'approve hukdis success');
         }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'approve prestasi failure');
+            return $this->sendResponseFalse($data, 'approve hukdis failure');
     }
 }
