@@ -224,15 +224,15 @@ class PengasuhanController extends BaseController
             }
         }
 
-        return $this->sendResponse($data, 'prestasi load successfully.');
+        return $this->sendResponse($data, 'pengasuhan load successfully.');
     }
 
     public function inputpengasuhan(Request $request)
     {
         if(!empty($request->id)){
-            return $this->updateprestasi($request);
+            return $this->updatepengasuhan($request);
         }else {
-            return $this->saveprestasi($request);
+            return $this->savepengasuhan($request);
         }
     }
 
@@ -240,11 +240,12 @@ class PengasuhanController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'tingkat' =>'required',
-            'tempat' =>'required',
-            'keterangan' =>'required',
-            'waktu' => 'required',
-            'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
+            'media' =>'required',
+            'start_time' =>'required',
+            'end_time' =>'required',
+            'id_media' =>'required',
+            'password' =>'required',
+            'judul' => 'required'
         ]);
         $data=[];
         $data['status'] = false;
@@ -345,25 +346,25 @@ class PengasuhanController extends BaseController
 
     public function deletepengasuhan(Request $request)
     {
-        $prestasi = Prestasi::where('id_user', $request->id_user)->where('id', $request->id)->first();
+        $pengasuhan = Pengasuhan::where('id_user', $request->id_user)->where('id', $request->id)->first();
         $data=[];
         try {
             DB::beginTransaction();
-  /*           if($prestasi->photo){
-                $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
+  /*           if($pengasuhan->photo){
+                $this->DeleteImage($pengasuhan->photo, config('app.documentImagePath').'/pengasuhan/');
             } */
-            $prestasi->user_deleted = $request->id_user;
-            $prestasi->save();
-            $prestasi->delete();
+            $pengasuhan->user_deleted = $request->id_user;
+            $pengasuhan->save();
+            $pengasuhan->delete();
             DB::commit();
             $data['status']=true;
-            return $this->sendResponse($data, 'prestasi deleted successfully.');
+            return $this->sendResponse($data, 'pengasuhan deleted successfully.');
         } catch (\Throwable $th) {
             DB::rollback();
             $data['status']=false;
-            return $this->sendResponseFalse($data, 'prestasi deleted failure.');
+            return $this->sendResponseFalse($data, 'pengasuhan deleted failure.');
         }
-        return $this->sendResponse($result, 'prestasi delete successfully.');
+        return $this->sendResponse($result, 'pengasuhan delete successfully.');
     }
 
     public function pengasuhantaruna($condition, $limit, $order, $dir)
