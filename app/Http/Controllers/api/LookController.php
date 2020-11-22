@@ -1246,7 +1246,7 @@ class LookController extends BaseController
         if($roleName=='Pembina' && $data['status']!=1){
             $data['show_disposisi'] = true;
         }
-        if(($roleName=='Taruna') || ($roleName=='Orang Tua')) {
+        if(($roleName=='Taruna') || ($roleName=='Orang Tua') && $data['status']!=1) {
             if($getSurat->user_created!=$request->user_created){
                 $data['permission'] = [];
             }

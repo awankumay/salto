@@ -361,7 +361,7 @@ class SuketController extends BaseController
         if($roleName=='Pembina' && $data['status']!=1){
             $data['show_disposisi'] = true;
         }
-        if(($roleName=='Taruna') || ($roleName=='Orang Tua')) {
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $data['status']!=1 ) {
             if($getSurat->user_created!=$request->user_created){
                 $data['permission'] = [];
             }
@@ -369,6 +369,11 @@ class SuketController extends BaseController
         if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
+
+        if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
+            $data['show_persetujuan'] = true;
+        }
+        
         if($getSurat['status']==1){
             $data['download'] = \URL::to('/').'/api/cetaksuket/id/'.$request->id.'/id_user/'.$request->id_user;
         }
@@ -532,9 +537,10 @@ class SuketController extends BaseController
         $data=[];
         try {
             DB::beginTransaction();
-            if($suket->photo){
+            /* if($suket->photo){
                 $this->DeleteImage($suket->photo, config('app.documentImagePath').'/suket/');
-            }
+                $suket->photo=NULL;
+            } */
             $suket->user_deleted = $request->id_user;
             $suket->save();
             $suket->delete();
@@ -542,6 +548,7 @@ class SuketController extends BaseController
             $data['status']=true;
             return $this->sendResponse($data, 'suket deleted successfully.');
         } catch (\Throwable $th) {
+            //@dd($th->getMessage());
             DB::rollback();
             $data['status']=false;
             return $this->sendResponseFalse($data, 'suket deleted failure.');

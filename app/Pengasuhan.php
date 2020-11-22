@@ -27,7 +27,8 @@ class Pengasuhan extends Authenticatable
         'keluarga_asuh', 'media', 'waktu', 'id_media', 'password', 
         'status', 'datetime', 'created_at', 'updated_at',
         'id_user', 'user_created', 'user_updated', 'deleted_at', 'created_at', 'updated_at',
-        'reason', 'user_approve', 'date_approve', 'start_time', 'end_time'
+        'reason', 'user_approve', 'date_approve', 'start_time', 'end_time',
+        'judul'
     ];
     protected $dates = ['deleted_at'];
     protected $primaryKey = 'id';

@@ -58,7 +58,7 @@ Route::post('approvesuket', 'api\SuketController@approvesuket')->name('approvesu
 Route::get('cetaksuket/id/{id}/id_user/{id_user}', 'api\SuketController@cetaksuket')->name('cetaksuket');
 
 Route::post('getpengasuhan', 'api\PengasuhanController@getpengasuhan')->name('getpengasuhan');
-Route::get('getpengasuhan/id/{id}/id_user/{id_user}', 'api\PengasuhanController@suketdetail')->name('getpengasuhan');
+Route::get('getpengasuhan/id/{id}/id_user/{id_user}', 'api\PengasuhanController@pengasuhandetail')->name('getpengasuhan');
 Route::post('inputpengasuhan', 'api\PengasuhanController@inputpengasuhan')->name('inputpengasuhan');
 Route::post('deletepengasuhan', 'api\PengasuhanController@deletepengasuhan')->name('deletepengasuhan');
 

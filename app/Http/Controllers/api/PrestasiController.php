@@ -481,9 +481,9 @@ class PrestasiController extends BaseController
         $data=[];
         try {
             DB::beginTransaction();
-            if($prestasi->photo){
+           /*  if($prestasi->photo){
                 $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
-            }
+            } */
             $prestasi->user_deleted = $request->id_user;
             $prestasi->save();
             $prestasi->delete();

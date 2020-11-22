@@ -147,15 +147,16 @@ class PengasuhanController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Wali Asuh' || $roleName=='Super Admin' ) && $value->status!=1){
+            if(($roleName=='Wali Asuh' || $roleName=='Super Admin' )){
                 $dataPermission = ['edit', 'delete'];
             }
 
             $result['pengasuhan'][]= [ 
                 'id'=>$value->id,
+                'id_user'=>$value->id_user,
                 'keluarga_asuh'=>$value->keluarga_asuh,
                 'judul'=>substr($value->judul, 0, 15).'...',
-                'waktu'=>$value->start_time.'s/d'.$value->end_time,
+                'waktu'=>$value->start_time.' s/d '.$value->end_time,
                 'permission'=>$dataPermission
             ];
                 
@@ -184,6 +185,7 @@ class PengasuhanController extends BaseController
                                             'tb_pengasuhan_daring.id_user as id_user',
                                             'author.name as nama_waliasuh',
                                             'tb_pengasuhan_daring.keluarga_asuh as keluarga_asuh',
+                                            'tb_pengasuhan_daring.judul as judul',
                                             'tb_pengasuhan_daring.media as media',
                                             'tb_pengasuhan_daring.id_media as id_media',
                                             'tb_pengasuhan_daring.password as password',
@@ -203,53 +205,23 @@ class PengasuhanController extends BaseController
         $data = array(
             'id'=>$getSurat->id,
             'id_user'=>$getSurat->id_user,
-            'stb'=>$getSurat->stb,
-            'name'=>$getSurat->nama_taruna,
-            'grade'=>$getSurat->grade,
-            'keterangan'=>$getSurat->keterangan,
-            'tingkat'=>$getSurat->tingkat,
-            'tempat'=>$getSurat->tempat,
-            'waktu'=>$getSurat->waktu,
+            'name'=>$getSurat->nama_waliasuh,
+            'keluarga_asuh'=>$getSurat->keluarga_asuh,
+            'judul'=>$getSurat->judul,
+            'media'=>$getSurat->media,
+            'id_media'=>$getSurat->id_media,
+            'password'=>$getSurat->password,
+            'start_time'=>$getSurat->start_time,
+            'end_time'=>$getSurat->end_time,
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
-            'status'=>$getSurat->status,
-            'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/prestasi/".$getSurat->photo : '',
-            'form'=>['keterangan', 'tingkat', 'tempat', 'waktu'],
-            'show_activation'=>false,
-            'download'=>'-'
+            'form'=>['judul', 'media', 'id_media', 'password', 'start_time', 'end_time']
         );
-        if(!empty($request->cetak)){
-            return $data;
-        }
-        if($getSurat->status_disposisi==1){
-            $status_disposisi = 'Disposisi';
-        }else if ($getSurat->status_disposisi==0) {
-            $status_disposisi = 'Belum Disposisi';
-        }else {
-            $status_disposisi = 'Disposisi Ditolak';
-        }
-
-        if($getSurat->status==1){
-            $data['status_name'] = 'Disetujui';
-        }else if ($getSurat->status==0) {
-            $data['status_name'] = 'Belum Disetujui';
-        }else {
-            $data['status_name'] = 'Tidak Disetujui';
-        }
-    
-        if($roleName=='Pembina' && $getSurat->status!=1){
-            $data['show_disposisi'] = true;
-        }
-        if(($roleName=='Taruna')) {
-            if($getSurat->id_user!=$request->id_user && $getSurat->status!=1){
-                $data['permission'] = [];
+        
+        if(($roleName=='Wali Asuh')) {
+            if($getSurat->id_user==$request->id_user){
+                $data['permission'] = ['edit', 'delete'];
             }
-        }
-        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){
-            $data['show_persetujuan'] = true;
-        }
-        if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetakprestasi/id/'.$request->id.'/id_user/'.$request->id_user;
         }
 
         return $this->sendResponse($data, 'prestasi load successfully.');
@@ -280,26 +252,14 @@ class PengasuhanController extends BaseController
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
 
-        if($request->file!==null){
-            $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
-            if($image==false){
-                return $this->sendResponseFalse($data, 'failed upload');  
-            }
-        }
-
         try {
             DB::beginTransaction();
-                if(!empty($image)){
-                    if($image!=false){
-                        $request->request->add(['photo'=> $image]);
-                    }
-                }
                 $request->request->add(['user_created'=> $request->id_user]);
                 $request->request->add(['user_updated'=> $request->id_user]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                Arr::forget($input, array('file', 'waktu'));
+                //Arr::forget($input, array('file', 'waktu'));
                 $getUser = User::where('id', $request->id_user)->first();
                 $input['grade'] = $getUser->grade;
                 $input['id_user'] = $getUser->id;
@@ -389,9 +349,9 @@ class PengasuhanController extends BaseController
         $data=[];
         try {
             DB::beginTransaction();
-            if($prestasi->photo){
+  /*           if($prestasi->photo){
                 $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/prestasi/');
-            }
+            } */
             $prestasi->user_deleted = $request->id_user;
             $prestasi->save();
             $prestasi->delete();
@@ -410,7 +370,7 @@ class PengasuhanController extends BaseController
     {
         return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_pengasuhan_daring.created_at))as tanggal"),'users.name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.judul', 'tb_pengasuhan_daring.id as id')
+            ->select(DB::raw("(DATE(tb_pengasuhan_daring.created_at))as tanggal"),'users.name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.judul', 'tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
