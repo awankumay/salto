@@ -215,7 +215,7 @@ class PrestasiController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status!=1){
+            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status_disposisi!=1){
                 $dataPermission = ['edit', 'delete'];
             }
 
@@ -329,12 +329,13 @@ class PrestasiController extends BaseController
             $data['status_name'] = 'Tidak Disetujui';
         }
     
-        if($roleName=='Pembina' && $getSurat->status!=1){
+        if($roleName=='Pembina' && $getSurat->status_level_1!=1){
             $data['show_disposisi'] = true;
         }
+        $data['permission'] = [];
         if(($roleName=='Taruna')) {
-            if($getSurat->id_user!=$request->id_user && $getSurat->status!=1){
-                $data['permission'] = [];
+            if($getSurat->id_user==$request->id_user && $getSurat->status_disposisi==1){
+                $data['permission'] = ['edit', 'delete'];
             }
         }
         if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){

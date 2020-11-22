@@ -62,6 +62,14 @@ Route::get('getpengasuhan/id/{id}/id_user/{id_user}', 'api\PengasuhanController@
 Route::post('inputpengasuhan', 'api\PengasuhanController@inputpengasuhan')->name('inputpengasuhan');
 Route::post('deletepengasuhan', 'api\PengasuhanController@deletepengasuhan')->name('deletepengasuhan');
 
+Route::post('gethukdis', 'api\HukumanDinasController@gethukdis')->name('gethukdis');
+Route::get('gethukdis/id/{id}/id_user/{id_user}', 'api\HukumanDinasController@hukdisdetail')->name('gethukdis');
+Route::post('inputhukdis', 'api\HukumanDinasController@inputhukdis')->name('inputhukdis');
+Route::post('deletehukdis', 'api\HukumanDinasController@deletehukdis')->name('deletehukdis');
+Route::post('disposisihukdis', 'api\HukumanDinasController@disposisihukdis')->name('disposisihukdis');
+Route::post('approvehukdis', 'api\HukumanDinasController@approvehukdis')->name('approvehukdis');
+Route::get('cetakhukdis/id/{id}/id_user/{id_user}', 'api\HukumanDinasController@cetakhukdis')->name('cetakhukdis');
+
 Route::group(['middleware' => ['auth:api', 'role:Pengunjung']], function(){
 Route::get('logout', 'api\LoginController@logout');
 Route::get('/ok', 'api\LookController@test')->name('ok');

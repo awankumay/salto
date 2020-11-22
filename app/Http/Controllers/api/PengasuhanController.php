@@ -219,7 +219,7 @@ class PengasuhanController extends BaseController
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'form'=>['judul', 'media', 'id_media', 'password', 'start_time', 'end_time']
         );
-        
+        $data['permission']=[];
         if(($roleName=='Wali Asuh')) {
             if($getSurat->id_user==$request->id_user){
                 $data['permission'] = ['edit', 'delete'];

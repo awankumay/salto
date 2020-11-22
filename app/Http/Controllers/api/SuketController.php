@@ -229,11 +229,11 @@ class SuketController extends BaseController
                 $status='Tidak Disetuji';
                 $download = '-';
             }
-            $dataPermission = [];
+
+            $dataPermission = ['edit', 'delete'];
             if($roleName=='Taruna' || $roleName=='Super Admin' || $roleName=='Orang Tua'){
-                $dataPermission = ['edit', 'delete'];
-                if($roleName=='Taruna' || $roleName=='Orang Tua'){
-                    if($value->user_created!=$request->user_created){
+                if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1){
+                    if($value->user_created!=$request->id_user){
                         $dataPermission = [];
                     }
                 }
@@ -358,12 +358,14 @@ class SuketController extends BaseController
             $data['status_name'] = 'Tidak Disetujui';
         }
     
-        if($roleName=='Pembina' && $data['status']!=1){
+        if($roleName=='Pembina' && $data['status_level_1']!=1){
             $data['show_disposisi'] = true;
         }
-        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $data['status']!=1 ) {
+
+        $data['permission'] = [];
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1 ) {
             if($getSurat->user_created!=$request->user_created){
-                $data['permission'] = [];
+                $data['permission'] = ['edit', 'delete'];
             }
         }
         if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
@@ -373,7 +375,7 @@ class SuketController extends BaseController
         if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
             $data['show_persetujuan'] = true;
         }
-        
+
         if($getSurat['status']==1){
             $data['download'] = \URL::to('/').'/api/cetaksuket/id/'.$request->id.'/id_user/'.$request->id_user;
         }
