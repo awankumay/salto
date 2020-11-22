@@ -1259,9 +1259,9 @@ class LookController extends BaseController
         }
         $data['start'] = date('Y-m-d H:i', strtotime($getSurat->start));
         $data['end'] = date('Y-m-d H:i', strtotime($getSurat->end));
-        $data['start_hi'] = date('d/m/Y H:i', strtotime($getSurat->start));
+        $data['start_bi'] = date('d-m-Y H:i', strtotime($getSurat->start));
         $data['start_date'] = date('d/m/Y', strtotime($getSurat->start));
-        $data['end_hi'] = date('d/m/Y H:i', strtotime($getSurat->end));
+        $data['end_bi'] = date('d-m-Y H:i', strtotime($getSurat->end));
         $data['end_date'] = date('d/m/Y', strtotime($getSurat->end));
       /*   asort($data);
         $sortData = [];
