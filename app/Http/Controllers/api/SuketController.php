@@ -304,6 +304,7 @@ class SuketController extends BaseController
                                             'tb_suket.date_disposisi as date_disposisi',
                                             'tb_suket.status_disposisi as status_disposisi',
                                             'tb_suket.reason_disposisi as reason_disposisi',
+                                            'tb_suket.user_created as user_created',
                                             'grade.grade as grade'
                                             )
                                     ->where('tb_suket.id', $id)
@@ -369,8 +370,8 @@ class SuketController extends BaseController
         }
 
         $data['permission'] = [];
-        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1 ) {
-            if($getSurat->user_created==$getSurat->id_user){
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
+            if($getSurat->user_created==$request->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
