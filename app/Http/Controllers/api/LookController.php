@@ -1541,7 +1541,7 @@ class LookController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        //$image='';
+        $image='';
         if(!empty($request->file)){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
