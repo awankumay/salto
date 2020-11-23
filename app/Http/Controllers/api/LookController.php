@@ -1276,7 +1276,7 @@ class LookController extends BaseController
         }
         $data['permission'] = [];
         if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
-            if($getSurat->user_created!=$getSurat->id_user){
+            if($getSurat->user_created==$getSurat->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
