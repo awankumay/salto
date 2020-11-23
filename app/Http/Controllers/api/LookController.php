@@ -1512,6 +1512,7 @@ class LookController extends BaseController
             $data['status'] = true;
             return $this->sendResponse($data, 'surat izin create successfully.');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
             if($image!=false){
                 $this->DeleteImage($image, config('app.documentImagePath'));
