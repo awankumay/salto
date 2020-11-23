@@ -178,6 +178,8 @@ class LookController extends BaseController
 
     public function checkabsen($request)
     {
+        date_default_timezone_set("Asia/Jakarta");
+
         $absensi = Absensi::where('id_user', $request->id_user)->whereRaw('DATE(created_at) = ?', date('Y-m-d'))->first();
         $data = [];
         if(empty($absensi)){
@@ -186,7 +188,7 @@ class LookController extends BaseController
         }else{
             if(!empty($absensi)){
                 $data['clock_in'] = !empty($absensi->clock_in) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
-                $data['clock_out'] = !empty($absensi->clock_out) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
+                $data['clock_out'] = !empty($absensi->clock_out) ? date('d-m-Y H:i', strtotime($absensi->clock_out)) : true;
             }
         }
         return $data;
@@ -202,6 +204,7 @@ class LookController extends BaseController
 
     public function clockin(Request $request)
     {
+        date_default_timezone_set("Asia/Jakarta");
         $data = [];
         $validator = Validator::make($request->all(), 
                     [ 
@@ -258,6 +261,7 @@ class LookController extends BaseController
 
     public function clockout(Request $request)
     {
+        date_default_timezone_set("Asia/Jakarta");
         $validator = Validator::make($request->all(), 
                     [ 
                         'id_user' => 'required',
