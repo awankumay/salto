@@ -1353,7 +1353,7 @@ class LookController extends BaseController
                 Arr::forget($input, array('file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $getUser = User::where('id', $request->id_user)->first();
 
-                if($getUser->getRoleNames()[0]!='Taruna'){
+                if($getUser->getRoleNames()[0]!='Taruna' && $getUser->getRoleNames()[0]!='Orang Tua'){
                     $input['start'] = date('Y-m-d H:i:s', strtotime($request->start));
                     $input['end']   = date('Y-m-d H:i:s', strtotime($request->end));
                     $input['status'] = 1;
@@ -1564,7 +1564,7 @@ class LookController extends BaseController
                 $input = $request->all();
                 Arr::forget($input, array('file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $getUser = User::where('id', $request->id_user)->first();
-                if($getUser->getRoleNames()[0]!='Taruna'){
+                if($getUser->getRoleNames()[0]!='Taruna' && $getUser->getRoleNames()[0]!='Orang Tua'){
                     $input['start'] = $request->start.' '.$request->start_time;
                     $input['end']   = $request->end.' '.$request->end_time;
                     $input['status'] = 1;
@@ -1731,14 +1731,15 @@ class LookController extends BaseController
 
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'surat izin create successfully.');
+            return $this->sendResponse($data, 'surat izin update successfully.');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
                 if($image!=false){
                     $this->DeleteImage($image, config('app.documentImagePath'));
                 }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'surat izin create successfully.');
+            return $this->sendResponseFalse($data, 'surat izin update failure.');
         }
     }
 
