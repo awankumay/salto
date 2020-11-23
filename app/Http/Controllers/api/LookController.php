@@ -594,7 +594,7 @@ class LookController extends BaseController
                 'permission'=>[]
             );
             $data['jurnal'][$key]['permission']=[];
-            if($value->status==1){
+            if($value->status==0){
                 $data['jurnal'][$key]['permission']=['edit', 'delete'];
             }
         }
