@@ -312,7 +312,7 @@ class PrestasiController extends BaseController
             'reason_level_1'=>$getSurat->reason_level_1,
             'show_disposisi'=>false,
             'show_approve'=>false,
-            'download'=>'-'
+            'download'=>false
         );
         if(!empty($request->cetak)){
             return $data;
