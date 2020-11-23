@@ -69,20 +69,32 @@ class LoginController extends BaseController
                 $user = Auth::user(); 
                 $success['profile'] =  $user;
                 $roles = $user->getRoleNames();
-                $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
+                $success['profile']['privilages'] = empty($roles[0]) ? '-' : $roles[0];
                 $success['permission'] = [];
                 foreach ($user->getAllPermissions() as $key => $vals) {
                     $success['permission'][]=$vals->name;
                 }
-    /*             switch ($roles[0]) {
+
+                $success['profile']['subscribe']=['salto'];
+                switch ($roles[0]) {
                     case 'Taruna':
-                    $success['subscribe'] = 
+                    $success['profile']['subscribe'][] ='taruna'; 
                         break;
-                    
+                    case 'Orang Tua';
+                    $success['profile']['subscribe'][] ='orangtua'; 
+                        break;
+                    case 'Pembina';
+                    $success['profile']['subscribe'][] ='pembina'; 
+                        break;
+                    case 'Wali Asuh';
+                    $success['profile']['subscribe'][] ='waliasuh'; 
+                        break;
+                    case 'Akademik dan Ketarunaaan';
+                        $success['profile']['subscribe'][] ='aak'; 
+                            break;
                     default:
-                        # code...
                         break;
-                } */
+                }
                 
                 $success['user_id'] = $user->id;
                 $success['token'] =  $user->createToken('MyApp')->accessToken;
