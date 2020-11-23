@@ -66,7 +66,6 @@ Route::post('gethukdis', 'api\HukumanDinasController@gethukdis')->name('gethukdi
 Route::get('gethukdis/id/{id}/id_user/{id_user}', 'api\HukumanDinasController@hukdisdetail')->name('gethukdis');
 Route::post('inputhukdis', 'api\HukumanDinasController@inputhukdis')->name('inputhukdis');
 Route::post('deletehukdis', 'api\HukumanDinasController@deletehukdis')->name('deletehukdis');
-Route::post('disposisihukdis', 'api\HukumanDinasController@disposisihukdis')->name('disposisihukdis');
 Route::post('approvehukdis', 'api\HukumanDinasController@approvehukdis')->name('approvehukdis');
 Route::get('cetakhukdis/id/{id}/id_user/{id_user}', 'api\HukumanDinasController@cetakhukdis')->name('cetakhukdis');
 

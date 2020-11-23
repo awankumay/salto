@@ -316,7 +316,7 @@ class HukumanDinasController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
+        $image='';
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/hukdis/');
             if($image==false){
@@ -338,6 +338,9 @@ class HukumanDinasController extends BaseController
                 $input = $request->all();
                 Arr::forget($input, array('file'));
                 $getTaruna = User::where('id', $request->id_taruna)->first();
+                if(empty($getTaruna)){
+                    return $this->sendResponseError($data, 'taruna tidak ditemukan');
+                }
                 $input['grade']             = $getTaruna->grade;
                 $input['stb']               = $getTaruna->stb;
                 $input['status_level_1']    = 0;
@@ -350,6 +353,7 @@ class HukumanDinasController extends BaseController
             $data['status'] = true;
             return $this->sendResponse($data, 'hukdis create successfully.');
         } catch (\Throwable $th) {
+            //@dd($th->getMessage());
             DB::rollBack();
             if($image!=false){
                 $this->DeleteImage($image, config('app.documentImagePath').'/hukdis/');
@@ -377,7 +381,7 @@ class HukumanDinasController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
+        $image='';
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/hukdis/');
             if($image==false){
@@ -386,19 +390,23 @@ class HukumanDinasController extends BaseController
         }
 
         try {
+            
+            if(!empty($image)){
+                if($image!=false){
+                    $request->request->add(['photo'=> $image]);
+                    $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/hukdis/');
+                }
+            }
 
             DB::beginTransaction();
             $prestasi = HukumanDinas::where('id_user', $request->id_user)->where('id', $request->id)->first();
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
             $getTaruna = User::where('id', $request->id_taruna)->first();
-            $input['grade'] = $getTaruna->grade;
-            if(isset($image)){
-                if($image!=false){
-                    $request->request->add(['photo'=> $image]);
-                    $this->DeleteImage($prestasi->photo, config('app.documentImagePath').'/hukdis/');
-                }
+            if(empty($getTaruna)){
+                return $this->sendResponseError($data, 'taruna tidak ditemukan');
             }
+            $input['grade'] = $getTaruna->grade;
             $input = $request->all();
             $input['status']   = 0;
             $input['status_disposisi']  = 0;

@@ -262,9 +262,9 @@ class PengasuhanController extends BaseController
                                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                                 ->first();
                 if(empty($getKeluargaAsuh)){
-                    return $this->sendResponseFalse($data, 'keluarga asuh not found');   
+                    return $this->sendResponseError($data, 'waliasuh belum mempunyai keluarga asuh');   
                 }
-         
+
                 $request->request->add(['user_created'=> $request->id_user]);
                 $request->request->add(['user_updated'=> $request->id_user]);
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
@@ -309,6 +309,9 @@ class PengasuhanController extends BaseController
 
             DB::beginTransaction();
             $pengasuhan = Pengasuhan::where('id_user', $request->id_user)->where('id', $request->id)->first();
+            if(empty($pengasuhan)){
+                return $this->sendResponseError($data, 'data not found');   
+            }
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
             $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
@@ -316,7 +319,7 @@ class PengasuhanController extends BaseController
                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                 ->first();
             if(empty($getKeluargaAsuh)){
-                return $this->sendResponseFalse($data, 'keluarga asuh not found');   
+                return $this->sendResponseError($data, 'keluarga asuh not found');   
             }
             $input = $request->all();
             $input['id_user'] = $request->id_user;
@@ -330,6 +333,7 @@ class PengasuhanController extends BaseController
             $data['status'] = true;
             return $this->sendResponse($data, 'pengasuhan updated successfully.');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
             $data['status'] = false;
             return $this->sendResponseFalse($data, 'pengasuhan failure updated.');
