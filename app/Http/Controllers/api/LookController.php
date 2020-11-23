@@ -1337,7 +1337,7 @@ class LookController extends BaseController
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
         }
-
+        $id_user = $request->id_user;
         try {
             DB::beginTransaction();
                 if(!empty($image)){
@@ -1549,8 +1549,8 @@ class LookController extends BaseController
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
         }
-
-       try {
+        $id_user = $request->id_user;
+        try {
             DB::beginTransaction();
             $suratIzin = SuratIzin::where('id_user', $request->id_user)->where('id', $request->id)->first();
 
