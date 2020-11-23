@@ -780,6 +780,7 @@ class LookController extends BaseController
             }else if($roleName=='OrangTua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
+                $tarunaId[] = $id_user;  
                 if(!empty($taruna)){
                     foreach ($taruna as $key => $value) {
                         $tarunaId[]=$value->taruna_id;
