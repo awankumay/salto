@@ -9,6 +9,7 @@ use App\Grade;
 use App\OrangTua;
 use App\WaliAsuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
+use App\TarunaKeluargaAsuh;
 use App\Pengasuhan;
 use Illuminate\Support\Facades\Auth;
 use Validator;
