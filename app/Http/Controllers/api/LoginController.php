@@ -74,6 +74,16 @@ class LoginController extends BaseController
                 foreach ($user->getAllPermissions() as $key => $vals) {
                     $success['permission'][]=$vals->name;
                 }
+    /*             switch ($roles[0]) {
+                    case 'Taruna':
+                    $success['subscribe'] = 
+                        break;
+                    
+                    default:
+                        # code...
+                        break;
+                } */
+                
                 $success['user_id'] = $user->id;
                 $success['token'] =  $user->createToken('MyApp')->accessToken;
                 return $this->sendResponse($success, 'User login successfully.'); 

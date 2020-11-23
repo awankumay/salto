@@ -594,7 +594,7 @@ class LookController extends BaseController
                 'permission'=>[]
             );
             $data['jurnal'][$key]['permission']=[];
-            if($value->status==0){
+            if($value->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi'){
                 $data['jurnal'][$key]['permission']=['edit', 'delete'];
             }
         }
@@ -616,7 +616,7 @@ class LookController extends BaseController
         $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
         $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
         $data['permission']=[];
-        if($jurnal->status==1){
+        if($jurnal->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi'){
             $data['permission']=['edit', 'delete'];
         }
         return $this->sendResponse($jurnal, 'jurnal load successfully.');
