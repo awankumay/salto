@@ -315,7 +315,7 @@ class LookController extends BaseController
 
     public function inputjurnal(Request $request)
     {
-       
+        date_default_timezone_set("Asia/Jakarta");
         $data = [];
         $validator = Validator::make($request->all(), 
                     [ 
@@ -1300,6 +1300,7 @@ class LookController extends BaseController
 
     public function savesuratizin($request)
     {
+        date_default_timezone_set("Asia/Jakarta");
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'start' => 'required',
