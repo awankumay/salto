@@ -865,7 +865,7 @@ class LookController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(in_array($value->id_category, $getCategoryId) && $value->status_disposisi!=1){
+            if(in_array($value->id_category, $getCategoryId)==true && $value->status_disposisi!=1){
                 $dataPermission = ['edit', 'delete'];
             }
                 $permissionApprove = $this->checkapprovepermission($value->id_category, $permission);
@@ -911,7 +911,7 @@ class LookController extends BaseController
         return SuratIzin::join('users', 'users.id', '=', 'surat_header.id_user')
             ->join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id', 'surat_header.id_category as id_category')
+            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id', 'surat_header.id_category as id_category', 'surat_header.status_disposisi', 'surat_header.status_level_1', 'surat_header.status_level_2')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
@@ -1283,7 +1283,8 @@ class LookController extends BaseController
         if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
-        if($getSurat['status']==1){
+        $data['download'] = false;
+        if($getSurat['status']==1 && ($roleName=='Orang Tua' || $roleName=='Taruna')){
             $data['download'] = \URL::to('/').'/api/cetaksuratizin/id/'.$request->id.'/id_user/'.$request->id_user;
         }
         $data['start'] = date('Y-m-d H:i', strtotime($getSurat->start));
