@@ -578,7 +578,7 @@ class LookController extends BaseController
                     ->select('jurnal_taruna.*', 'users.name as nama_taruna', 'grade_table.grade as nama_grade')
                     ->get();
         foreach ($jurnal as $key => $value) {
-            $data[]=array(
+            $data['jurnal'][]=array(
                 'id'=>$value->id,
                 'id_user'=>$value->id_user,
                 'name'=>$value->nama_taruna,
@@ -591,10 +591,11 @@ class LookController extends BaseController
                 'status_name'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim',
                 'created_at'=> date_format(date_create($value->created_at), 'd-m-Y H:i:s'),
                 'udpated_at'=> date_format(date_create($value->udpated_at), 'd-m-Y H:i:s'),
+                'permission'=>[]
             );
-            $data['permission']=[];
+            $data['jurnal'][$key]['permission']=[];
             if($value->status==1){
-                $data['permission']=['edit', 'delete'];
+                $data['jurnal'][$key]['permission']=['edit', 'delete'];
             }
         }
         $data['clock_out'] = $this->checkabsen($request);
@@ -628,7 +629,7 @@ class LookController extends BaseController
         $id_user = $request->idUser;
         $jurnal = JurnalTaruna::where('id', $id)->where('id_user', $id_user)->first();
         if(empty($jurnal)){
-            return $this->sendResponseFalse($data, 'jurnal not found.');
+            return $this->sendResponseError($data, 'jurnal not found.');
         }
         $jurnal->delete();
         return $this->sendResponse($data, 'jurnal delete successfully.');
