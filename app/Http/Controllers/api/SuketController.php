@@ -230,11 +230,11 @@ class SuketController extends BaseController
                 $download = '-';
             }
 
-            $dataPermission = ['edit', 'delete'];
+            $dataPermission = [];
             if($roleName=='Taruna' || $roleName=='Super Admin' || $roleName=='Orang Tua'){
                 if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1){
                     if($value->user_created==$id_user){
-                        $dataPermission = [];
+                        $dataPermission = ['edit', 'delete'];
                     }
                 }
             }else {
