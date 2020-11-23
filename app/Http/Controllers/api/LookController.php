@@ -594,7 +594,7 @@ class LookController extends BaseController
                 'permission'=>[]
             );
             $data['jurnal'][$key]['permission']=[];
-            if($value->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi'){
+            if($value->status==0 && $value->kegiatan!='Clock In / Apel Pagi'){
                 $data['jurnal'][$key]['permission']=['edit', 'delete'];
             }
         }
