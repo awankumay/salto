@@ -569,7 +569,7 @@ class SuketController extends BaseController
     {
         return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_suket.updated_at))as tanggal"),'users.name', 'tb_suket.keperluan', 'tb_suket.status', 'tb_suket.id as id', 'tb_suket.user_created as user_created')
+            ->select(DB::raw("(DATE(tb_suket.updated_at))as tanggal"),'users.name', 'tb_suket.keperluan', 'tb_suket.status', 'tb_suket.id as id', 'tb_suket.user_created as user_created', 'tb_suket.status_disposisi as status_disposisi')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
