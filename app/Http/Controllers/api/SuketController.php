@@ -233,7 +233,7 @@ class SuketController extends BaseController
             $dataPermission = ['edit', 'delete'];
             if($roleName=='Taruna' || $roleName=='Super Admin' || $roleName=='Orang Tua'){
                 if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1){
-                    if($value->user_created!=$value->id_user){
+                    if($value->user_created==$id_user){
                         $dataPermission = [];
                     }
                 }
@@ -370,7 +370,7 @@ class SuketController extends BaseController
 
         $data['permission'] = [];
         if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1 ) {
-            if($getSurat->user_created==$request->id_user){
+            if($getSurat->user_created==$getSurat->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
