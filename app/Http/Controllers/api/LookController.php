@@ -1833,10 +1833,9 @@ class LookController extends BaseController
         return $this->sendResponse($data, 'approve surat izin success');
     }
 
-    public function gettaruna(Request $request, $option=null)
+    public function gettaruna(Request $request)
     {
         $getUser    = User::find($request->id_user);
-        $option     = $option;
     
         $roleName   = $getUser->getRoleNames()[0];
         if($roleName=='Taruna'){
@@ -1908,12 +1907,12 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
         }
-        if($option!=1){
-            $tarunaData['id']       = implode(',',$tarunaId);
+        /* if($option!=1){
+            //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
-        }else{
+        }else{ */
             $tarunaData['taruna']   = $tarunaWithName;
-        }
+        //}
         return $tarunaData;
     }
 
