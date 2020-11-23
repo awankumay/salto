@@ -658,6 +658,7 @@ class LookController extends BaseController
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
+        $data = [];
         if($order=='status'){
             $order='surat_header.status';
         }
@@ -693,7 +694,7 @@ class LookController extends BaseController
                                 ->count();   
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 if(!empty($taruna)){
@@ -777,15 +778,15 @@ class LookController extends BaseController
                                 ->count();  
                 $count = SuratIzin::whereRaw($condition)->count();
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
-                $tarunaId[] = $id_user;  
                 if(!empty($taruna)){
                     foreach ($taruna as $key => $value) {
                         $tarunaId[]=$value->taruna_id;
                     }
                 }
+                $tarunaId[] = $id_user;
                 $getTaruna  = implode(',',$tarunaId);
                 $condition = 'surat_header.id_user in('.$getTaruna.') AND surat_header.id '.$diff.' '.$lastId.'';
                 $total = SuratIzin::whereRaw('surat_header.id_user in('.$getTaruna.')')
