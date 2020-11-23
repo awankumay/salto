@@ -74,27 +74,27 @@ class LoginController extends BaseController
                 foreach ($user->getAllPermissions() as $key => $vals) {
                     $success['permission'][]=$vals->name;
                 }
-
+/* 
                 $success['profile']['subscribe']=['salto'];
                 switch ($roles[0]) {
                     case 'Taruna':
                     $success['profile']['subscribe'][] ='taruna'; 
                         break;
-                    case 'Orang Tua';
+                    case 'Orang Tua':
                     $success['profile']['subscribe'][] ='orangtua'; 
                         break;
-                    case 'Pembina';
+                    case 'Pembina':
                     $success['profile']['subscribe'][] ='pembina'; 
                         break;
-                    case 'Wali Asuh';
+                    case 'Wali Asuh':
                     $success['profile']['subscribe'][] ='waliasuh'; 
                         break;
-                    case 'Akademik dan Ketarunaaan';
+                    case 'Akademik dan Ketarunaaan':
                         $success['profile']['subscribe'][] ='aak'; 
                             break;
                     default:
                         break;
-                }
+                } */
                 
                 $success['user_id'] = $user->id;
                 $success['token'] =  $user->createToken('MyApp')->accessToken;
