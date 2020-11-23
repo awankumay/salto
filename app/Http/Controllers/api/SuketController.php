@@ -338,11 +338,11 @@ class SuketController extends BaseController
             'user_approve_1'=>$getSurat->user_approve_1,
             'date_approve_1'=>$getSurat->date_approve_1,
             'status_level_1'=>$getSurat->status_level_1,
-            'reason_level_1'=>$getSurat->reason_level_1,
+            'reason_level_1'=>$getSurat->user_reason_1,
             'user_approve_2'=>$getSurat->user_approve_2,
             'date_approve_2'=>$getSurat->date_approve_2,
             'status_level_2'=>$getSurat->status_level_2,
-            'reason_level_2'=>$getSurat->reason_level_2,
+            'reason_level_2'=>$getSurat->user_reason_2,
             'show_disposisi'=>false,
             'show_persetujuan'=>false,
             'download'=>false
