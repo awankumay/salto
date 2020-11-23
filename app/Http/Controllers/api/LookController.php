@@ -954,7 +954,8 @@ class LookController extends BaseController
                                             'user_disposisi.name as user_disposisi',
                                             'surat_header.date_disposisi as date_disposisi',
                                             'surat_header.status_disposisi as status_disposisi',
-                                            'surat_header.reason_disposisi as reason_disposisi'
+                                            'surat_header.reason_disposisi as reason_disposisi',
+                                            'surat_header.user_created as user_created'
                                             )
                                     ->where('surat_header.id', $id)
                                     ->first();
@@ -1276,7 +1277,7 @@ class LookController extends BaseController
         }
         $data['permission'] = [];
         if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
-            if($getSurat->user_created==$getSurat->id_user){
+            if($getSurat->user_created==$request->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
