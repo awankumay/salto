@@ -590,9 +590,12 @@ class LookController extends BaseController
                 'status'=> $value->status,
                 'status_name'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim',
                 'created_at'=> date_format(date_create($value->created_at), 'd-m-Y H:i:s'),
-                'udpated_at'=> date_format(date_create($value->udpated_at), 'd-m-Y H:i:s')
-
+                'udpated_at'=> date_format(date_create($value->udpated_at), 'd-m-Y H:i:s'),
             );
+            $data['permission']=[];
+            if($value->status==1){
+                $data['permission']=['edit', 'delete'];
+            }
         }
         $data['clock_out'] = $this->checkabsen($request);
         return $this->sendResponse($data, 'jurnal load successfully.');
@@ -604,12 +607,17 @@ class LookController extends BaseController
         $date = $request->date;
         $id   = $request->id;
         $id_user =$request->id_user;
+        $data = [] ;
         $jurnal = JurnalTaruna::whereRaw('tanggal = ?', $date)
                     ->where('jurnal_taruna.id', $id)
                     ->where('jurnal_taruna.id_user', $id_user)
                     ->first();
         $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
         $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
+        $data['permission']=[];
+        if($jurnal->status==1){
+            $data['permission']=['edit', 'delete'];
+        }
         return $this->sendResponse($jurnal, 'jurnal load successfully.');
     }
 
