@@ -9,6 +9,10 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use App\WaliAsuhKeluargaAsuh;
+use App\PembinaKeluargaAsuh;
+use App\TarunaKeluargaAsuh;
+use App\OrangTua;
 use DB;
    
 class LoginController extends BaseController
@@ -66,6 +70,9 @@ class LoginController extends BaseController
                 $success['profile'] =  $user;
                 $roles = $user->getRoleNames();
                 $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
+                if($role[0]=='Taruna'){
+                    
+                }
                 $success['permission'] = [];
                 foreach ($user->getAllPermissions() as $key => $vals) {
                     $success['permission'][]=$vals->name;
