@@ -70,9 +70,6 @@ class LoginController extends BaseController
                 $success['profile'] =  $user;
                 $roles = $user->getRoleNames();
                 $success['privilages'] = empty($roles[0]) ? '-' : $roles[0];
-                if($role[0]=='Taruna'){
-                    
-                }
                 $success['permission'] = [];
                 foreach ($user->getAllPermissions() as $key => $vals) {
                     $success['permission'][]=$vals->name;

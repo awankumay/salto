@@ -231,6 +231,10 @@ class PrestasiController extends BaseController
             ];
                 
         }
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Taruna'){
+            $result['info']['permissionCreate'] = true;
+        }
 
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;
@@ -334,7 +338,7 @@ class PrestasiController extends BaseController
         }
         $data['permission'] = [];
         if(($roleName=='Taruna')) {
-            if($getSurat->id_user==$request->id_user && $getSurat->status_disposisi==1){
+            if($getSurat->id_user==$request->id_user && $getSurat->status_disposisi!=1){
                 $data['permission'] = ['edit', 'delete'];
             }
         }

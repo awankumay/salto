@@ -250,6 +250,10 @@ class SuketController extends BaseController
             ];
                 
         }
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Taruna' || $roleName=='Orang Tua'){
+            $result['info']['permissionCreate'] = true;
+        }
 
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;

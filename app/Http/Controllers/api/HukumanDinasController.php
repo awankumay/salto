@@ -174,7 +174,7 @@ class HukumanDinasController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Pembina' || $roleName=='Super Admin' ) && $value->status!=1){
+            if(($roleName=='Pembina') && $value->status!=1){
                 $dataPermission = ['edit', 'delete'];
             }
             
@@ -188,6 +188,10 @@ class HukumanDinasController extends BaseController
             ];
         }       
         
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Pembina'){
+            $result['info']['permissionCreate'] = true;
+        }
 
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;
@@ -390,7 +394,7 @@ class HukumanDinasController extends BaseController
         }
 
         try {
-            
+
             if(!empty($image)){
                 if($image!=false){
                     $request->request->add(['photo'=> $image]);

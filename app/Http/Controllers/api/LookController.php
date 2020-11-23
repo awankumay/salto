@@ -538,6 +538,11 @@ class LookController extends BaseController
                     'status'=> $value->status
                 ];
         }
+        
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Taruna'){
+            $result['info']['permissionCreate'] = true;
+        }
 
         if($count > $limit){
             $result['info']['lastDate'] = $data[count($data)-1]->tanggal;
@@ -550,6 +555,7 @@ class LookController extends BaseController
             $result['info']['dataload'] = count($data);
             $result['info']['totaldata'] = $total;
         }
+     
         $result['info']['limit']  = $limit;
         return $this->sendResponse($result, 'jurnal load successfully.');
     }
@@ -861,6 +867,11 @@ class LookController extends BaseController
                 'permission'=>$dataPermission
             ];
                 
+        }
+
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Taruna' || $roleName=='Orang Tua'){
+            $result['info']['permissionCreate'] = true;
         }
 
         if($count > $limit){
@@ -1247,7 +1258,7 @@ class LookController extends BaseController
             $data['show_disposisi'] = true;
         }
         $data['permission'] = [];
-        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi==1) {
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
             if($getSurat->user_created!=$request->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }

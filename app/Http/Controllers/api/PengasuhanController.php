@@ -163,6 +163,11 @@ class PengasuhanController extends BaseController
                 
         }
 
+        $result['info']['permissionCreate'] = false;
+        if($roleName=='Wali Asuh'){
+            $result['info']['permissionCreate'] = true;
+        }
+
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;
             $result['info']['loadmore'] = true;
