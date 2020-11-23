@@ -185,8 +185,8 @@ class LookController extends BaseController
             $data['clock_out'] = true;
         }else{
             if(!empty($absensi)){
-                $data['clock_in'] = !empty($absensi->clock_in) ? $absensi->clock_in : true;
-                $data['clock_out'] = !empty($absensi->clock_out) ? $absensi->clock_out : true;
+                $data['clock_in'] = !empty($absensi->clock_in) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
+                $data['clock_out'] = !empty($absensi->clock_out) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
             }
         }
         return $data;
@@ -536,7 +536,8 @@ class LookController extends BaseController
                     'name'=>$value->name,
                     'tanggal'=>$value->tanggal,
                     'status_name'=> $value->status==1 ? 'Terkirim' : 'Belum Terkirim',
-                    'status'=> $value->status
+                    'status'=> $value->status,
+
                 ];
         }
         
