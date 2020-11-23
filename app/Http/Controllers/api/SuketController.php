@@ -237,6 +237,8 @@ class SuketController extends BaseController
                         $dataPermission = [];
                     }
                 }
+            }else {
+                $dataPermission = [];
             }
 
             $result['suket'][]= [ 
