@@ -507,7 +507,7 @@ class PrestasiController extends BaseController
     {
         return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_penghargaan.created_at))as tanggal"),'users.name', 'tb_penghargaan.status', 'tb_penghargaan.keterangan', 'tb_penghargaan.id as id')
+            ->select(DB::raw("(DATE(tb_penghargaan.created_at))as tanggal"),'users.name', 'tb_penghargaan.status', 'tb_penghargaan.keterangan', 'tb_penghargaan.id as id', 'tb_penghargaan.status_disposisi')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
