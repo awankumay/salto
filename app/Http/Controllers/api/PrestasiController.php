@@ -54,7 +54,7 @@ class PrestasiController extends BaseController
                                 ->count();   
                 $count  = $total;
                 $data   = $this->penghargaantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 if(!empty($taruna)){
@@ -132,7 +132,7 @@ class PrestasiController extends BaseController
                                 ->count();  
                 $count = Prestasi::whereRaw($condition)->count();
                 $data = $this->penghargaantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {

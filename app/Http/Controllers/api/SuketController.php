@@ -61,7 +61,7 @@ class SuketController extends BaseController
                                 ->count();   
                 $count  = $total;
                 $data   = $this->sukettaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 if(!empty($taruna)){
@@ -145,7 +145,7 @@ class SuketController extends BaseController
                                 ->count();  
                 $count = Suket::whereRaw($condition)->count();
                 $data = $this->sukettaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 if(!empty($taruna)){
@@ -412,14 +412,14 @@ class SuketController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
+        $image = '';
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
         }
-
+        $id_user = $request->id_user;
         try {
             DB::beginTransaction();
                 if(!empty($image)){
@@ -482,14 +482,14 @@ class SuketController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-
+        $image = '';
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
                 return $this->sendResponseFalse($data, 'failed upload');  
             }
         }
-
+        $id_user = $request->id_user;
         try {
 
             DB::beginTransaction();
@@ -508,7 +508,7 @@ class SuketController extends BaseController
             $input['id_user']   = $getUser->id;
             $input['nama']      = $getUser->name;
             $input['stb']       = $getUser->stb;
-            if(isset($image)){
+            if(!empty($image)){
                 if($image!=false){
                     $request->request->add(['photo'=> $image]);
                     $this->DeleteImage($suket->photo, config('app.documentImagePath').'/suket/');

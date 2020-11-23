@@ -396,7 +396,7 @@ class LookController extends BaseController
                 $count  = $total;
                 $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
                 $result['info']['permission'] = ['create', 'delete', 'edit'];
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
@@ -466,7 +466,7 @@ class LookController extends BaseController
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
                 $result['info']['permission'] = ['create', 'delete', 'edit'];
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {

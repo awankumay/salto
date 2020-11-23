@@ -57,7 +57,7 @@ class PengasuhanController extends BaseController
                                 ->count();   
                 $count  = $total;
                 $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $total  = 0; 
                 $count  = $total;
                 $data   = [];
@@ -101,7 +101,7 @@ class PengasuhanController extends BaseController
                                 ->count();  
                 $count = Pengasuhan::whereRaw('tb_pengasuhan_daring.keluarga_asuh_id='.$getKeluargaAsuh->keluarga_asuh_id)->count();
                 $data = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 
                 $count = 0;
                 $data = [];

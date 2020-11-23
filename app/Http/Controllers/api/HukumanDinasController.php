@@ -55,7 +55,7 @@ class HukumanDinasController extends BaseController
                                 ->count();   
                 $count  = $total;
                 $data   = $this->hukdistaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 if(!empty($taruna)){
@@ -110,7 +110,7 @@ class HukumanDinasController extends BaseController
                                 ->count();  
                 $count = HukumanDinas::whereRaw($condition)->count();
                 $data = $this->hukdistaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='OrangTua'){
+            }else if($roleName=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->get();
                 $tarunaId   = [];
                 foreach ($taruna as $key => $value) {
