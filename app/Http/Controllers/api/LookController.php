@@ -336,6 +336,7 @@ class LookController extends BaseController
         }
 
         $getUser = User::where('id', $request->id_user)->first();
+        
         if($request->id){
             try {
                 DB::beginTransaction();
@@ -1878,7 +1879,7 @@ class LookController extends BaseController
     public function gettaruna(Request $request)
     {
         $getUser    = User::find($request->id_user);
-    
+        $id_user    = $request->id_user; 
         $roleName   = $getUser->getRoleNames()[0];
         if($roleName=='Taruna'){
             $tarunaId   = [];
@@ -2131,7 +2132,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'name'=>$author->name,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
@@ -2151,7 +2152,7 @@ class LookController extends BaseController
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'status'=>$getSurat->status,
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
@@ -2171,7 +2172,7 @@ class LookController extends BaseController
                         'name'=>$author->name,
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'status'=>$getSurat->status,
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
@@ -2193,7 +2194,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>\Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
                         'template'=>2,
@@ -2209,7 +2210,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>\Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
                         'template'=>2,
@@ -2225,7 +2226,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>\Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
                         'template'=>2,
@@ -2241,7 +2242,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
                         'template'=>1
@@ -2256,7 +2257,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
                         'template'=>1
@@ -2271,7 +2272,7 @@ class LookController extends BaseController
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
-                        'tanggal_cetak'=>\Carbon\Carbon::now()->isoFormat('D MMMM Y'),
+                        'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'STB', 'Keperluan', 'Tujuan', 'Mulai', 'Akhir', 'Tanggal Pengajuan'],
                         'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y H:i'), date_format(date_create($getSurat->end), 'd-m-Y H:i'), $getSurat->created_at],
                         'template'=>1

@@ -583,11 +583,13 @@ class SuketController extends BaseController
         $getData   = $this->suketdetail($request);
         $data   = array(
             'name'=>$getData['name'],
-            'category_name'=>'DATA PENGHARGAAN',
+            'category_name'=>'SURAT KETERANGAN',
             'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_2'])->isoFormat('D MMMM Y'),
-            'header'=>['No', 'Nama', 'No.STB', 'Keterangan Penghargaan', 'Tingkat', 'Tempat', 'Waktu', 'Tanggal Pengajuan'],
-            'body'=>['1', $getData['name'], $getData['stb'], $getData['keterangan'], $getData['tingkat'], $getData['tempat'], $getData['waktu'], $getData['created_at_bi']],
-            'template'=>1
+            'header'=>['Nama', 'No.STB', 'Tempat, Tanggal Lahir', 'Anak Dari : ', 
+                        'Nama Orang Tua', 'Pekerjaan', 'Alamat'],
+            'body'=>[$getData['name'], $getData['stb'], $getData['ttl'], '', $getData['orangtua'], $getData['pekerjaan'], $getData['alamat']],
+            'template'=>3,
+            'id_surat_cetak'=>$getData['id']+1
         );
         if($getData['status']==0){
             return $this->sendResponse($res, 'link surat generate failure');
@@ -646,7 +648,7 @@ class SuketController extends BaseController
                                 ->where('status', 0)
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
-        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
             $suket->user_approve_level_1=$request->id_user;
             $suket->date_approve_level_1=date('Y-m-d H:i:s');
             $suket->status_level_1=$request->status;

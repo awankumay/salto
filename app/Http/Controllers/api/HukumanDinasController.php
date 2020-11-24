@@ -255,7 +255,7 @@ class HukumanDinasController extends BaseController
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseFalse($data, 'Penghargaan Not Found or Deleted');
+            return $this->sendResponseError($data, 'Penghargaan Not Found or Deleted');
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];

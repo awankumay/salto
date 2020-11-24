@@ -120,6 +120,75 @@
 	<p align=left style="margin-left:5%">
 		<img src="qr_dir.png"  alt="Logo" /> 
 	</p>
+	@elseif($data['template']==3)
+	<p align=center>
+		<b><u> SURAT KETERANGAN </u></b><br>
+		<b> Nomor: SDM.5.SM.09.03 - {{$data['id_surat_cetak']}} </b><br>
+		
+	<p align=justify>
+		&emsp;&emsp;&emsp; Direktur Politeknik Ilmu Pemasyarakatan Badan Pengembangan Sumber Daya Manusia Hukum dan Hak Asasi Manusia Kementerian Hukum dan Hak Asasi Manusia Republik Indonesia dengan ini menerangkan bahwa :<br>
+	<br>
+	<style>
+		table{
+			border-collapse: collapse;
+		}
+		table, th, td{
+			border: 0px;
+			border-spacing: 0px;
+		}
+		hr {
+		  width: 100% solid black;
+		border: 1px solid black;
+		}
+	</style>
+	<table cellpadding="5" border="1" width="100%" align="center">
+		<thead>
+			
+		</thead>
+		<tbody>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][0]}} </th><td>{{ucwords($data['body'][0])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][1]}}</th><td>{{ucwords($data['body'][1])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][2]}}</th><td>{{ucwords($data['body'][2])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][3]}}</th><td>{{ucwords($data['body'][3])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][4]}}</th><td>{{ucwords($data['body'][4])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][5]}}</th><td>{{ucwords($data['body'][5])}}</td>
+			</tr>
+			<tr align="left">
+			<th style="width:30%;">{{$data['header'][6]}}</th><td>{{ucwords($data['body'][6])}}</td>
+			</tr>
+		
+		</tbody>
+	</table>
+	
+	<p align=justify>
+		&emsp;&emsp;&emsp;Sampai dengan Surat Keterangan ini dibuat yang bersangkutan Taruna Politeknik Ilmu Pemasyarakatan yang masih menjalani Pendidikan di Politeknik Ilmu Pemasyarakatan Badan Pengembangan Sumber Daya Manusia Hukum dan Hak Asasi Manusia Kementerian Hukum dan Hak Asasi Manusia Republik Indonesia.
+	<br>
+	<p align=justify>
+		&emsp;&emsp;&emsp;Demikian Surat Keterangan ini dibuat untuk dapat dipergunakan dengan sebaik-baiknya.
+	<br>
+	
+	<p align=left style="margin-left:60%">
+		Depok, {{$data['tanggal_cetak']}}<br>
+		Direktur,<br>
+		<img src="direktur_spesimen.png"  alt="Logo" /> 
+		<br><b><u>Dr. Rachmayanthy, Bc.IP., SH., M.Si</u></b><br>
+		NIP. 196904261992032001<br>
+	</p>
+	
+	<p align=left style="margin-left:5%">
+		<img src="qr_dir.png"  alt="Logo" /> 
+	</p>
 	@endif
 </body>  
 </html> 
