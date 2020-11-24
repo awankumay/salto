@@ -513,7 +513,7 @@ class HukumanDinasController extends BaseController
             'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
             'user_approve_1' =>$getData['user_approve_1'],
             'date_approve_1' =>$getData['date_approve_1'],
-            'header'=>['No', 'Nama', 'No.STB', 'Keterangan Hukuman', 'Tingkat', 'Hukuman', 'Waktu', 'TGL Pengajuan'],
+            'header'=>['No', 'Nama', 'No.STB', 'Keterangan', 'Tingkat', 'Hukuman', 'Waktu', 'TGL Pengajuan'],
             'body'=>['1', $getData['nama_taruna'], $getData['stb'], $getData['keterangan'], $getData['tingkat_name'], $getData['hukuman'], $getData['start_time_bi'].' sd '.$getData['end_time_bi'], $getData['created_at_bi']],
             'template'=>1
         );
