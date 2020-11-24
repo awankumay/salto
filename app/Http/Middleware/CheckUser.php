@@ -26,7 +26,8 @@ class CheckUser
         if ($request->isMethod('post')) {
             //@dd($request->input('idUser'));
             if(!empty($request->input('idUser')) || !empty($request->input('id_user'))){
-                $getUser = User::find($request->input('idUser'));
+                $id = $request->input('idUser') ? $request->input('idUser') : $request->input('id_user');
+                $getUser = User::find($id);
                 if(empty($getUser)) {
                     return response()->json($response, 500);
                 }

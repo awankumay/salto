@@ -623,7 +623,7 @@ class LookController extends BaseController
                     ->first();
         $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
         $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
-        $grade= Grade::where('id', $jurnal->grade)->first();
+        $grade  = Grade::where('id', $jurnal->grade)->first();
         if(!empty($grade)){
             $jurnal->grade_name = $grade->grade;
         }

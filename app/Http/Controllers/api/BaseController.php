@@ -6,7 +6,8 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller as Controller;
-
+use App\User;
+use App\Grade;
 
 class BaseController extends Controller
 {
@@ -17,6 +18,14 @@ class BaseController extends Controller
      */
     public function sendResponse($result, $message)
     {
+        if(!empty($result['id_user'])){
+            $data = User::join('grade_table as grade', 'grade.id', '=', 'users.grade')
+                    ->where('users.id', $result['id_user'])
+                    ->select('users.stb', 'users.name', 'grade.grade', 'users.photo')
+                    ->first();
+            $data->photo = $data->photo ? \URL::to('/').'/storage/'.config('app.userImagePath').'/'. $data->photo : \URL::to('/').'/profile.png';
+            $result['profile']=$data;
+        }
     	$response = [
             'success' => true,
             'data'    => $result,
