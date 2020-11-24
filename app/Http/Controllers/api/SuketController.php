@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Grade;
 use App\OrangTua;
-use App\WaliAsuhKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Prestasi;
 use App\Suket;
@@ -232,8 +232,8 @@ class SuketController extends BaseController
             }
 
             $dataPermission = [];
-            if($roleName=='Taruna' || $roleName=='Super Admin' || $roleName=='Orang Tua'){
-                if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1){
+            if($roleName=='Taruna' || $roleName=='Orang Tua'){
+                if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1 && $value->status!=1){
                     if($value->user_created==$id_user){
                         $dataPermission = ['edit', 'delete'];
                     }
@@ -312,7 +312,7 @@ class SuketController extends BaseController
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseFalse($data, 'Suket Not Found or Deleted');
+            return $this->sendResponseError($data, 'Suket Not Found or Deleted');
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
@@ -366,12 +366,12 @@ class SuketController extends BaseController
             $data['status_name'] = 'Tidak Disetujui';
         }
     
-        if($roleName=='Pembina' && $data['status_level_1']!=1){
+        if($roleName=='Pembina' && $data['status_level_1']!=1 && $getSurat->status!=1){
             $data['show_disposisi'] = true;
         }
 
         $data['permission'] = [];
-        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1 && $getSurat->status!=1) {
             if($getSurat->user_created==$request->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
@@ -441,7 +441,7 @@ class SuketController extends BaseController
                 if($getUser->getRoleNames()[0]=='Orang Tua'){
                     $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
                     if(empty($taruna)){
-                        return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                        return $this->sendResponseError($data, 'taruna tidak ditemukan');  
                     }
                     $getUser    = User::where('id', $taruna->taruna_id)->first();
                 }
@@ -465,7 +465,7 @@ class SuketController extends BaseController
                 $this->DeleteImage($image, config('app.documentImagePath').'/suket/');
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'suket create failure.');
+            return $this->sendResponseError($data, 'suket create failure.');
         }
 
     }
@@ -503,7 +503,7 @@ class SuketController extends BaseController
             if($getUser->getRoleNames()[0]=='Orang Tua'){
                 $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
                 if(empty($taruna)){
-                    return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                    return $this->sendResponseError($data, 'taruna tidak ditemukan');  
                 }
                 $getUser    = User::where('id', $taruna->taruna_id)->first();
             }
@@ -535,7 +535,7 @@ class SuketController extends BaseController
                 }
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'suket failure updated.');
+            return $this->sendResponseError($data, 'suket failure updated.');
 
         }
     
@@ -561,7 +561,7 @@ class SuketController extends BaseController
             //@dd($th->getMessage());
             DB::rollback();
             $data['status']=false;
-            return $this->sendResponseFalse($data, 'suket deleted failure.');
+            return $this->sendResponseError($data, 'suket deleted failure.');
         }
         return $this->sendResponse($result, 'suket delete successfully.');
     }

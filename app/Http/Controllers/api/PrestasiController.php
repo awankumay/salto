@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Grade;
 use App\OrangTua;
-use App\WaliAsuhKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Prestasi;
 use Illuminate\Support\Facades\Auth;
