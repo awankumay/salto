@@ -220,8 +220,8 @@ class PengasuhanController extends BaseController
             'password'=>$getSurat->password,
             'start_time'=>$getSurat->start_time,
             'end_time'=>$getSurat->end_time,
-            'start_time_bi'=>date('Y-m-d H:i', $getSurat->start_time),
-            'end_time_bi'=>date('Y-m-d H:i', $getSurat->end_time),
+            'start_time_bi'=>date('Y-m-d H:i', strtotime($getSurat->start_time)),
+            'end_time_bi'=>date('Y-m-d H:i', strtotime($getSurat->end_time)),
             'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
             'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
             'form'=>['judul', 'media', 'id_media', 'password', 'start_time', 'end_time']

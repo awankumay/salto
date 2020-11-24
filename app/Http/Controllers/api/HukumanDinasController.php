@@ -178,10 +178,25 @@ class HukumanDinasController extends BaseController
             if(($roleName=='Pembina') && $value->status!=1){
                 $dataPermission = ['edit', 'delete'];
             }
-            
+            switch ($value->tingkat) {
+                case 1:
+                    $tingkat = 'Ringan';
+                    break;
+                case 2:
+                    $tingkat = 'Sedang';
+                    break;
+                case 2:
+                    $tingkat = 'Berat';
+                    break;
+                
+                default:
+                    $tingkat = 'Ringan';
+                    break;
+            }
             $result['hukdis'][]= [ 
                 'id'=>$value->id,
                 'name'=>$value->name,
+                'tingkat'=>$tingkat,
                 'status_name'=> $status,
                 'status'=> $value->status,
                 'hukuman'=> substr($value->hukuman, 0, 40).'...',
@@ -244,6 +259,23 @@ class HukumanDinasController extends BaseController
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
+
+        switch ($getSurat->tingkat) {
+            case 1:
+                $tingkat = 'Ringan';
+                break;
+            case 2:
+                $tingkat = 'Sedang';
+                break;
+            case 2:
+                $tingkat = 'Berat';
+                break;
+            
+            default:
+                $tingkat = 'Ringan';
+                break;
+        }
+
         $data = array(
             'id'=>$getSurat->id,
             'id_user'=>$getSurat->id_user,
@@ -252,6 +284,7 @@ class HukumanDinasController extends BaseController
             'grade'=>$getSurat->grade,
             'keterangan'=>$getSurat->keterangan,
             'tingkat'=>$getSurat->tingkat,
+            'tingkat_name'=>$tingkat,
             'hukuman'=>$getSurat->hukuman,
             'start_time'=>date('Y-m-d H:i', strtotime($getSurat->start_time)),
             'end_time'=>date('Y-m-d H:i', strtotime($getSurat->end_time)),
@@ -282,10 +315,10 @@ class HukumanDinasController extends BaseController
             $data['status_name'] = 'Tidak Disetujui';
         }
         $data['permission'] = [];
-        if($roleName=='Pembina' && $getSurat->status_level_1!=1){
+        if($roleName=='Pembina' && $getSurat->status_level_1!=1 && $getSurat->status!=1){
             $data['permission'] = ['edit', 'delete'];
         }
-        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $roleName=='Super Admin'){
+        if(($roleName=='Akademik dan Ketarunaan' || $roleName=='Super Admin') && $getSurat->status!=1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){

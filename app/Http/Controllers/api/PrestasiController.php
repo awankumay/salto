@@ -334,16 +334,16 @@ class PrestasiController extends BaseController
             $data['status_name'] = 'Tidak Disetujui';
         }
     
-        if($roleName=='Pembina' && $getSurat->status_level_1!=1){
+        if($roleName=='Pembina' && $getSurat->status_level_1!=1 && $getSurat->status!=1){
             $data['show_disposisi'] = true;
         }
         $data['permission'] = [];
         if(($roleName=='Taruna')) {
-            if($getSurat->id_user==$request->id_user && $getSurat->status_disposisi!=1){
+            if($getSurat->id_user==$request->id_user && $getSurat->status_disposisi!=1 && $getSurat->status!=1){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $getSurat->status!=1 && $getSurat->status_disposisi==1){
+        if(($roleName=='Akademik dan Ketarunaan' || $roleName=='Super Admin') && $getSurat->status!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
@@ -417,7 +417,7 @@ class PrestasiController extends BaseController
                 $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'prestasi create failure.');
+            return $this->sendResponseError($data, 'prestasi create failure.');
         }
 
     }

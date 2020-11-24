@@ -866,8 +866,10 @@ class LookController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(in_array($value->id_category, $getCategoryId)==true && $value->status_disposisi!=1){
-                $dataPermission = ['edit', 'delete'];
+            if(in_array($value->id_category, $getCategoryId)==true && $value->status_disposisi!=1 && $value->status!=1){
+                if($value->user_created!=$value->id_user){
+                    $dataPermission = ['edit', 'delete'];
+                }
             }
                 $permissionApprove = $this->checkapprovepermission($value->id_category, $permission);
                 if(!empty($permissionApprove)){
@@ -912,7 +914,7 @@ class LookController extends BaseController
         return SuratIzin::join('users', 'users.id', '=', 'surat_header.id_user')
             ->join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id', 'surat_header.id_category as id_category', 'surat_header.status_disposisi', 'surat_header.status_level_1', 'surat_header.status_level_2')
+            ->select(DB::raw("(DATE(surat_header.created_at))as tanggal"),'users.name', 'surat_header.status', 'menu_persetujuan.nama_menu as category', 'surat_header.id as id', 'surat_header.id_category as id_category', 'surat_header.status_disposisi', 'surat_header.status_level_1', 'surat_header.status_level_2', 'surat_header.id_user', 'surat_header.user_created')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
@@ -1268,21 +1270,21 @@ class LookController extends BaseController
                 $data['status_level_2']=$getSurat->status_level_2;
                 $data['user_reason_2']=$getSurat->user_reason_2;
                 $data['menginap']='Izin Menginap';
-                if($roleName=='Direktur' && $data['status']!=1 && $data['status_level_1']==1){
+                if(($roleName=='Direktur' || $roleName=='Super Admin') && $getSurat->status!=1 && $data['status_level_1']==1){
                     $data['show_persetujuan'] = true;
                 }
             }
         }
-        if($roleName=='Pembina' && $data['status_level_1']!=1){
+        if($roleName=='Pembina' && $data['status_level_1']!=1 && $getSurat->status!=1){
             $data['show_disposisi'] = true;
         }
         $data['permission'] = [];
-        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1) {
-            if($getSurat->user_created==$request->id_user){
+        if(($roleName=='Taruna' || $roleName=='Orang Tua') && $getSurat->status_disposisi!=1 && $getSurat->status!=1) {
+            if($getSurat->user_created==$getSurat->id_user){
                 $data['permission'] = ['edit', 'delete'];
             }
         }
-        if($roleName=='Akademik dan Ketarunaan' && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
+        if(($roleName=='Akademik dan Ketarunaan' || $roleName=='Super Admin') && $getSurat->status!=1 && $data['status_level_1']!=1 && $getSurat->status_disposisi==1){
             $data['show_persetujuan'] = true;
         }
         $data['download'] = false;
