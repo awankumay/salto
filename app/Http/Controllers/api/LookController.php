@@ -1902,7 +1902,7 @@ class LookController extends BaseController
             //return $tarunaData;
         }else if($roleName=='Wali Asuh'){
             $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
                             ->get();
@@ -1918,7 +1918,7 @@ class LookController extends BaseController
             //return $tarunaData;
         }else if($roleName=='Pembina'){
             $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
                             ->where('pembina_keluarga_asuh.pembina_id', $id_user)
                             ->get();
