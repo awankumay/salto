@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Grade;
 use App\OrangTua;
-use App\WaliAsuhKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\TarunaKeluargaAsuh;
 use App\Pengasuhan;
@@ -262,7 +262,7 @@ class PengasuhanController extends BaseController
         }
         try {
             DB::beginTransaction();
-                $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+                $getKeluargaAsuh = WaliasuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
                                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
                                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                                 ->first();
@@ -319,7 +319,7 @@ class PengasuhanController extends BaseController
             }
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
-            $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+            $getKeluargaAsuh = WaliasuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                 ->first();
