@@ -227,10 +227,9 @@ class HukumanDinasController extends BaseController
     public function hukdisdetail(Request $request)
     {
         $id   = $request->id;
-        $getSurat = Prestasi::join('users as taruna', 'taruna.id', '=', 'tb_hukdis.id_taruna')
+        $getSurat = HukumanDinas::join('users as taruna', 'taruna.id', '=', 'tb_hukdis.id_taruna')
                                     ->leftjoin('users as user_approve_1', 'user_approve_1.id', '=', 'tb_hukdis.user_approve_level_1')
-                                    ->leftjoin('users as user_approve_2', 'user_approve_2.id', '=', 'tb_hukdis.user_approve_level_2')
-                                    ->leftjoin('users as pembina', 'id_user.id', '=', 'tb_hukdis.id_user')
+                                    ->leftjoin('users as pembina', 'pembina.id', '=', 'tb_hukdis.id_user')
                                     ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_hukdis.grade')
                                     ->select('tb_hukdis.id as id', 
                                             'tb_hukdis.id_user as id_user',
@@ -251,11 +250,11 @@ class HukumanDinasController extends BaseController
                                             'tb_hukdis.status_level_1 as status_level_1',
                                             'grade.grade as grade'
                                             )
-                                    ->where('tb_penghargaan.id', $id)
+                                    ->where('tb_hukdis.id', $id)
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseError($data, 'Penghargaan Not Found or Deleted');
+            return $this->sendResponseError($data, 'Hukuman Dinas Not Found or Deleted');
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
