@@ -233,6 +233,7 @@ class HukumanDinasController extends BaseController
                                     ->leftjoin('grade_table as grade', 'grade.id', '=', 'tb_hukdis.grade')
                                     ->select('tb_hukdis.id as id', 
                                             'tb_hukdis.id_user as id_user',
+                                            'tb_hukdis.id_taruna as id_taruna',
                                             'tb_hukdis.stb as stb',
                                             'taruna.name as nama_taruna',
                                             'pembina.name as nama_pembina',
@@ -278,6 +279,7 @@ class HukumanDinasController extends BaseController
         $data = array(
             'id'=>$getSurat->id,
             'id_user'=>$getSurat->id_user,
+            'id_taruna'=>$getSurat->id_taruna,
             'stb'=>$getSurat->stb,
             'nama_taruna'=>$getSurat->nama_taruna,
             'grade'=>$getSurat->grade,
