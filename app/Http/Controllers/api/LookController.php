@@ -179,17 +179,23 @@ class LookController extends BaseController
     public function checkabsen($request)
     {
         date_default_timezone_set("Asia/Jakarta");
-
+        $getUser = User::find($request->idUser);
+        $roleName = $getUser->getRoleNames()[0];
         $absensi = Absensi::where('id_user', $request->id_user)->whereRaw('DATE(created_at) = ?', date('Y-m-d'))->first();
         $data = [];
-        if(empty($absensi)){
-            $data['clock_in'] = true;
-            $data['clock_out'] = true;
-        }else{
-            if(!empty($absensi)){
-                $data['clock_in'] = !empty($absensi->clock_in) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
-                $data['clock_out'] = !empty($absensi->clock_out) ? date('d-m-Y H:i', strtotime($absensi->clock_out)) : true;
+        if($roleName=='Taruna'){
+            if(empty($absensi)){
+                $data['clock_in'] = true;
+                $data['clock_out'] = true;
+            }else{
+                if(!empty($absensi)){
+                    $data['clock_in'] = !empty($absensi->clock_in) ? date('d-m-Y H:i', strtotime($absensi->clock_in)) : true;
+                    $data['clock_out'] = !empty($absensi->clock_out) ? date('d-m-Y H:i', strtotime($absensi->clock_out)) : true;
+                }
             }
+            $data['absen'] = true;
+        }else{
+            $data['absen'] = false;
         }
         return $data;
     }
