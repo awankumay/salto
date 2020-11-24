@@ -292,8 +292,8 @@ class HukumanDinasController extends BaseController
             'start_time_bi'=>date('d-m-Y H:i', strtotime($getSurat->start_time)),
             'end_time_bi'=>date('d-m-Y H:i', strtotime($getSurat->end_time)),
             'nama_pembina'=>$getSurat->nama_pembina,
-            'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
-            'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
+            'created_at'=>date('Y-m-d H:i', strtotime($getSurat->updated_at)),
+            'created_at_bi'=>date('d-m-Y H:i', strtotime($getSurat->updated_at)),
             'status'=>$getSurat->status,
             'photo'=>$getSurat->photo ? \URL::to('/')."/storage/".config('app.documentImagePath')."/hukdis/".$getSurat->photo : '',
             'form'=>['keterangan', 'tingkat', 'hukuman', 'id_taruna', 'start_time', 'end_time', 'id_user'],
@@ -446,6 +446,7 @@ class HukumanDinasController extends BaseController
                 return $this->sendResponseError($data, 'taruna tidak ditemukan');
             }
             $input['grade'] = $getTaruna->grade;
+            $input['stb'] = $getTaruna->stb;
             $input = $request->all();
             $input['status']   = 0;
             $input['status_disposisi']  = 0;
@@ -507,13 +508,13 @@ class HukumanDinasController extends BaseController
         $request->request->add(['cetak'=> true]);
         $getData   = $this->hukdisdetail($request);
         $data   = array(
-            'name'=>$getData['name'],
-            'category_name'=>'DATA PENGHARGAAN',
+            'name'=>$getData['nama_taruna'],
+            'category_name'=>'DATA HUKUMAN DISIPILIN',
             'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
             'user_approve_1' =>$getData['user_approve_1'],
             'date_approve_1' =>$getData['date_approve_1'],
-            'header'=>['No', 'Nama', 'No.STB', 'Keterangan Penghargaan', 'Tingkat', 'Tempat', 'Waktu', 'Tanggal Pengajuan'],
-            'body'=>['1', $getData['name'], $getData['stb'], $getData['keterangan'], $getData['tingkat'], $getData['tempat'], $getData['waktu'], $getData['created_at_bi']],
+            'header'=>['No', 'Nama', 'No.STB', 'Keterangan Hukuman', 'Tingkat', 'Hukuman', 'Waktu', 'TGL Pengajuan'],
+            'body'=>['1', $getData['nama_taruna'], $getData['stb'], $getData['keterangan'], $getData['tingkat_name'], $getData['hukuman'], $getData['start_time_bi'].' sd '.$getData['end_time_bi'], $getData['created_at_bi']],
             'template'=>1
         );
         if($getData['status']==0){
