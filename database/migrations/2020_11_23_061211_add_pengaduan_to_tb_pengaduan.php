@@ -14,7 +14,10 @@ class AddPengaduanToTbPengaduan extends Migration
     public function up()
     {
         Schema::table('tb_pengaduan', function (Blueprint $table) {
-            //
+            $table->longText('pengaduan')->nullable();
+            $table->longText('follow_up')->nullable();
+            $table->timestamp('date_follow_up')->nullable();
+            $table->integer('user_follow_up')->nullable();
         });
     }
 
@@ -26,7 +29,7 @@ class AddPengaduanToTbPengaduan extends Migration
     public function down()
     {
         Schema::table('tb_pengaduan', function (Blueprint $table) {
-            //
+            $table->dropColumn(['pengaduan', 'follow_up', 'user_follow_up', 'date_follow_up']);
         });
     }
 }

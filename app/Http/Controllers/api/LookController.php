@@ -18,7 +18,7 @@ use App\KegiatanDalam;
 use App\Tugas;
 use App\KegiatanPesiar;
 use App\OrangTua;
-use App\WaliAsuhKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Provinces;
 use App\Regencies;
@@ -384,6 +384,7 @@ class LookController extends BaseController
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result = [];
+        $data=[];
         $result['info']['permission'] = [];
         if($order=='status'){
             $order='jurnal_taruna.status';
@@ -961,7 +962,7 @@ class LookController extends BaseController
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseFalse($data, 'Surat Izin Not Found or Deleted');
+            return $this->sendResponseError($data, 'Surat Izin Not Found or Deleted');
         }
         $getCategory = Permission::where('id', $getSurat->id_category)->first();
         $getUser = User::find($request->id_user);
@@ -1336,7 +1337,7 @@ class LookController extends BaseController
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
-                return $this->sendResponseFalse($data, 'failed upload');  
+                return $this->sendResponseError($data, 'failed upload');  
             }
         }
         $id_user = $request->id_user;
@@ -1376,7 +1377,7 @@ class LookController extends BaseController
                     if($getUser->getRoleNames()[0]=='Orang Tua'){
                         $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
                         if(empty($taruna)){
-                            return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                            return $this->sendResponseError($data, 'taruna tidak ditemukan');  
                         }
                         $getUser    = User::where('id', $taruna->taruna_id)->first();
                     }
@@ -1520,7 +1521,7 @@ class LookController extends BaseController
                 $this->DeleteImage($image, config('app.documentImagePath'));
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'surat izin create failure.');
+            return $this->sendResponseError($data, 'surat izin create failure.');
         }
 
     }
@@ -1548,7 +1549,7 @@ class LookController extends BaseController
         if(!empty($request->file)){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
-                return $this->sendResponseFalse($data, 'failed upload');  
+                return $this->sendResponseError($data, 'failed upload');  
             }
         }
         $id_user = $request->id_user;
@@ -1588,7 +1589,7 @@ class LookController extends BaseController
                     if($getUser->getRoleNames()[0]=='Orang Tua'){
                         $taruna     = OrangTua::where('orangtua_id', $id_user)->first(); 
                         if(empty($taruna)){
-                            return $this->sendResponseFalse($data, 'taruna tidak ditemukan');  
+                            return $this->sendResponseError($data, 'taruna tidak ditemukan');  
                         }
                         $getUser    = User::where('id', $taruna->taruna_id)->first();
                     }  
@@ -1742,7 +1743,7 @@ class LookController extends BaseController
                     $this->DeleteImage($image, config('app.documentImagePath'));
                 }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'surat izin update failure.');
+            return $this->sendResponseError($data, 'surat izin update failure.');
         }
     }
 
@@ -1799,10 +1800,10 @@ class LookController extends BaseController
             } catch (\Throwable $th) {
                 DB::rollback();
                 $data['status'] = false;
-                return $this->sendResponseFalse($data, 'surat izin delete failure.');
+                return $this->sendResponseError($data, 'surat izin delete failure.');
             }
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'surat izin delete failure.');
+            return $this->sendResponseError($data, 'surat izin delete failure.');
         }
     }
 

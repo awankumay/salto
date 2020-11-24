@@ -7,10 +7,10 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Grade;
 use App\OrangTua;
-use App\WaliasuhKeluargaAsuh;
+use App\WaliAsuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\TarunaKeluargaAsuh;
-use App\Pengasuhan;
+use App\Pengaduan;
 use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
@@ -18,77 +18,44 @@ use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
-class PengasuhanController extends BaseController
+class PengaduanController extends BaseController
 {
     use ImageTrait;
     
-    public function getpengasuhan(Request $request){
+    public function getpengaduan(Request $request){
         $limit  = 5;
         $id_user = $request->idUser;
         $lastId = !empty($request->lastId) ? $request->lastId : 0;
-        $order  = !empty($request->order) ? $request->order : 'tb_pengasuhan_daring.id';
+        $order  = !empty($request->order) ? $request->order : 'tb_pengaduan.id';
         $search  = !empty($request->search) ? $request->search : '';
         $dir    = !empty($request->dir) ? $request->dir : 'DESC';
         $diff   = ($dir=='DESC') ? '<' : '>';
-        $condition = 'tb_pengasuhan_daring.id='.$lastId.'';
+        $condition = 'tb_pengaduan.id='.$lastId.'';
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
-        $data=[];
         if($order=='status'){
-            $order='tb_pengasuhan_daring.status';
+            $order='tb_pengaduan.status';
         }
         if($order=='name'){
             $order='users.name';
         }
         if($order=='id'){
-            $order='tb_pengasuhan_daring.id';
+            $order='tb_pengaduan.id';
         }
 
         $permission = [];
         if($lastId==0){
-            if($roleName=='Taruna' || $roleName=='Pembina'){
-                if($roleName=='Taruna'){
-                    $getKeluargaAsuh = TarunaKeluargaAsuh::where('taruna_id', $getUser->id)->first();
-                }else{
-                    $getKeluargaAsuh = PembinaKeluargaAsuh::where('pembina_id', $getUser->id)->first();
-                }
-                $condition  = 'tb_pengasuhan_daring.keluarga_asuh_id='.$getKeluargaAsuh->keluarga_asuh_id;
+            if($roleName=='Admin' || $roleName=='Super Admin'){
+                $condition  = '';
                 $total      =  Pengasuhan::whereRaw($condition)
                                 ->count();   
                 $count  = $total;
                 $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='Orang Tua'){
+            }else{
                 $total  = 0; 
                 $count  = $total;
                 $data   = [];
-               
-            }else if($roleName=='Wali Asuh'){
-                $condition  = 'tb_pengasuhan_daring.id_user='.$getUser->id;
-                $total      = Pengasuhan::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-               
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
-                $waliasuh     = DB::table('users')
-                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
-                                ->select('users.id', 'users.name')
-                                ->where('model_has_roles.role_id', 4)
-                                ->whereNull('users.deleted_at')
-                                ->get();
-                $waliasuhId   = [];
-                foreach ($waliasuh as $key => $value) {
-                    $waliasuhId[]=$value->id;
-                }
-                $getWaliasuh  = implode(',',$waliasuhId);
-                $condition  = 'tb_pengasuhan_daring.id_user in('.$getWaliasuh.')';
-                $total      = Pengasuhan::whereRaw($condition)
-                                ->count();     
-                $count  = $total;
-                $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-               
             }
         }else {
             if($roleName=='Taruna' || $roleName=='Pembina'){
@@ -263,7 +230,7 @@ class PengasuhanController extends BaseController
         }
         try {
             DB::beginTransaction();
-                $getKeluargaAsuh = WaliasuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+                $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
                                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
                                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                                 ->first();
@@ -320,7 +287,7 @@ class PengasuhanController extends BaseController
             }
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
-            $getKeluargaAsuh = WaliasuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
+            $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
                                 ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
                                 ->select('keluarga_asuh.id', 'keluarga_asuh.name')
                                 ->first();

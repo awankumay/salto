@@ -7,7 +7,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\User;
 use App\Grade;
 use App\OrangTua;
-use App\WaliAsuhKeluargaAsuh;
+use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\Prestasi;
 use App\HukumanDinas;
@@ -34,6 +34,7 @@ class HukumanDinasController extends BaseController
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
+        $data=[];
         if($order=='status'){
             $order='tb_hukdis.status';
         }
@@ -88,7 +89,7 @@ class HukumanDinasController extends BaseController
                 $data   = $this->hukdistaruna($condition, $limit, $order, $dir);
                
             }else if($roleName=='Pembina'){
-                $condition  = 'tb_hukdis.id_user='.$request->id_user;
+                $condition  = 'tb_hukdis.id_user='.$id_user;
                 $total      = HukumanDinas::whereRaw($condition)
                                 ->count();     
                 $count  = $total;

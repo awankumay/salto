@@ -34,6 +34,7 @@ class SuketController extends BaseController
         $getUser = User::find($request->idUser);
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
+        $data=[];
         if($order=='status'){
             $order='tb_suket.status';
         }
