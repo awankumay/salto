@@ -179,7 +179,7 @@ class LookController extends BaseController
     public function checkabsen($request)
     {
         date_default_timezone_set("Asia/Jakarta");
-        $getUser = User::find($request->idUser);
+        $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
         $absensi = Absensi::where('id_user', $request->id_user)->whereRaw('DATE(created_at) = ?', date('Y-m-d'))->first();
         $data = [];
