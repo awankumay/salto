@@ -878,7 +878,7 @@ class LookController extends BaseController
             }
             $dataPermission = [];
             if(in_array($value->id_category, $getCategoryId)==true && $value->status_disposisi!=1 && $value->status!=1){
-                if($value->user_created!=$value->id_user){
+                if($value->user_created==$id_user){
                     $dataPermission = ['edit', 'delete'];
                 }
             }
