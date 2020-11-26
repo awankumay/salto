@@ -29,7 +29,7 @@ trait Firebase
     {
         $ch = curl_init();
         $headers  = [
-                    'Authorization: '.$key.'',
+                    'Authorization: '.$this->key.'',
                     'Content-Type: application/json'
                 ];
         $postData = [
@@ -42,6 +42,8 @@ trait Firebase
             ],
             'data' => [
                 'title'=>$data['title'],
+                'body'=>$data['body'],
+                'image'=>!empty($data['image']) ? $data['image'] : null,
                 'page'=>$data['page']
             ],
             'to'=>$data['token']

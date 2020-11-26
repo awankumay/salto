@@ -11,6 +11,7 @@ use App\Tags;
 use App\PostCategory;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Hash;
 use DataTables;
 use DB;
@@ -22,6 +23,7 @@ class ContentController extends Controller
 {
     use ActionTable;
     use ImageTrait;
+    use Firebase;
     /**
      * Create a new controller instance.
      *
@@ -91,7 +93,8 @@ class ContentController extends Controller
         $dom = new \DomDocument();
         $dom->loadHtml($detail, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
         $images = $dom->getElementsByTagName('img');
-
+        $doc = '';
+        $image = '';
         foreach($images as $k => $img){
             $data = $img->getAttribute('src');
             list($type, $data) = explode(';', $data);
@@ -130,7 +133,7 @@ class ContentController extends Controller
        try {
 
             DB::beginTransaction();
-                if(isset($image)){
+                if(!empty($image)){
                     if($image!=false){
                         $request->request->add(['photo'=> $image]);
                     }
@@ -140,15 +143,25 @@ class ContentController extends Controller
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 Arr::forget($input, array('content', 'file_lampiran'));
-                if(isset($doc)){
+                if(!empty($doc)){
                     if($doc!=false){
                         $input['file']=$doc;
                     }
                 }
                 $input['content']=$detail;
-                Content::create($input);
-
-
+                $save = Content::create($input);
+                if($save){
+                    $data=['title'=>Str::words($input['title'], 30, '...'),
+                            'body'=>Str::words($input['excerpt'], 80, '...'),
+                            'page'=>'/berita',
+                            'token'=>'dUwhmH9iTmGA77QPHVOpCX:APA91bHdCYxP5zfxQzVb2XL6sOa0ILIC9BpwIabXsal0VWZXZgVzlZOqUSEHSOwFHbo93d7_ZL3R1OU5TRHYIAjoZ4lBpDs_kFCJemvPHCYXQTGyS6-f6iVsvrJZK_qxZ2vJJtwR5SME'];
+                    if(!empty($image) && $image!=false){
+                        $data['image'] = url('/')."/storage/".config('app.documentImagePath')."/".$image;
+                    }
+                    $firebase = $this->pushNotif($data);
+             
+                }
+                
             DB::commit();
             \Session::flash('success','data berhasil ditambah.');
             return redirect()->route('content.index');
