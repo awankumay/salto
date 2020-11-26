@@ -97,7 +97,7 @@ class LoginController extends BaseController
                 } */
                 
                 $success['user_id'] = $user->id;
-                $success['token'] =  $user->createToken('MyApp')->accessToken;
+                $success['token']   =  $user->createToken('MyApp')->accessToken;
                 return $this->sendResponse($success, 'User login successfully.'); 
         }else{
                 $success['id'] =  $username;

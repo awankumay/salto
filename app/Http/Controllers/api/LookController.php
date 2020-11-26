@@ -30,12 +30,14 @@ use DB;
 use App\Absensi;
 use App\JurnalTaruna;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class LookController extends BaseController
 {
     use ImageTrait;
+    use Firebase;
     /**
      * Register api
      *
@@ -2300,6 +2302,20 @@ class LookController extends BaseController
             }
         }
         return $data;
+    }
+
+    public function settoken(Request $request)
+    {
+        $data = [];
+        $data['id_user'] = $request->id_user;
+        $data['token'] = $request->fcm_token;
+        $set =  $this->saveToken($data);
+        if($set==true){
+            return $this->sendResponse(true, 'success set token');
+        }else{
+            return $this->sendResponseError(false, 'failure set token');
+        }
+        
     }
     
 }
