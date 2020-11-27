@@ -69,7 +69,7 @@ class LookController extends BaseController
         $provinces  = Provinces::where('id', $user->province_id)->first();
         $regencies  = Regencies::where('id', $user->regencie_id)->first();
         
-        if($user->gerRolesName['0']=='Taruna' && !empty($grade)){
+        if($getUser->getRoleNames()[0]=='Taruna' && !empty($grade)){
             $data['grade']=$grade->grade;
         }
         $data['provinces']  = !empty($provinces) ? $provinces->name : null;
