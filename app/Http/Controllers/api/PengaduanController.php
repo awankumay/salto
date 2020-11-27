@@ -76,9 +76,9 @@ class PengaduanController extends BaseController
         }
         foreach ($data as $key => $value) {
             if($value->status==1){
-                $status='Proses';
-            }else if ($value->status==0) {
                 $status='Selesai';
+            }else if ($value->status==0) {
+                $status='Proses';
             }else{
                 $status='Tidak Disetuji';
             }
@@ -89,8 +89,8 @@ class PengaduanController extends BaseController
                 'id_user'=>$value->id_user,
                 'nama'=>$value->name,
                 'pengaduan'=>substr($value->judul, 0, 30).'...',
-                'created_at'=>date('Y-m-d', strtotime($getSurat->created_at)),
-                'created_at_bi'=>date('d-m-Y', strtotime($getSurat->created_at)),
+                'created_at'=>date('Y-m-d', strtotime($value->created_at)),
+                'created_at_bi'=>date('d-m-Y', strtotime($value->created_at)),
                 'status'=>$value->status,
                 'status_name'=>$status
             ];
