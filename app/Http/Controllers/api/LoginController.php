@@ -14,6 +14,7 @@ use App\WaliasuhKeluargaAsuh;
 use App\PembinaKeluargaAsuh;
 use App\TarunaKeluargaAsuh;
 use App\OrangTua;
+use App\Traits\Firebase;
 use DB;
    
 class LoginController extends BaseController
@@ -98,7 +99,7 @@ class LoginController extends BaseController
                 }else if ($roles['0']=='Orang Tua') {
                     $taruna = OrangTua::where('orangtua_id', $user->id)->first();
                     $success['profile']['keluarga_asuh'] = null;
-                    $success['profile']['subscribe']   = Str::slug('salto', 'orangtua', 'taruna-'.$taruna->taruna_id);
+                    $success['profile']['subscribe']   = Str::slug('salto', 'orangtua', 'orangtua-'.$taruna->taruna_id, 'taruna-'.$taruna->taruna_id);
                 }else if ($roles['0']=='Pembina') {
                     $keluarga = PembinaKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'pembina_keluarga_asuh.keluarga_asuh_id')
                                         ->where('pembina_keluarga_asuh.pembina_id', $user->id)

@@ -127,6 +127,12 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('approvehukdis', 'api\HukumanDinasController@approvehukdis')->name('approvehukdis');
     Route::get('cetakhukdis/id/{id}/id_user/{id_user}', 'api\HukumanDinasController@cetakhukdis')->name('cetakhukdis');
 
+    Route::post('getpengaduan', 'api\PengaduanController@getpengaduan')->name('getpengaduan');
+    Route::get('getpengaduan/id/{id}/id_user/{id_user}', 'api\PengaduanController@pengaduandetail')->name('getpengaduan');
+    Route::post('inputpengaduan', 'api\PengaduanController@inputpengaduan')->name('inputpengaduan');
+    Route::post('deletepengaduan', 'api\PengaduanController@deletepengaduan')->name('deletepengaduan');
+    Route::post('tanggapanpengaduan', 'api\PengaduanController@tanggapan')->name('tanggapanpengaduan');
+
     Route::post('settoken', 'api\LookController@settoken')->name('settoken');
 });
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {

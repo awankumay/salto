@@ -2,26 +2,49 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+#use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Passport\HasApiTokens;
 use DB;
-class Slider extends Model
+use Auth;
+
+class Pengaduan extends Authenticatable
 {
     use SoftDeletes;
+    use HasApiTokens;
+    use HasRoles;
+
     protected $table = 'tb_pengaduan';
     protected $fillable = [
-        'photo',
-        'status'
+        'bukti',
+        'id_user',
+        'status',
+        'user_follow_up',
+        'date_follow_up',
+        'follow_up',
+        'pengaduan',
+        'user_created',
+        'user_updated',
+        'user_deleted'
+    ];
+    protected $dates = ['deleted_at'];
+    protected $primaryKey = 'id';
+    protected $casts = [
+        'created_at'  => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s'
     ];
 
     public function GetCount()
     {
-        return Slider::count();
+        return Pengaduan::count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir)
     {
-        $data = Slider::offset($start)
+        $data = Pengaduan::offset($start)
                 ->limit($limit)
                 ->orderBy($order,$dir)
                 ->get();
@@ -30,7 +53,7 @@ class Slider extends Model
 
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
-        $data = Slider::where('id','LIKE',"%{$search}%")
+        $data = Pengaduan::where('id','LIKE',"%{$search}%")
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -39,7 +62,7 @@ class Slider extends Model
     }
 
     public function GetCountDataFilter($search){
-        $data = Slider::where('id','LIKE',"%{$search}%")
+        $data = Pengaduan::where('id','LIKE',"%{$search}%")
                         ->count();
         return $data;
     }

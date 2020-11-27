@@ -47,94 +47,57 @@ class PengaduanController extends BaseController
         $permission = [];
         if($lastId==0){
             if($roleName=='Admin' || $roleName=='Super Admin'){
-                $condition  = '';
-                $total      =  Pengasuhan::whereRaw($condition)
+                $condition  = 'tb_pengaduan.id is not null';
+                $total      =  Pengaduan::whereRaw($condition)
                                 ->count();   
                 $count  = $total;
-                $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
+                $data   = $this->pengaduan($condition, $limit, $order, $dir);
             }else{
-                $total  = 0; 
+                $condition  = 'tb_pengaduan.id_user='.$id_user;
+                $total      =  Pengaduan::whereRaw($condition)
+                                ->count();   
                 $count  = $total;
-                $data   = [];
+                $data   = $this->pengaduan($condition, $limit, $order, $dir);
             }
         }else {
-            if($roleName=='Taruna' || $roleName=='Pembina'){
-                if($roleName=='Taruna'){
-                    $getKeluargaAsuh = TarunaKeluargaAsuh::where('taruna_id', $getUser->id)->first();
-                }else{
-                    $getKeluargaAsuh = PembinaKeluargaAsuh::where('pembina_id', $getUser->id)->first();
-                }
-                $condition  = 'tb_pengasuhan_daring.keluarga_asuh_id='.$getKeluargaAsuh->keluarga_asuh_id.'AND tb_pengasuhan_daring.id '.$diff.' '.$lastId.'';
-                $total      =  Pengasuhan::whereRaw('tb_pengasuhan_daring.keluarga_asuh_id='.$getKeluargaAsuh->keluarga_asuh_id)
+            if($roleName=='Admin' || $roleName=='Super Admin'){
+                $condition  = 'tb_pengaduan.id is not null AND tb_pengaduan.id '.$diff.' '.$lastId.'';
+                $total      =  Pengaduan::whereRaw('tb_pengaduan.id is not null')
                                 ->count();  
-                $count = Pengasuhan::whereRaw('tb_pengasuhan_daring.keluarga_asuh_id='.$getKeluargaAsuh->keluarga_asuh_id)->count();
-                $data = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='Orang Tua'){
-                
-                $count = 0;
-                $data = [];
-               
-            }else if($roleName=='Wali Asuh'){
-                $condition  = 'tb_pengasuhan_daring.id_user='.$getUser->id;
-               
-                $condition = 'tb_pengasuhan_daring.id_user='.$getUser->id.' AND tb_pengasuhan_daring.id '.$diff.' '.$lastId.'';
-                $total      = Pengasuhan::whereRaw('tb_pengasuhan_daring.id_user='.$getUser->id)->count();
-                $count      = Pengasuhan::whereRaw($condition)->count();
-                $data = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-               
-
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
-                $waliasuh     = DB::table('users')
-                                ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-                                ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
-                                ->select('users.id', 'users.name')
-                                ->where('model_has_roles.role_id', 4)
-                                ->whereNull('users.deleted_at')
-                                ->get();
-                $waliasuhId   = [];
-                foreach ($waliasuh as $key => $value) {
-                    $waliasuhId[]=$value->id;
-                }
-                $getWaliasuh  = implode(',',$waliasuhId);
-                $condition = 'tb_pengasuhan_daring.id_user in('.$getWaliasuh.') AND tb_pengasuhan_daring.id '.$diff.' '.$lastId.'';
-                $total = Pengasuhan::whereRaw('tb_pengasuhan_daring.id_user in('.$getWaliasuh.')')
-                            ->count();
-                
-                $count = Pengasuhan::whereRaw($condition)->count();
-                $data = $this->pengasuhantaruna($condition, $limit, $order, $dir);
-               
+                $count = Pengaduan::whereRaw($condition)->count();
+                $data = $this->pengaduan($condition, $limit, $order, $dir);
+            }else{
+                $condition  = 'tb_pengaduan.id_user='.$id_user.' AND tb_pengaduan.id '.$diff.' '.$lastId.'';
+                $total      =  Pengaduan::whereRaw('tb_pengaduan.id_user='.$id_user)
+                                ->count();  
+                $count = Pengaduan::whereRaw($condition)->count();
+                $data = $this->pengaduan($condition, $limit, $order, $dir);
             }
         }
         foreach ($data as $key => $value) {
             if($value->status==1){
-                $status='Disetujui';
+                $status='Proses';
             }else if ($value->status==0) {
-                $status='Belum Disetuji';
-                $download = '-';
+                $status='Selesai';
             }else{
                 $status='Tidak Disetuji';
-                $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Wali Asuh' || $roleName=='Super Admin' )){
-                $dataPermission = ['edit', 'delete'];
-            }
 
-            $result['pengasuhan'][]= [ 
+            $result['pengaduan'][]= [ 
                 'id'=>$value->id,
                 'id_user'=>$value->id_user,
-                'keluarga_asuh'=>$value->keluarga_asuh,
-                'judul'=>substr($value->judul, 0, 15).'...',
-                'waktu'=>$value->start_time.' s/d '.$value->end_time,
-                'permission'=>$dataPermission
+                'nama'=>$value->name,
+                'pengaduan'=>substr($value->judul, 0, 30).'...',
+                'created_at'=>date('Y-m-d', strtotime($getSurat->created_at)),
+                'created_at_bi'=>date('d-m-Y', strtotime($getSurat->created_at)),
+                'status'=>$value->status,
+                'status_name'=>$status
             ];
                 
         }
 
-        $result['info']['permissionCreate'] = false;
-        if($roleName=='Wali Asuh'){
-            $result['info']['permissionCreate'] = true;
-        }
+        $result['info']['permissionCreate'] = true;
 
         if($count > $limit){
             $result['info']['lastId'] = $data[count($data)-1]->id;
@@ -148,80 +111,72 @@ class PengaduanController extends BaseController
             $result['info']['totaldata'] = $total;
         }
         $result['info']['limit']  = $limit;
-        return $this->sendResponse($result, 'pengasuhan load successfully.');
+        return $this->sendResponse($result, 'pengaduan load successfully.');
     }
 
-    public function pengasuhandetail(Request $request)
+    public function pengaduandetail(Request $request)
     {
         $id   = $request->id;
-        $getSurat = Pengasuhan::join('users as author', 'author.id', '=', 'tb_pengasuhan_daring.id_user')
-                                    ->select('tb_pengasuhan_daring.id as id', 
-                                            'tb_pengasuhan_daring.id_user as id_user',
-                                            'author.name as nama_waliasuh',
-                                            'tb_pengasuhan_daring.keluarga_asuh as keluarga_asuh',
-                                            'tb_pengasuhan_daring.judul as judul',
-                                            'tb_pengasuhan_daring.media as media',
-                                            'tb_pengasuhan_daring.id_media as id_media',
-                                            'tb_pengasuhan_daring.password as password',
-                                            'tb_pengasuhan_daring.start_time as start_time',
-                                            'tb_pengasuhan_daring.end_time as end_time',
-                                            'tb_pengasuhan_daring.status as status',
-                                            'tb_pengasuhan_daring.updated_at as updated_at'
+        $getSurat = Pengaduan::join('users as author', 'author.id', '=', 'tb_pengaduan.id_user')
+                                ->leftjoin('users as admin', 'admin.id', '=', 'tb_pengaduan.user_follow_up')
+                                    ->select('tb_pengaduan.id as id', 
+                                            'tb_pengaduan.id_user as id_user',
+                                            'author.name as nama',
+                                            'tb_pengaduan.pengaduan as pengaduan',
+                                            'tb_pengaduan.follow_up as tanggapan',
+                                            'tb_pengaduan.created_at as created_at',
+                                            'tb_pengaduan.status as status',
+                                            'admin.name as user_follow_up',
+                                            'tb_pengaduan.status as status',
+                                            'tb_pengaduan.user_created as user_created',
+                                            'tb_pengaduan.date_follow_up as date_follow_up'
                                             )
-                                    ->where('tb_pengasuhan_daring.id', $id)
+                                    ->where('tb_pengaduan.id', $id)
                                     ->first();
         $data = [];
         if(empty($getSurat)){
-            return $this->sendResponseFalse($data, 'Pengasuhan Not Found or Deleted');
+            return $this->sendResponseFalse($data, 'Pengaduan Not Found or Deleted');
         }
         $getUser = User::find($request->id_user);
         $roleName = $getUser->getRoleNames()[0];
         $data = array(
             'id'=>$getSurat->id,
             'id_user'=>$getSurat->id_user,
-            'name'=>$getSurat->nama_waliasuh,
-            'keluarga_asuh'=>$getSurat->keluarga_asuh,
-            'judul'=>$getSurat->judul,
-            'media'=>$getSurat->media,
-            'id_media'=>$getSurat->id_media,
-            'password'=>$getSurat->password,
-            'start_time'=>$getSurat->start_time,
+            'name'=>$getSurat->nama,
+            'pengaduan'=>$getSurat->pengaduan,
+            'tanggapan'=>$getSurat->tanggapan,
+            'created_at'=>date('Y-m-d', strtotime($getSurat->created_at)),
+            'created_at_bi'=>date('d-m-Y', strtotime($getSurat->created_at)),
+            'status'=>$getSurat->status,
+            'user_follow_up'=>$getSurat->user_follow_up,
             'end_time'=>$getSurat->end_time,
-            'start_time_bi'=>date('Y-m-d H:i', $getSurat->start_time),
-            'end_time_bi'=>date('Y-m-d H:i', $getSurat->end_time),
-            'created_at'=>date('Y-m-d', strtotime($getSurat->updated_at)),
-            'created_at_bi'=>date('d-m-Y', strtotime($getSurat->updated_at)),
-            'form'=>['judul', 'media', 'id_media', 'password', 'start_time', 'end_time']
+            'date_follow_up'=>date('Y-m-d H:i', strtotime($getSurat->date_follow_up)),
+            'created_at_bi'=>date('d-m-Y H:i', strtotime($getSurat->created_at)),
+            'form'=>['id_user', 'pengaduan'],
+            'follow_up'=>false
         );
         $data['permission']=[];
-        if(($roleName=='Wali Asuh')) {
-            if($getSurat->id_user==$request->id_user){
-                $data['permission'] = ['edit', 'delete'];
-            }
+        if($roleName=='Admin' || $roleName=='Super Admin') {
+            $data['follow_up']=true;
         }
 
-        return $this->sendResponse($data, 'pengasuhan load successfully.');
+        return $this->sendResponse($data, 'Pengaduan load successfully.');
     }
 
-    public function inputpengasuhan(Request $request)
+    public function inputpengaduan(Request $request)
     {
         if(!empty($request->id)){
-            return $this->updatepengasuhan($request);
+            return $this->updatepengaduan($request);
         }else {
-            return $this->savepengasuhan($request);
+            return $this->savepengaduan($request);
         }
     }
 
-    public function savepengasuhan($request)
+    public function savepengaduan($request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'media' =>'required',
-            'id_media' =>'required',
-            'password' =>'required',
-            'start_time' =>'required',
-            'end_time' =>'required',
-            'judul' => 'required'
+            'pengaduan' =>'required'
         ]);
         $data=[];
         $data['status'] = false;
@@ -230,13 +185,6 @@ class PengaduanController extends BaseController
         }
         try {
             DB::beginTransaction();
-                $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
-                                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
-                                                ->select('keluarga_asuh.id', 'keluarga_asuh.name')
-                                                ->first();
-                if(empty($getKeluargaAsuh)){
-                    return $this->sendResponseError($data, 'waliasuh belum mempunyai keluarga asuh');   
-                }
 
                 $request->request->add(['user_created'=> $request->id_user]);
                 $request->request->add(['user_updated'=> $request->id_user]);
@@ -244,34 +192,26 @@ class PengaduanController extends BaseController
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
                 $input['id_user'] = $request->id_user;
-                $input['keluarga_asuh']   = $getKeluargaAsuh->name;
-                $input['keluarga_asuh_id']   = $getKeluargaAsuh->id;
-                $input['start_time'] = date('Y-m-d H:i:s', strtotime($request->start_time));
-                $input['end_time'] = date('Y-m-d H:i:s', strtotime($request->end_time));
-                Pengasuhan::create($input);
+                $input['pengaduan']   = $request->pengaduan;
+                Pengaduan::create($input);
 
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'pengasuhan create successfully.');
+            return $this->sendResponse($data, 'pengaduan create successfully.');
         } catch (\Throwable $th) {
             //@dd($th->getMessage());
             DB::rollBack();
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'pengasuhan create failure.');
+            return $this->sendResponseError($data, 'pengaduan create failure.');
         }
 
     }
 
-    public function updatepengasuhan(Request $request)
+    public function updatepengaduan(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
-            'media' =>'required',
-            'id_media' =>'required',
-            'password' =>'required',
-            'start_time' =>'required',
-            'end_time' =>'required',
-            'judul' => 'required'
+            'pengaduan' =>'required'
         ]);
         $data=[];
         $data['status'] = false;
@@ -281,70 +221,88 @@ class PengaduanController extends BaseController
         try {
 
             DB::beginTransaction();
-            $pengasuhan = Pengasuhan::where('id_user', $request->id_user)->where('id', $request->id)->first();
-            if(empty($pengasuhan)){
+            $pengaduan = Pengaduan::where('id_user', $request->id_user)->where('id', $request->id)->first();
+            if(empty($pengaduan)){
                 return $this->sendResponseError($data, 'data not found');   
             }
             $request->request->add(['user_updated'=> $request->id_user]);
             $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
-            $getKeluargaAsuh = WaliAsuhKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'waliasuh_keluarga_asuh.keluarga_asuh_id')
-                                ->where('waliasuh_keluarga_asuh.waliasuh_id', $request->id_user)
-                                ->select('keluarga_asuh.id', 'keluarga_asuh.name')
-                                ->first();
-            if(empty($getKeluargaAsuh)){
-                return $this->sendResponseError($data, 'keluarga asuh not found');   
-            }
+
             $input = $request->all();
             $input['id_user'] = $request->id_user;
-            $input['keluarga_asuh']   = $getKeluargaAsuh->name;
-            $input['keluarga_asuh_id']   = $getKeluargaAsuh->id;
-            $input['start_time'] = date('Y-m-d H:i:s', strtotime($request->start_time));
-            $input['end_time'] = date('Y-m-d H:i:s', strtotime($request->end_time));
+            $input['pengaduan']   = $request->pengaduan;
 
-            $pengasuhan->update($input);
+            $pengaduan->update($input);
             DB::commit();
             $data['status'] = true;
-            return $this->sendResponse($data, 'pengasuhan updated successfully.');
+            return $this->sendResponse($data, 'pengaduan updated successfully.');
         } catch (\Throwable $th) {
-            @dd($th->getMessage());
+            //@dd($th->getMessage());
             DB::rollBack();
             $data['status'] = false;
-            return $this->sendResponseFalse($data, 'pengasuhan failure updated.');
+            return $this->sendResponseFalse($data, 'pengaduan failure updated.');
 
         }
     
     }
 
-    public function deletepengasuhan(Request $request)
+    public function deletepengaduan(Request $request)
     {
-        $pengasuhan = Pengasuhan::where('id_user', $request->id_user)->where('id', $request->id)->first();
+        $pengaduan = Pengaduan::where('id_user', $request->id_user)->where('id', $request->id)->first();
         $data=[];
         try {
             DB::beginTransaction();
   /*           if($pengasuhan->photo){
                 $this->DeleteImage($pengasuhan->photo, config('app.documentImagePath').'/pengasuhan/');
             } */
-            $pengasuhan->user_deleted = $request->id_user;
-            $pengasuhan->save();
-            $pengasuhan->delete();
+            $pengaduan->user_deleted = $request->id_user;
+            $pengaduan->save();
+            $pengaduan->delete();
             DB::commit();
             $data['status']=true;
-            return $this->sendResponse($data, 'pengasuhan deleted successfully.');
+            return $this->sendResponse($data, 'pengaduan deleted successfully.');
         } catch (\Throwable $th) {
             DB::rollback();
             $data['status']=false;
-            return $this->sendResponseFalse($data, 'pengasuhan deleted failure.');
+            return $this->sendResponseFalse($data, 'pengaduan deleted failure.');
         }
-        return $this->sendResponse($result, 'pengasuhan delete successfully.');
+        return $this->sendResponse($result, 'pengaduan delete successfully.');
     }
 
-    public function pengasuhantaruna($condition, $limit, $order, $dir)
+    public function pengaduan($condition, $limit, $order, $dir)
     {
-        return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
+        return Pengaduan::join('users', 'users.id', '=', 'tb_pengaduan.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_pengasuhan_daring.created_at))as tanggal"),'users.name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.judul', 'tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*')
+            ->select(DB::raw("(DATE(tb_pengaduan.created_at))as tanggal"),'users.name', 'tb_pengaduan.status', 'tb_pengaduan.pengaduan', 'tb_pengaduan.id as id', 'tb_pengaduan.*')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
+    }
+
+    public function tanggapan(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'follow_up' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }
+        $pengaduan = Pengaduan::where('id', $request->id)
+                                ->first();
+        if(!empty($pengaduan)){
+            $pengaduan->user_follow_up=$request->id_user;
+            $pengaduan->date_follow_up=date('Y-m-d H:i:s');
+            $pengaduan->follow_up=$request->follow_up;
+            $pengaduan->status=1;
+            $pengaduan->save();
+        }else{
+            $data['status'] = false;
+            return $this->sendResponseError($data, 'Data Not Found or Deleted');
+        }
+        $data['status'] = true;
+        return $this->sendResponse($data, 'tanggapan success');
     }
 }

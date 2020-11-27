@@ -1524,10 +1524,38 @@ class LookController extends BaseController
                     ];
                     KegiatanPesiar::create($dataDetail);
                 }
-
-
             DB::commit();
+            $firebase = [];
+            $keluarga = TarunaKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                        ->where('taruna_keluarga_asuh.taruna_id', $getUser->id)
+                        ->first();
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            if(!empty($keluarga_asuh) && $keluarga_asuh!=null){
+                $topic = Str::slug('pembina-'.$keluarga_asuh, '-');
+                $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
+                        'body'=>Str::words('Hi, Pembina ada perizinan baru'),
+                        'page'=>'/riwayat-izin-detail/id/'.$id.'/id_user/'.$getUser->id,
+                        'token'=>$topic];
+                try {
+                    $firebase = $this->pushNotif($data);
+                    $status_firebase = true;
+                } catch (\Throwable $th) {
+                    $status_firebase = false;
+                }
+                if($status_firebase==true){
+                    try {
+                        $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
+                        'body'=>Str::words('Hi, ada perizinan baru'),
+                        'page'=>'/riwayat-izin-detail/id/'.$id.'/id_user/'.$getUser->id,
+                        'token'=>$topic];
+                        $firebase = $this->pushNotif($data);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+                }
+            }
             $data['status'] = true;
+            $data['firebase'] = $firebase;
             return $this->sendResponse($data, 'surat izin create successfully.');
         } catch (\Throwable $th) {
             @dd($th->getMessage());

@@ -19,7 +19,7 @@ class BaseController extends Controller
     public function sendResponse($result, $message)
     {
         if(!empty($result['id_user'])){
-            $data = User::join('grade_table as grade', 'grade.id', '=', 'users.grade')
+            $data = User::leftjoin('grade_table as grade', 'grade.id', '=', 'users.grade')
                     ->where('users.id', $result['id_user'])
                     ->select('users.stb', 'users.name', 'grade.grade', 'users.photo')
                     ->first();
