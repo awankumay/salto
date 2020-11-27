@@ -26,6 +26,7 @@ use App\Permission;
 use App\Prestasi;
 use Illuminate\Support\Facades\Auth;
 use Validator;
+use Hash;
 use DB;
 use App\Absensi;
 use App\JurnalTaruna;
@@ -60,7 +61,7 @@ class LookController extends BaseController
                 'whatsapp'=>$user->whatsapp,
                 'alamat'=>$user->address,
                 'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
-                'sex_name'=>$user->sex,
+                'sex'=>$user->sex,
                 'photo'=>url('/')."/storage/".config('app.userImagePath')."/".$user->photo,
                 'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
                 ];
@@ -85,7 +86,7 @@ class LookController extends BaseController
         $data['success'] = false;
         $validator = Validator::make($request->all(), 
         [ 
-            'id_user' => 'required',
+            'id' => 'required',
             'file' => 'nullable|mimes:jpg,jpeg,png|max:2048',
             'email' => "required|email|unique:users,email,{$request->id},id,deleted_at,NULL",
             'password' => 'same:confirm-password',
