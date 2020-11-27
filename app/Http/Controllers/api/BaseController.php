@@ -23,7 +23,7 @@ class BaseController extends Controller
                     ->where('users.id', $result['id_user'])
                     ->select('users.stb', 'users.name', 'grade.grade', 'users.photo')
                     ->first();
-            $data->photo = $data->photo ? \URL::to('/').'/storage/'.config('app.userImagePath').'/'. $data->photo : \URL::to('/').'/profile.png';
+            $data->photo = !empty($data->photo) ? \URL::to('/').'/storage/'.config('app.userImagePath').'/'. $data->photo : \URL::to('/').'/profile.png';
             $result['profile']=$data;
         }
     	$response = [
