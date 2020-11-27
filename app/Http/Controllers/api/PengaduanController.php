@@ -150,7 +150,7 @@ class PengaduanController extends BaseController
             'status'=>$getSurat->status,
             'user_follow_up'=>$getSurat->user_follow_up,
             'end_time'=>$getSurat->end_time,
-            'date_follow_up'=>date('Y-m-d H:i', strtotime($getSurat->date_follow_up)),
+            'date_follow_up'=>!empty($getSurat->date_follow_up) ? date('Y-m-d H:i', strtotime($getSurat->date_follow_up)) : null,
             'created_at_bi'=>date('d-m-Y H:i', strtotime($getSurat->created_at)),
             'form'=>['id_user', 'pengaduan'],
             'follow_up'=>false
