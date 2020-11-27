@@ -65,11 +65,11 @@ class LookController extends BaseController
                 'photo'=>url('/')."/storage/".config('app.userImagePath')."/".$user->photo,
                 'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
                 ];
-        $grade      = Grade::where('id', $user->grade)->pluck('grade','id')->first();
+        $grade      = Grade::where('id', $user->grade)->first();
         $provinces  = Provinces::where('id', $user->province_id)->first();
         $regencies  = Regencies::where('id', $user->regencie_id)->first();
         
-        if($getUser->getRoleNames()[0]=='Taruna' && !empty($grade)){
+        if($user->getRoleNames()[0]=='Taruna' && !empty($grade)){
             $data['grade']=$grade->grade;
         }
         $data['provinces']  = !empty($provinces) ? $provinces->name : null;
