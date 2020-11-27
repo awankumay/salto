@@ -62,7 +62,7 @@ class LookController extends BaseController
                 'alamat'=>$user->address,
                 'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
                 'sex'=>$user->sex,
-                'photo'=>url('/')."/storage/".config('app.userImagePath')."/".$user->photo,
+                'photo'=>url('/').'/'.$user->photo,
                 'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
                 ];
         $grade      = Grade::where('id', $user->grade)->first();
