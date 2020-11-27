@@ -53,7 +53,7 @@ class LookController extends BaseController
     public function getprofile(Request $request)
     {
         $user = User::where('id', $request->id_user)->first();
-        $user->photo = $user->photo ? $user->photo : 'profile.png';
+        
         $data=['id'=>$user->id,
                 'name'=>$user->name,
                 'email'=>$user->email,
@@ -62,7 +62,7 @@ class LookController extends BaseController
                 'alamat'=>$user->address,
                 'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
                 'sex'=>$user->sex,
-                'photo'=>url('/').'/'.$user->photo,
+                'photo'=>!empty($user->photo) ? url('/')."/storage/".config('app.userImagePath')."/".$user->photo : url('/').'/profile.png',
                 'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
                 ];
         $grade      = Grade::where('id', $user->grade)->first();
