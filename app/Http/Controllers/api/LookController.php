@@ -51,17 +51,89 @@ class LookController extends BaseController
     
     public function getprofile(Request $request)
     {
-        $user = User::where('id', $request->id)->first();
-        $user->photo = url('/')."/storage/".config('app.userImagePath')."/".$user->photo;
-        $data=[];
-        $data['user'] = $user;
-        $data['select_grade'] = Grade::where('id', $user->grade)->pluck('grade','id')->all();
-        $data['select_provinces'] = Provinces::where('id', $user->province_id)->pluck('name','id')->all();
-        $data['select_regencies'] = Regencies::where('id', $user->regencie_id)->pluck('name','id')->all();
-        $data['grade'] = Grade::pluck('grade', 'id')->all();
-        $data['provinces'] = Provinces::pluck('name','id')->all();
-        $data['regencies'] = Regencies::where('province_id', $user->province_id)->pluck('name','id')->all();
+        $user = User::where('id', $request->id_user)->first();
+        $user->photo = $user->photo ? $user->photo : 'profile.png';
+        $data=['id'=>$user->id,
+                'name'=>$user->name,
+                'email'=>$user->email,
+                'phone'=>$user->phone,
+                'whatsapp'=>$user->whatsapp,
+                'alamat'=>$user->address,
+                'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
+                'sex_name'=>$user->sex,
+                'photo'=>url('/')."/storage/".config('app.userImagePath')."/".$user->photo,
+                'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
+                ];
+        $grade      = Grade::where('id', $user->grade)->pluck('grade','id')->first();
+        $provinces  = Provinces::where('id', $user->province_id)->first();
+        $regencies  = Regencies::where('id', $user->regencie_id)->first();
+        
+        if($user->gerRolesName['0']=='Taruna' && !empty($grade)){
+            $data['grade']=$grade->grade;
+        }
+        $data['provinces']  = !empty($provinces) ? $provinces->name : null;
+        $data['regencies']  = !empty($regencies) ? $regencies->name : null;
         return $this->sendResponse($data, 'profile load successfully.');
+
+    }
+
+    public function setprofile(Request $request)
+    {
+        $user = User::where('id', $request->id)->first();
+        $data = [];
+
+        $data['success'] = false;
+        $validator = Validator::make($request->all(), 
+        [ 
+            'id_user' => 'required',
+            'file' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+            'email' => "required|email|unique:users,email,{$request->id},id,deleted_at,NULL",
+            'password' => 'same:confirm-password',
+            'phone' => "required|numeric|unique:users,phone,{$request->id},id,deleted_at,NULL",
+            'whatsapp' => "numeric|unique:users,whatsapp,{$request->id},id,deleted_at,NULL",
+            'sex'=>'required',
+            'address'=>'required',
+            'name'=>'required'
+        ]); 
+        if ($validator->fails()) {
+            return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
+        }  
+        $image='';
+        if($request->file){
+            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            if($image==false){
+                return $this->sendResponseError($data, 'failure upload image'); 
+            }
+            $this->DeleteImage($user->photo, config('app.userImagePath'));
+        }
+        try {
+            if(!empty($image)){
+                if($image!=false){
+                    $request->request->add(['photo'=> $image]);
+                }
+            }
+            $request->request->add(['user_updated'=> $user->id]);
+            $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
+            $input = $request->all();
+
+            if(!empty($input['password'])){
+                $input['password'] = Hash::make($input['password']);
+            }else{
+               Arr::forget($input, array('password', 'confirm-password'));
+            }
+            DB::beginTransaction();
+                $user->update($input);
+            DB::commit();
+            $data['success']=true;
+            return $this->sendResponse($data, 'success update profile'); 
+        } catch (\Throwable $th) {
+            @dd($th->getMessage());
+            DB::rollBack();
+                if($image!=false){
+                    $this->DeleteImage($image, config('app.userImagePath'));
+                }
+            return $this->sendResponseError($data, 'failure update profile'); 
+        }
 
     }
 
@@ -165,18 +237,7 @@ class LookController extends BaseController
         return $this->sendResponse($result, 'berita load successfully.');
     }
 
-    public function setprofile(Request $request)
-    {
-        $user = User::where('id', $request->id)->first();
-        $data['data']=[];
-        $data['data']['user'] = $user;
-        $data['data']['all_grade'] = Grade::pluck('grade', 'id')->all();
-        $data['data']['all_provinces'] = Provinces::pluck('name','id')->all();
-        $data['data']['all_regencies'] = Regencies::pluck('name','id')->all();
-        $data['data']['select_regencies'] = Regencies::where('province_id', $user->province_id)->pluck('name','id')->all();
-        return $this->sendResponse($data, 'profile load successfully.');
 
-    }
 
     public function checkabsen($request)
     {

@@ -72,7 +72,7 @@ Route::group(['middleware' => ['CheckUser:api']], function(){
 Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::get('logout', 'api\LoginController@logout');
     Route::get('/ok', 'api\LookController@test')->name('ok');
-    Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile');
+    Route::get('getprofile/{id_user}', 'api\LookController@getprofile')->name('getprofile');
    
     Route::post('getdata', 'api\LookController@getdata')->name('getdata');
     Route::get('getslider', 'api\LookController@getslider')->name('getslider');
@@ -132,6 +132,13 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('inputpengaduan', 'api\PengaduanController@inputpengaduan')->name('inputpengaduan');
     Route::post('deletepengaduan', 'api\PengaduanController@deletepengaduan')->name('deletepengaduan');
     Route::post('tanggapanpengaduan', 'api\PengaduanController@tanggapan')->name('tanggapanpengaduan');
+
+    Route::post('getwbs', 'api\WBSController@getwbs')->name('getwbs');
+    Route::get('getwbs/id/{id}/id_user/{id_user}', 'api\WBSController@wbsdetail')->name('getwbs');
+    Route::post('inputwbs', 'api\WBSController@inputwbs')->name('inputwbs');
+    Route::post('deletewbs', 'api\WBSController@deletewbs')->name('deletewbs');
+    Route::post('tanggapanwbs', 'api\WBSController@tanggapan')->name('tanggapanwbs');
+    Route::get('getcategorywbs', 'api\WBSController@category')->name('getcategorywbs');
 
     Route::post('settoken', 'api\LookController@settoken')->name('settoken');
 });
