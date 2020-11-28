@@ -235,7 +235,8 @@ class PasswordResetController extends Controller
                         </tr>
                         <tr>
                           <td class="content-block powered-by" style="font-family: sans-serif; vertical-align: top; padding-bottom: 10px; padding-top: 10px; font-size: 12px; color: #999999; text-align: center;">
-                            Powered by <a href="http://htmlemail.io" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">SALTO</a>.
+                          <center><img src='.\URL::to('/').'/logo.png'.' style="width:120px;height:120px;"></center>
+                            Powered by <a href="http://poltekip.ac.id" style="color: #999999; font-size: 12px; text-align: center; text-decoration: none;">poltekip.ac.id</a>.
                           </td>
                         </tr>
                       </table>
