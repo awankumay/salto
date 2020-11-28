@@ -38,7 +38,7 @@ class PasswordResetController extends Controller
                 'FromName' => "SALTO",
                 'Recipients' => [
                   [
-                    'Email' => 'fajarqibs@gmail.com',
+                    'Email' => $user->email,
                     'Name' => $user->name
                   ]
                 ],
