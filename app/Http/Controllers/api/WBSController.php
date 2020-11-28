@@ -90,8 +90,8 @@ class WBSController extends BaseController
                 'id_user'=>$value->id_user,
                 'nama'=>$value->name,
                 'ewhat'=>substr($value->ewhat, 0, 30).'...',
-                'created_at'=>date('Y-m-d', strtotime($getSurat->created_at)),
-                'created_at_bi'=>date('d-m-Y', strtotime($getSurat->created_at)),
+                'created_at'=>date('Y-m-d', strtotime($value->created_at)),
+                'created_at_bi'=>date('d-m-Y', strtotime($value->created_at)),
                 'status'=>$value->status,
                 'status_name'=>$status
             ];
