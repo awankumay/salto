@@ -61,6 +61,8 @@ return [
     'campaignImagePath'=> 'images/campaign',
     'auctionImagePath'=> 'images/auction',
     'asset_url' => env('ASSET_URL', null),
+    'mailjet_key' => '8b43555b5b58f11c6c7725c2e2ba14bf',
+    'mailjet_secret' => 'ae633d9c3b98dc369a0d8b816727cda8',
 
     /*
     |--------------------------------------------------------------------------
@@ -184,6 +186,8 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
+        Mailjet\LaravelMailjet\MailjetMailServiceProvider::class
 
     ],
 
@@ -240,6 +244,7 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class
 
     ],
 

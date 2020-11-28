@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-#use Illuminate\Notifications\Notifiable;
+use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
@@ -13,7 +13,7 @@ use Auth;
 
 class User extends Authenticatable
 {
-    #use Notifiable;
+    use Notifiable;
     use HasRoles;
     use SoftDeletes;
     use HasApiTokens;

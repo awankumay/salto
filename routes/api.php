@@ -143,6 +143,15 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
 
     Route::post('settoken', 'api\LookController@settoken')->name('settoken');
 });
+Route::group([    
+    'namespace' => 'Auth',    
+    'middleware' => 'api',    
+    'prefix' => 'password'
+], function () {    
+    Route::post('forgot', 'PasswordResetController@create');
+    Route::get('find/{token}', 'PasswordResetController@find');
+    Route::post('reset', 'PasswordResetController@reset');
+});
 /*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });*/

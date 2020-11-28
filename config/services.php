@@ -30,4 +30,27 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'mailjet' => [
+        'key' => config('app.mailjet_key'),
+        'secret' => config('app.mailjet_secret'),
+        'transactional' => [
+            'call' => true,
+            'options' => [
+                'url' => 'api.mailjet.com',
+                'version' => 'v3.1',
+                'call' => true,
+                'secured' => false
+            ]
+        ],
+        'common' => [
+            'call' => true,
+            'options' => [
+                'url' => 'api.mailjet.com',
+                'version' => 'v3',
+                'call' => true,
+                'secured' => false
+            ]
+        ]
+    ]
+
 ];
