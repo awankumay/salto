@@ -19,6 +19,11 @@ Route::get('/', function () {
     }
     return view('auth.login');
 });
+
+Route::get('/triggercetak', function () {
+    return view('triggercetak');
+});
+
 Route::get('cetaksurat/{hash}', 'CetakSuratController@cetaksurat')->name('cetaksurat');
 Auth::routes();
 Route::group(['middleware' => ['auth:web']], function(){

@@ -1,21 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-<a id="a" href="https://salto.tokodagingdepok.com/storage/images/document/temp/surat-izin-sakit-edika-jeremia-t-191120105736.pdf" download="FileName">Download it!</a>
-<script>
-function myFunction() {
-  document.getElementById("a").click(function () {
-      
-  });
-  self.close();
-}
-myFunction();
-</script>
+<html>
+<body style="background-color: rgb(38, 38, 38); height: 100%; width: 100%; overflow: hidden; margin: 0px;">
+<embed width="100%" height="100%" name="plugin" id="plugin" src="https://salto.tokodagingdepok.com/cetaksurat/LwsCNe" type="application/pdf">
 </body>
 </html>
