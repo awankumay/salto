@@ -60,7 +60,7 @@ class CetakSuratController extends Controller
                         return $pdf->stream();
                     }
                 }else if($params->cetak=='hukdis'){
-                    $getData    = $this->hukdisdetail($request);
+/*                     $getData    = $this->hukdisdetail($request);
                     $data       = array(
                                     'name'=>$getData['nama_taruna'],
                                     'category_name'=>'DATA HUKUMAN DISIPILIN',
@@ -75,7 +75,7 @@ class CetakSuratController extends Controller
                         $pdf = app()->make('dompdf.wrapper');
                         $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
                         return $pdf->stream();
-                    }
+                    } */
                 }
             }
         }
