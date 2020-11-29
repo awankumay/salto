@@ -3,6 +3,11 @@
 <embed width="100%" height="100%" name="plugin" id="plugin" src="https://salto.tokodagingdepok.com/cetaksurat/LwsCNe" type="application/pdf">
 </body>
 </html> -->
-<div id="example1"></div>
+<div id="example1">download...</div>
 <script src="{{URL::asset('js/pdfobject.js')}}"></script>
-<script>PDFObject.embed("https://salto.tokodagingdepok.com/cetaksurat/LwsCNe", "#example1");</script>
+<script>
+setTimeout(() => {
+  
+  PDFObject.embed("https://salto.tokodagingdepok.com/cetaksurat/LwsCNe", "#example1");
+}, 3000);
+</script>
