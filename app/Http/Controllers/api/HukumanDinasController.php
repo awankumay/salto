@@ -197,6 +197,7 @@ class HukumanDinasController extends BaseController
                 'id'=>$value->id,
                 'name'=>$value->name,
                 'tingkat'=>$tingkat,
+                'created_at_bi'=>date('d-m-Y H:i', strtotime($value->updated_at)),
                 'status_name'=> $status,
                 'status'=> $value->status,
                 'hukuman'=> substr($value->hukuman, 0, 40).'...',
@@ -300,7 +301,7 @@ class HukumanDinasController extends BaseController
             'user_approve_1'=>$getSurat->user_approve_1,
             'date_approve_1'=>$getSurat->date_approve_1,
             'status_level_1'=>$getSurat->status_level_1,
-            'reason_level_1'=>$getSurat->reason_level_1,
+            'reason_level_1'=>$getSurat->user_reason_1,
             'show_persetujuan'=>false,
             'download'=>'-'
         );

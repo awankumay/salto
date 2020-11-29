@@ -310,7 +310,7 @@ class PrestasiController extends BaseController
             'user_approve_1'=>$getSurat->user_approve_1,
             'date_approve_1'=>$getSurat->date_approve_1,
             'status_level_1'=>$getSurat->status_level_1,
-            'reason_level_1'=>$getSurat->reason_level_1,
+            'reason_level_1'=>$getSurat->user_reason_1,
             'show_disposisi'=>false,
             'show_approve'=>false,
             'download'=>false
@@ -344,7 +344,7 @@ class PrestasiController extends BaseController
             }
         }
         if(($roleName=='Akademik dan Ketarunaan' || $roleName=='Super Admin') && $getSurat->status!=1 && $getSurat->status_disposisi==1){
-            $data['show_persetujuan'] = true;
+            $data['show_approve'] = true;
         }
         if($getSurat['status']==1){
             $data['download'] = \URL::to('/').'/api/cetakprestasi/id/'.$request->id.'/id_user/'.$request->id_user;

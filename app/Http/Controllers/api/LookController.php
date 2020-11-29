@@ -640,9 +640,12 @@ class LookController extends BaseController
 
     public function getjurnaldetail(Request $request)
     {
+        #bugs
         $data = [];
         $date = $request->date;
         $id_user =$request->id_user;
+        $getUser = User::find($request->id_user);
+        $roleName = $getUser->getRoleNames()[0];
         $jurnal = JurnalTaruna::join('users', 'users.id', '=', 'jurnal_taruna.id_user')
                     ->join('grade_table', 'grade_table.id', '=', 'jurnal_taruna.grade')
                     ->whereRaw('jurnal_taruna.tanggal = ?', $date)
@@ -666,7 +669,7 @@ class LookController extends BaseController
                 'permission'=>[]
             );
             $data['jurnal'][$key]['permission']=[];
-            if($value->status==0 && $value->kegiatan!='Clock In / Apel Pagi'){
+            if($value->status==0 && $value->kegiatan!='Clock In / Apel Pagi' && $roleName=='Taruna'){
                 $data['jurnal'][$key]['permission']=['edit', 'delete'];
             }
         }
@@ -677,13 +680,16 @@ class LookController extends BaseController
 
     public function getjurnaldetailbyid(Request $request)
     {
-        $date = $request->date;
-        $id   = $request->id;
-        $id_user =$request->id_user;
-        $data = [] ;
-        $jurnal = JurnalTaruna::whereRaw('tanggal = ?', $date)
+        #bugs
+        $date       = $request->date;
+        $id         = $request->id;
+        $id_user    = $request->id_user;
+        $data       = [] ;
+
+        $getUser    = User::find($request->id_user);
+        $roleName   = $getUser->getRoleNames()[0];
+        $jurnal     = JurnalTaruna::whereRaw('tanggal = ?', $date)
                     ->where('jurnal_taruna.id', $id)
-                    ->where('jurnal_taruna.id_user', $id_user)
                     ->first();
         $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
         $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
@@ -691,9 +697,9 @@ class LookController extends BaseController
         if(!empty($grade)){
             $jurnal->grade_name = $grade->grade;
         }
-        $data['permission']=[];
-        if($jurnal->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi'){
-            $data['permission']=['edit', 'delete'];
+        $jurnal->permission=[];
+        if($jurnal->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi' && $roleName=='Taruna'){
+            $jurnal->permission=['edit', 'delete'];
         }
         return $this->sendResponse($jurnal, 'jurnal load successfully.');
     }
@@ -1276,6 +1282,7 @@ class LookController extends BaseController
                 }
                 break;
             case 8:
+            #bugs
                 $getSuratDetail = KegiatanDalam::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
@@ -1294,6 +1301,7 @@ class LookController extends BaseController
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
                         'user_reason_1' => $getSurat->user_reason_1,
+                        'status_level_1' => $getSurat->status_level_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
                         'status_disposisi'=>$status_disposisi,
@@ -1338,8 +1346,9 @@ class LookController extends BaseController
                 $getSuratDetail = [];
                 break;
         }
+        #bugs
         if(strtotime(date_format(date_create($getSurat->end), 'Y-m-d')) > strtotime(date_format(date_create($getSurat->start), 'Y-m-d'))){
-            if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
+            //if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
                 $data['user_approve_2']=$getSurat->user_approve_2;
                 $data['date_approve_2']=$getSurat->date_approve_2;
                 $data['status_level_2']=$getSurat->status_level_2;
@@ -1348,7 +1357,7 @@ class LookController extends BaseController
                 if(($roleName=='Direktur' || $roleName=='Super Admin') && $getSurat->status!=1 && $data['status_level_1']==1){
                     $data['show_persetujuan'] = true;
                 }
-            }
+            //}
         }
         if($roleName=='Pembina' && $data['status_level_1']!=1 && $getSurat->status!=1){
             $data['show_disposisi'] = true;
@@ -1937,6 +1946,7 @@ class LookController extends BaseController
 
     public function approvesuratizin(Request $request)
     {
+        #categorytugas
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'status' => 'required',

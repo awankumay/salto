@@ -156,7 +156,7 @@ class PengaduanController extends BaseController
             'follow_up'=>false
         );
         $data['permission']=[];
-        if($roleName=='Admin' || $roleName=='Super Admin') {
+        if(($roleName=='Admin' || $roleName=='Super Admin') && $getSurat->status!=1) {
             $data['follow_up']=true;
         }
 
