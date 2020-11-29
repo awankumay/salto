@@ -80,7 +80,7 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('getberita/id_category/{id_category}', 'api\LookController@getberita')->name('getberita');
     Route::get('getberitadetail/id/{id}', 'api\LookController@getberitadetail')->name('getberitadetail');
 
-    Route::get('getjurnal/tanggal/{date}/id_user/{id_user}', 'api\LookController@getjurnaldetail')->name('getjurnal');
+    Route::get('getjurnal/tanggal/{date}/id_user/{id_user}/id_login/{id_login}', 'api\LookController@getjurnaldetail')->name('getjurnal');
     Route::get('getjurnal/tanggal/{date}/id/{id}/id_user/{id_user}', 'api\LookController@getjurnaldetailbyid')->name('getjurnal');
     Route::get('getabsen/id_user/{id_user}', 'api\LookController@getabsen')->name('getabsen');
     Route::post('clockin', 'api\LookController@clockin')->name('clockin');

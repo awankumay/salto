@@ -644,7 +644,7 @@ class LookController extends BaseController
         $data = [];
         $date = $request->date;
         $id_user =$request->id_user;
-        $getUser = User::find($request->id_user);
+        $getUser = User::find($request->id_login);
         $roleName = $getUser->getRoleNames()[0];
         $jurnal = JurnalTaruna::join('users', 'users.id', '=', 'jurnal_taruna.id_user')
                     ->join('grade_table', 'grade_table.id', '=', 'jurnal_taruna.grade')
