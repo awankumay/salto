@@ -272,7 +272,7 @@ class SuratIzin extends Authenticatable
         if(!empty($request)){
             $table = DB::table('tmp_report')->where('id_user', $request['id_user'])->first();
             if(!empty($table)){
-                DB::delete('delete tmp_report where id_user = ?', [$request->id_user]);
+                DB::delete('delete tmp_report where id_user = ?', [$request['id_user']]);
             }
             if(!empty($request['cetak'])){
                 $hash           = Str::random(6);
