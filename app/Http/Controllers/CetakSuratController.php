@@ -58,19 +58,29 @@ class CetakSuratController extends Controller
                         $pdf = app()->make('dompdf.wrapper');
                         $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
                         return $pdf->stream();
-                        /* $content = $pdf->download()->getOriginalContent();
-                        $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('dmyhis')).".pdf";
-                        Storage::put('public/'.config('app.documentImagePath').'/temp/'.$name, $content) ;
-                       
-                        //\Storage::put(config('app.documentImagePath').$name, $pdf->output());
-                        //$data->storeAs('public/'.config('app.documentImagePath'), $file_name);
-                        $link =  \URL::to('/').'/storage/'.config('app.documentImagePath').'/temp/'.$name;
-                        // */
+                    }
+                }else if($params->cetak=='hukdis'){
+                    $getData    = $this->hukdisdetail($request);
+                    $data       = array(
+                                    'name'=>$getData['nama_taruna'],
+                                    'category_name'=>'DATA HUKUMAN DISIPILIN',
+                                    'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
+                                    'user_approve_1' =>$getData['user_approve_1'],
+                                    'date_approve_1' =>$getData['date_approve_1'],
+                                    'header'=>['No', 'Nama', 'No.STB', 'Keterangan', 'Tingkat', 'Hukuman', 'Waktu', 'TGL Pengajuan'],
+                                    'body'=>['1', $getData['nama_taruna'], $getData['stb'], $getData['keterangan'], $getData['tingkat_name'], $getData['hukuman'], $getData['start_time_bi'].' sd '.$getData['end_time_bi'], $getData['created_at_bi']],
+                                    'template'=>1
+                                );
+                    if(!empty($getData)){
+                        $pdf = app()->make('dompdf.wrapper');
+                        $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
+                        return $pdf->stream();
                     }
                 }
             }
         }
     }
+
 
 
     public function datasuratizin($request)

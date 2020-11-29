@@ -524,14 +524,6 @@ class HukumanDinasController extends BaseController
         if(!empty($getData)){
             $pdf = app()->make('dompdf.wrapper');
             $pdf->loadView('cetaksurat', compact('data'))->setPaper('a4', 'portrait');
-            /* $content = $pdf->download()->getOriginalContent();
-            $name = \Str::slug($data['category_name'].'-'.$data['name'].'-'.date('dmyhis')).".pdf";
-            Storage::put('public/'.config('app.documentImagePath').'/temp/'.$name, $content) ;
-           
-            //\Storage::put(config('app.documentImagePath').$name, $pdf->output());
-            //$data->storeAs('public/'.config('app.documentImagePath'), $file_name);
-            $link =  \URL::to('/').'/storage/'.config('app.documentImagePath').'/temp/'.$name;
-            $res['link'] = $link; */
             return $pdf->stream();
         }
            return $this->sendResponse($res, 'link surat generate failure');
