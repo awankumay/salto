@@ -197,7 +197,7 @@ class HukumanDinasController extends BaseController
                 'id'=>$value->id,
                 'name'=>$value->name,
                 'tingkat'=>$tingkat,
-                'created_at_bi'=>date('d-m-Y H:i', strtotime($value->updated_at)),
+                'created_at_bi'=>date('d-m-Y H:i', strtotime($value->tanggal)),
                 'status_name'=> $status,
                 'status'=> $value->status,
                 'hukuman'=> substr($value->hukuman, 0, 40).'...',
@@ -497,7 +497,7 @@ class HukumanDinasController extends BaseController
     {
         return HukumanDinas::join('users', 'users.id', '=', 'tb_hukdis.id_taruna')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_hukdis.created_at))as tanggal"),'users.name', 'tb_hukdis.status', 'tb_hukdis.hukuman', 'tb_hukdis.id as id')
+            ->select(DB::raw("(DATE(tb_hukdis.updated_at))as tanggal"),'users.name', 'tb_hukdis.status', 'tb_hukdis.hukuman', 'tb_hukdis.id as id')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
