@@ -3,5 +3,6 @@
 <embed width="100%" height="100%" name="plugin" id="plugin" src="https://salto.tokodagingdepok.com/cetaksurat/LwsCNe" type="application/pdf">
 </body>
 </html> -->
-<script src="/js/pdfobject.js"></script>
+<div id="example1"></div>
+<script src="{{URL::asset('js/pdfobject.js')}}"></script>
 <script>PDFObject.embed("https://salto.tokodagingdepok.com/cetaksurat/LwsCNe", "#example1");</script>
