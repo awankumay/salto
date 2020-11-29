@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'api\LookController@cetaksurat')->name('cetaksurat');
 Route::post('login', 'api\LoginController@login');
 Route::group(['middleware' => ['CheckUser:api']], function(){
     /* Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile');
@@ -97,7 +98,7 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('deletesuratizin', 'api\LookController@deletesuratizin')->name('deletesuratizin');
     Route::post('disposisisuratizin', 'api\LookController@disposisisuratizin')->name('disposisisuratizin');
     Route::post('approvesuratizin', 'api\LookController@approvesuratizin')->name('approvesuratizin');
-    Route::get('cetaksuratizin/id/{id}/id_user/{id_user}', 'api\LookController@cetaksurat')->name('cetaksuratizin');
+
     Route::get('triggercetak', 'api\LookController@triggercetak')->name('triggercetak');
 
     Route::post('getprestasi', 'api\PrestasiController@getprestasi')->name('getprestasi');

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Str;
 use DB;
 use Auth;
 use OrangTua;
@@ -264,5 +265,22 @@ class SuratIzin extends Authenticatable
                             ->count();
         }
         return $data;
+    }
+
+    public static function tmpreport($request)
+    {
+
+        if(!empty($request)){
+            $table = DB::table('tmp_report')->where('id_user', $request['id_user'])->first();
+            if(!empty($table)){
+                $table->delete();
+            }
+            if(!empty($request['cetak'])){
+                $hash           = Str::random(6);
+                DB::insert('insert into tmp_report (hash, id_user, params) values (?, ?, ?)', [$hash, $request['id_user'], json_encode($request)]);
+                return \URL::to('/').'/cetaksurat/'.$hash;
+
+            }
+        }
     }
 }

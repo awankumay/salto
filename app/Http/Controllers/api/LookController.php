@@ -1373,7 +1373,7 @@ class LookController extends BaseController
         }
         $data['download'] = false;
         if($getSurat['status']==1 && ($roleName=='Orang Tua' || $roleName=='Taruna')){
-            $data['download'] = \URL::to('/').'/api/cetaksuratizin/id/'.$request->id.'/id_user/'.$request->id_user;
+            $data['download'] = \URL::to('/').'/api/cetaksurat/id/'.$request->id.'/id_user/'.$request->id_user.'/cetak/perizinan';
         }
         $data['start'] = date('Y-m-d H:i', strtotime($getSurat->start));
         $data['end'] = date('Y-m-d H:i', strtotime($getSurat->end));
@@ -2158,6 +2158,16 @@ class LookController extends BaseController
     }
 
     public function cetaksurat(Request $request){
+        $data   = ['id'=>$request->id, 'id_user'=>$request->id_user, 'cetak'=>$request->cetak];
+        $res    = [];
+        $data   = SuratIzin::tmpreport($data);
+        
+        $res['link'] = $data; 
+        $res['status'] = true;
+        return $this->sendResponse($res, 'link surat generate');
+    }
+/* 
+    public function cetaksurat(Request $request){
         $data   = [];
         $res    = [];
         $data   = $this->datasuratizin($request);
@@ -2171,13 +2181,15 @@ class LookController extends BaseController
             //\Storage::put(config('app.documentImagePath').$name, $pdf->output());
             //$data->storeAs('public/'.config('app.documentImagePath'), $file_name);
             $link =  \URL::to('/').'/storage/'.config('app.documentImagePath').'/temp/'.$name;
-            $res['link'] = $link; 
-            $res['status'] = true;
-            return $this->sendResponse($res, 'link surat generate');
             //return $pdf->stream();
         }
+
+        $res['link'] = $link; 
+        $res['status'] = true;
+        return $this->sendResponse($res, 'link surat generate');
+        
            return $this->sendResponse($res, 'link surat generate failure');
-    }
+    } */
 
     public function triggercetak(Request $request){
         return view('triggercetak');
