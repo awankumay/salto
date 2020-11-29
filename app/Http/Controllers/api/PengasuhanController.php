@@ -375,7 +375,7 @@ class PengasuhanController extends BaseController
     {
         return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
             ->whereRaw($condition)
-            ->select(DB::raw("(DATE(tb_pengasuhan_daring.created_at))as tanggal"),'users.name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.judul', 'tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*')
+            ->select(DB::raw("(DATE(tb_pengasuhan_daring.created_at))as tanggal"),'users.name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.judul as judul', 'tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*')
             ->limit($limit)
             ->orderBy($order,$dir)
             ->get();
