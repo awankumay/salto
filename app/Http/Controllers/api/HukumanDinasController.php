@@ -324,7 +324,7 @@ class HukumanDinasController extends BaseController
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetakhukdis/id/'.$request->id.'/id_user/'.$request->id_user;
+            $data['download'] = \URL::to('/').'/api/cetaksurat/id/'.$request->id.'/id_user/'.$request->id_user.'/cetak/hukdis';
         }
 
         return $this->sendResponse($data, 'prestasi load successfully.');

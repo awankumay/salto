@@ -385,7 +385,7 @@ class SuketController extends BaseController
         }
 
         if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetaksuket/id/'.$request->id.'/id_user/'.$request->id_user;
+            $data['download'] = \URL::to('/').'/api/cetaksurat/id/'.$request->id.'/id_user/'.$request->id_user.'/cetak/suket';;
         }
 
         return $this->sendResponse($data, 'suket load successfully.');
