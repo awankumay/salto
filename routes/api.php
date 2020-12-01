@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'api\LookController@cetaksurat')->name('cetaksurat');
+Route::post('clockin', 'api\LookController@clockin')->name('clockin');
+Route::post('clockout', 'api\LookController@clockout')->name('clockout');
 Route::post('login', 'api\LoginController@login');
 Route::group(['middleware' => ['CheckUser:api']], function(){
     /* Route::get('getprofile/{id}', 'api\LookController@getprofile')->name('getprofile');
@@ -85,8 +87,6 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::get('getjurnal/tanggal/{date}/id_user/{id_user}/id_login/{id_login}', 'api\LookController@getjurnaldetail')->name('getjurnal');
     Route::get('getjurnal/tanggal/{date}/id/{id}/id_user/{id_user}', 'api\LookController@getjurnaldetailbyid')->name('getjurnal');
     Route::get('getabsen/id_user/{id_user}', 'api\LookController@getabsen')->name('getabsen');
-    Route::post('clockin', 'api\LookController@clockin')->name('clockin');
-    Route::post('clockout', 'api\LookController@clockout')->name('clockout');
     Route::post('inputjurnal', 'api\LookController@inputjurnal')->name('inputjurnal');
     Route::post('deletejurnal', 'api\LookController@deletejurnal')->name('deleterjurnal');
     Route::get('gettaruna/id_user/{id_user}', 'api\LookController@gettaruna')->name('gettaruna');
