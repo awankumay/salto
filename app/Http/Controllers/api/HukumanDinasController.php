@@ -32,6 +32,12 @@ class HukumanDinasController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'tb_hukdis.id='.$lastId.'';
         $getUser = User::find($request->idUser);
+        $author = $getUSer;
+        $roleAuthor = $author->getRoleNames()[0];
+        if(!empty($search)){
+            $getUser = User::find($search);
+            $id_user = $getUser->id;
+        }
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
         $data=[];
@@ -178,6 +184,11 @@ class HukumanDinasController extends BaseController
             if(($roleName=='Pembina') && $value->status!=1){
                 $dataPermission = ['edit', 'delete'];
             }
+            if(!empty($search)){
+                if($roleAuthor=='Pembina' && $value->status!=1){
+                    $dataPermission = ['edit', 'delete'];
+                }
+            }
             switch ($value->tingkat) {
                 case 1:
                     $tingkat = 'Ringan';
@@ -208,6 +219,11 @@ class HukumanDinasController extends BaseController
         $result['info']['permissionCreate'] = false;
         if($roleName=='Pembina'){
             $result['info']['permissionCreate'] = true;
+        }
+        if(!empty($search)){
+            if($roleAuthor=='Pembina'){
+                $result['info']['permissionCreate'] = true;
+            }
         }
 
         if($count > $limit){

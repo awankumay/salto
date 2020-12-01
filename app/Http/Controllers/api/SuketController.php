@@ -32,6 +32,10 @@ class SuketController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'tb_suket.id='.$lastId.'';
         $getUser = User::find($request->idUser);
+        if(!empty($search)){
+            $getUser = User::find($search);
+            $id_user = $getUser->id;
+        }
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
         $data=[];
@@ -233,7 +237,7 @@ class SuketController extends BaseController
 
             $dataPermission = [];
             if($roleName=='Taruna' || $roleName=='Orang Tua'){
-                if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1 && $value->status!=1){
+                if(($roleName=='Taruna' || $roleName=='Orang Tua') && $value->status_disposisi!=1 && $value->status!=1 && empty($search)){
                     if($value->user_created==$id_user){
                         $dataPermission = ['edit', 'delete'];
                     }

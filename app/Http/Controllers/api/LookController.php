@@ -453,6 +453,10 @@ class LookController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'jurnal_taruna.tanggal='.$lastDate.'';
         $getUser = User::find($request->idUser);
+        if(!empty($search)){
+            $getUser = User::find($search);
+            $id_user = $getUser->id;
+        }
         $roleName = $getUser->getRoleNames()[0];
         $result = [];
         $data=[];
@@ -618,7 +622,7 @@ class LookController extends BaseController
         }
         
         $result['info']['permissionCreate'] = false;
-        if($roleName=='Taruna'){
+        if($roleName=='Taruna' && empty($search)){
             $result['info']['permissionCreate'] = true;
         }
 
@@ -738,6 +742,10 @@ class LookController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'surat_header.id='.$lastId.'';
         $getUser = User::find($request->idUser);
+        if(!empty($search)){
+            $getUser = User::find($search);
+            $id_user = $getUser->id;
+        }
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
         $data = [];
@@ -948,7 +956,7 @@ class LookController extends BaseController
             }
             $dataPermission = [];
             if(in_array($value->id_category, $getCategoryId)==true && $value->status_disposisi!=1 && $value->status!=1){
-                if($value->user_created==$id_user){
+                if($value->user_created==$id_user && empty($search)){
                     $dataPermission = ['edit', 'delete'];
                 }
             }

@@ -31,6 +31,10 @@ class PrestasiController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'tb_penghargaan.id='.$lastId.'';
         $getUser = User::find($request->idUser);
+        if(!empty($search)){
+            $getUser = User::find($search);
+            $id_user = $getUser->id;
+        }
         $roleName = $getUser->getRoleNames()[0];
         $result =[];
         $data=[];
@@ -216,7 +220,7 @@ class PrestasiController extends BaseController
                 $download = '-';
             }
             $dataPermission = [];
-            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status_disposisi!=1){
+            if(($roleName=='Taruna' || $roleName=='Super Admin' ) && $value->status_disposisi!=1 && empty($search)){
                 $dataPermission = ['edit', 'delete'];
             }
 
