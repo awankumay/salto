@@ -32,7 +32,7 @@ class HukumanDinasController extends BaseController
         $diff   = ($dir=='DESC') ? '<' : '>';
         $condition = 'tb_hukdis.id='.$lastId.'';
         $getUser = User::find($request->idUser);
-        $author = $getUSer;
+        $author = $getUser;
         $roleAuthor = $author->getRoleNames()[0];
         if(!empty($search)){
             $getUser = User::find($search);
