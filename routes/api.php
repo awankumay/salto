@@ -75,6 +75,7 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::get('/ok', 'api\LookController@test')->name('ok');
     Route::get('getprofile/{id_user}', 'api\LookController@getprofile')->name('getprofile');
     Route::post('setprofile', 'api\LookController@setprofile')->name('setprofile');
+    Route::post('setfcm', 'api\LookController@settoken')->name('setfcm');
    
     Route::post('getdata', 'api\LookController@getdata')->name('getdata');
     Route::get('getslider', 'api\LookController@getslider')->name('getslider');

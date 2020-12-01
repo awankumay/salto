@@ -81,6 +81,7 @@ class UserController extends Controller
         $regencies = Regencies::where('province_id', $user->province_id)->pluck('name','id')->all();
         $getOrangTua = OrangTua::where('taruna_id', $user->id)->first();
         $selectOrangTua = !empty($getOrangTua->orangtua_id) ? $getOrangTua->orangtua_id : '';
+        //@dd($getOrangTua);
         $selectGrade = !empty($user->grade) ? $user->grade : '';
         $selectProvince = !empty($user->province_id) ? $user->province_id : '';
         $selectRegencie = !empty($user->regencie_id) ? $user->regencie_id : '';
@@ -191,6 +192,7 @@ class UserController extends Controller
                 'grade'=>'required',
                 'orangtua'=>'required'
             ]);
+            $orangtua = $request->input('orangtua');
         }else{
             $this->validate($request, [
                 'name' => 'required',
@@ -237,9 +239,17 @@ class UserController extends Controller
                 $user->assignRole($request->input('role'));
                 if($orangtua!=null){
                     $getOrangTua = OrangTua::where('taruna_id', $id)->first();
-                    $getOrangTua->orangtua_id=$orangtua;
-                    $getOrangTua->user_updated=Auth::user()->id;
-                    $getOrangTua->save();
+                    if(!empty($getOrangTua)){
+                        $getOrangTua->orangtua_id=$orangtua;
+                        $getOrangTua->user_updated=Auth::user()->id;
+                        $getOrangTua->save();
+                    }else{
+                        $getOrangTua = New OrangTua();
+                        $getOrangTua->orangtua_id=$orangtua;
+                        $getOrangTua->taruna_id=$id;
+                        $getOrangTua->user_updated=Auth::user()->id;
+                        $getOrangTua->save();
+                    }
                 }
             DB::commit();
 

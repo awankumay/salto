@@ -1605,34 +1605,29 @@ class LookController extends BaseController
                 }
             DB::commit();
             $firebase = [];
-            $keluarga = TarunaKeluargaAsuh::join('keluarga_asuh', 'keluarga_asuh.id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
-                        ->where('taruna_keluarga_asuh.taruna_id', $getUser->id)
-                        ->first();
+            $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
-            if(!empty($keluarga_asuh) && $keluarga_asuh!=null){
-                $topic = Str::slug('pembina-'.$keluarga_asuh, '-');
-                $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
-                        'body'=>Str::words('Hi, Pembina ada perizinan baru'),
-                        'page'=>'/riwayat-izin-detail/id/'.$id.'/id_user/'.$getUser->id,
-                        'token'=>$topic];
-                try {
-                    $firebase = $this->pushNotif($data);
-                    $status_firebase = true;
-                } catch (\Throwable $th) {
-                    $status_firebase = false;
-                }
-                if($status_firebase==true){
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
+                    'body'=>Str::words('perizinan baru telah dibuat'),
+                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'token'=>$topic[$i]];
                     try {
-                        $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
-                        'body'=>Str::words('Hi, ada perizinan baru'),
-                        'page'=>'/riwayat-izin-detail/id/'.$id.'/id_user/'.$getUser->id,
-                        'token'=>$topic];
                         $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
                     } catch (\Throwable $th) {
-                        //throw $th;
+                        $status_firebase = false;
                     }
+                    sleep(1);
                 }
             }
+            
             $data['status'] = true;
             $data['firebase'] = $firebase;
             return $this->sendResponse($data, 'surat izin create successfully.');
@@ -1949,6 +1944,30 @@ class LookController extends BaseController
         $suratIzin->status_disposisi=$request->status;
         $suratIzin->save();
         $data['status'] = true;
+
+        $keluarga       = User::keluargataruna($suratIzin->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $data=['title'=>Str::words('Pemberitahuan disposisi perizinan baru'),
+                'body'=>Str::words('perizinan baru telah diposisi'),
+                'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($data);
+                    $status_firebase = true;
+                } catch (\Throwable $th) {
+                    $status_firebase = false;
+                }
+                sleep(1);
+            }
+        }
+
         return $this->sendResponse($data, 'disposisi surat izin success');
     }
 
@@ -1973,8 +1992,50 @@ class LookController extends BaseController
             $suratIzin->date_approve_level_1=date('Y-m-d H:i:s');
             $suratIzin->status_level_1=$request->status;
             $suratIzin->reason_level_1=$request->reason;
+
+            $keluarga       = User::keluargataruna($suratIzin->id_user);
+            $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            $dataFirebase   = [];
+            $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic          = User::topic('approve-aak', $dataFirebase);
+
             if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
                 $suratIzin->status=$request->status;
+                $suratIzin->save();
+                if(!empty($topic)){
+                    set_time_limit(60);
+                    for ($i=0; $i < count($topic); $i++) { 
+                        $data=['title'=>Str::words('Pemberitahuan persetujuan perizinan baru'),
+                        'body'=>Str::words('perizinan baru telah disetuji'),
+                        'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                        'token'=>$topic[$i]];
+                        try {
+                            $firebase = $this->pushNotif($data);
+                            $status_firebase = true;
+                        } catch (\Throwable $th) {
+                            $status_firebase = false;
+                        }
+                        sleep(1);
+                    }
+                }
+            }else{
+                if(!empty($topic)){
+                    set_time_limit(60);
+                    for ($i=0; $i < count($topic); $i++) { 
+                        $data=['title'=>Str::words('Pemberitahuan persetujuan perizinan baru'),
+                        'body'=>Str::words('perizinan baru telah disetuji oleh aak'),
+                        'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                        'token'=>$topic[$i]];
+                        try {
+                            $firebase = $this->pushNotif($data);
+                            $status_firebase = true;
+                        } catch (\Throwable $th) {
+                            $status_firebase = false;
+                        }
+                        sleep(1);
+                    }
+                }
+
             }
             $suratIzin->save();
         }
