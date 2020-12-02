@@ -245,10 +245,10 @@ class User extends Authenticatable
 
     public static function topic($category, $data)
     {
-        $data = [];
+        
         switch ($category) {
             case 'createsurat':
-                $data = ['pembina-'.strtolower($data['keluarga_asuh']), 'waliasuh-'.strtolower($data['keluarga_asuh'])];
+                $data = ['pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
             case 'disposisisurat':
@@ -257,24 +257,24 @@ class User extends Authenticatable
                 break;
             case 'approve-aak':
                 $data = ['taruna-'.$data['id'], 
-                        'pembina-'.strtolower($data['keluarga_asuh']), 
-                        'waliasuh-'.strtolower($data['keluarga_asuh'])];
+                        'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
             case 'approve-direktur':
                 $data = ['taruna-'.$data['id'], 
-                        'pembina-'.strtolower($data['keluarga_asuh']), 
-                        'waliasuh-'.strtolower($data['keluarga_asuh'])];
+                        'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
             case 'createhukdis':
                 $data = ['taruna-'.$data['id'],
-                        'waliasuh-'.strtolower($data['keluarga_asuh']),
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-')),
                         'akademik-dan-ketarunaan'];  
                 return $data;
             case 'createpengasuhan':
-                $data = ['taruna-'.strtolower($data['keluarga_asuh']),
-                        'pembina-'.strtolower($data['keluarga_asuh'])]; 
+                $data = ['taruna-'.strtolower(Str::slug($data['keluarga_asuh'], '-')),
+                        'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))]; 
                 return $data; 
             case 'wbs':
                 $data = ['admin']; 
@@ -282,6 +282,7 @@ class User extends Authenticatable
                 $data = ['admin']; 
                 return $data;         
             default:
+                $data = [];
                 return $data;
                 break;
         }

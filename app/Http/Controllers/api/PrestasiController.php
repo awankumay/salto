@@ -14,12 +14,14 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class PrestasiController extends BaseController
 {
     use ImageTrait;
+    use Firebase;
     
     public function getprestasi(Request $request){
         $limit  = 5;
@@ -377,7 +379,7 @@ class PrestasiController extends BaseController
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
-        $image='';
+        $image=false;
         $data['status'] = false;
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
@@ -418,10 +420,11 @@ class PrestasiController extends BaseController
             $data['firebase'] = false;
             $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
-            
+           
             $dataFirebase = [];
             $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
             $topic = User::topic('createsurat', $dataFirebase);
+           
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
@@ -431,7 +434,7 @@ class PrestasiController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -440,6 +443,7 @@ class PrestasiController extends BaseController
             }
             return $this->sendResponse($data, 'prestasi create successfully.');
         } catch (\Throwable $th) {
+            @dd($th->getMessage());
             DB::rollBack();
             if($image!=false){
                 $this->DeleteImage($image, config('app.documentImagePath').'/prestasi/');
@@ -465,7 +469,7 @@ class PrestasiController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $image='';
+        $image=false;
 
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
@@ -501,6 +505,7 @@ class PrestasiController extends BaseController
             
             $dataFirebase = [];
             $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            
             $topic = User::topic('createsurat', $dataFirebase);
             if(!empty($topic)){
                 set_time_limit(60);
@@ -511,7 +516,7 @@ class PrestasiController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -637,7 +642,7 @@ class PrestasiController extends BaseController
                 'token'=>$topic[$i]];
                 try {
                     $firebase = $this->pushNotif($paramsFirebase);
-                    $data['firebase'] = $firebase;
+                    $data['firebase'][$i] = $firebase;
                 } catch (\Throwable $th) {
                     $data['firebase'] = $th->getMessage();
                 }
@@ -688,7 +693,7 @@ class PrestasiController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }

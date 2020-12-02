@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class SuketController extends BaseController
 {
     use ImageTrait;
+    use Firebase;
     
     public function getsuket(Request $request){
         $limit  = 5;
@@ -420,7 +422,7 @@ class SuketController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $image = '';
+        $image = false;
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
@@ -479,7 +481,7 @@ class SuketController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -515,7 +517,7 @@ class SuketController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $image = '';
+        $image = false;
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/suket/');
             if($image==false){
@@ -571,7 +573,7 @@ class SuketController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -699,7 +701,7 @@ class SuketController extends BaseController
                 'token'=>$topic[$i]];
                 try {
                     $firebase = $this->pushNotif($paramsFirebase);
-                    $data['firebase'] = $firebase;
+                    $data['firebase'][$i] = $firebase;
                 } catch (\Throwable $th) {
                     $data['firebase'] = $th->getMessage();
                 }
@@ -750,7 +752,7 @@ class SuketController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -779,7 +781,7 @@ class SuketController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }

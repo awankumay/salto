@@ -109,7 +109,7 @@ class LookController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }  
-        $image='';
+        $image=false;
         if($request->file){
             $image = $this->UploadImage($request->file, config('app.userImagePath'));
             if($image==false){
@@ -1438,7 +1438,7 @@ class LookController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $image='';
+        $image=false;
 
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
@@ -1633,7 +1633,7 @@ class LookController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -1675,7 +1675,7 @@ class LookController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
-        $image='';
+        $image=false;
         if(!empty($request->file)){
             $image = $this->UploadImage($request->file, config('app.documentImagePath'));
             if($image==false){
@@ -1879,7 +1879,7 @@ class LookController extends BaseController
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
-                        $data['firebase'] = $firebase;
+                        $data['firebase'][$i] = $firebase;
                     } catch (\Throwable $th) {
                         $data['firebase'] = $th->getMessage();
                     }
@@ -1999,7 +1999,7 @@ class LookController extends BaseController
                 'token'=>$topic[$i]];
                 try {
                     $firebase = $this->pushNotif($paramsFirebase);
-                    $data['firebase'] = $firebase;
+                    $data['firebase'][$i] = $firebase;
                 } catch (\Throwable $th) {
                     $data['firebase'] = $th->getMessage();
                 }
@@ -2051,7 +2051,7 @@ class LookController extends BaseController
                         'token'=>$topic[$i]];
                         try {
                             $firebase = $this->pushNotif($paramsFirebase);
-                            $data['firebase'] = $firebase;
+                            $data['firebase'][$i] = $firebase;
                         } catch (\Throwable $th) {
                             $data['firebase'] = $th->getMessage();
                         }
@@ -2069,7 +2069,7 @@ class LookController extends BaseController
                         'token'=>$topic[$i]];
                         try {
                             $firebase = $this->pushNotif($paramsFirebase);
-                            $data['firebase'] = $firebase;
+                            $data['firebase'][$i] = $firebase;
                         } catch (\Throwable $th) {
                             $data['firebase'] = $th->getMessage();
                         }
@@ -2100,7 +2100,7 @@ class LookController extends BaseController
                             'token'=>$topic[$i]];
                             try {
                                 $firebase = $this->pushNotif($paramsFirebase);
-                                $data['firebase'] = $firebase;
+                                $data['firebase'][$i] = $firebase;
                             } catch (\Throwable $th) {
                                 $data['firebase'] = $th->getMessage();
                             }

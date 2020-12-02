@@ -46,7 +46,7 @@ trait Firebase
                 'image'=>!empty($data['image']) ? $data['image'] : null,
                 'page'=>$data['page']
             ],
-            'to'=>$data['token']
+            'to'=>'/topics/'.$data['token']
         ];
         curl_setopt($ch, CURLOPT_URL, $this->url);
         curl_setopt($ch, CURLOPT_POST, 1);
