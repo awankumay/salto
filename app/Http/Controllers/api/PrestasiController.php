@@ -377,6 +377,7 @@ class PrestasiController extends BaseController
             'file' => 'nullable|mimes:jpeg,bmp,png,jpg|max:2048'
         ]);
         $data=[];
+        $image='';
         $data['status'] = false;
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
@@ -464,6 +465,7 @@ class PrestasiController extends BaseController
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
+        $image='';
 
         if($request->file!==null){
             $image = $this->UploadImage($request->file, config('app.documentImagePath').'/prestasi/');
