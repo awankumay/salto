@@ -1614,8 +1614,8 @@ class LookController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>Str::words('Pemberitahuan perizinan baru'),
-                    'body'=>Str::words('perizinan baru telah dibuat'),
+                    $data=['title'=>'Pemberitahuan perizinan baru',
+                    'body'=>'perizinan baru telah dibuat',
                     'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
                     'token'=>$topic[$i]];
                     try {
@@ -1849,7 +1849,29 @@ class LookController extends BaseController
                     ];
                     $table->update($dataDetail);
                 }
-
+            $firebase = [];
+            $keluarga = User::keluargataruna($getUser->id);
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>'Pemberitahuan perizinan baru',
+                    'body'=>'perizinan baru telah dibuat',
+                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
+                    } catch (\Throwable $th) {
+                        $status_firebase = false;
+                    }
+                    sleep(1);
+                }
+            }
             DB::commit();
             $data['status'] = true;
             return $this->sendResponse($data, 'surat izin update successfully.');
@@ -1954,8 +1976,8 @@ class LookController extends BaseController
         if(!empty($topic)){
             set_time_limit(60);
             for ($i=0; $i < count($topic); $i++) { 
-                $data=['title'=>Str::words('Pemberitahuan disposisi perizinan baru'),
-                'body'=>Str::words('perizinan baru telah diposisi'),
+                $data=['title'=>'Pemberitahuan disposisi perizinan baru',
+                'body'=>'perizinan baru telah diposisi',
                 'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
                 'token'=>$topic[$i]];
                 try {
@@ -1997,16 +2019,16 @@ class LookController extends BaseController
             $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
             $dataFirebase   = [];
             $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
-            $topic          = User::topic('approve-aak', $dataFirebase);
 
             if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
                 $suratIzin->status=$request->status;
                 $suratIzin->save();
+                $topic  = User::topic('approve-direktur', $dataFirebase);
                 if(!empty($topic)){
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
-                        $data=['title'=>Str::words('Pemberitahuan persetujuan perizinan baru'),
-                        'body'=>Str::words('perizinan baru telah disetuji'),
+                        $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        'body'=>'perizinan baru telah disetuji direktur',
                         'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
                         'token'=>$topic[$i]];
                         try {
@@ -2019,11 +2041,12 @@ class LookController extends BaseController
                     }
                 }
             }else{
+                $topic  = User::topic('approve-aak', $dataFirebase);
                 if(!empty($topic)){
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
-                        $data=['title'=>Str::words('Pemberitahuan persetujuan perizinan baru'),
-                        'body'=>Str::words('perizinan baru telah disetuji oleh aak'),
+                        $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        'body'=>'perizinan baru telah disetuji oleh aak',
                         'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
                         'token'=>$topic[$i]];
                         try {
@@ -2048,6 +2071,23 @@ class LookController extends BaseController
             $suratIzin->save();
         }
         $data['status'] = true;
+        $topic  = User::topic('approve-direktur', $dataFirebase);
+                    if(!empty($topic)){
+                        set_time_limit(60);
+                        for ($i=0; $i < count($topic); $i++) { 
+                            $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                            'body'=>'perizinan baru telah disetuji direktur',
+                            'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                            'token'=>$topic[$i]];
+                            try {
+                                $firebase = $this->pushNotif($data);
+                                $status_firebase = true;
+                            } catch (\Throwable $th) {
+                                $status_firebase = false;
+                            }
+                            sleep(1);
+                        }
+                    }
         return $this->sendResponse($data, 'approve surat izin success');
     }
 

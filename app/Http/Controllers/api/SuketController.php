@@ -461,6 +461,28 @@ class SuketController extends BaseController
 
             DB::commit();
             $data['status'] = true;
+            $keluarga = User::keluargataruna($getUser->id);
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>Str::words('Pemberitahuan surat keterangan baru'),
+                    'body'=>Str::words('surat keterangan  baru telah dibuat'),
+                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
+                    } catch (\Throwable $th) {
+                        $status_firebase = false;
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'suket create successfully.');
         } catch (\Throwable $th) {
             @dd($th->getMessage());
@@ -530,6 +552,28 @@ class SuketController extends BaseController
             $suket->update($input);
             DB::commit();
             $data['status'] = true;
+            $keluarga = User::keluargataruna($getUser->id);
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>Str::words('Pemberitahuan surat keterangan baru'),
+                    'body'=>Str::words('surat keterangan  baru telah dibuat'),
+                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
+                    } catch (\Throwable $th) {
+                        $status_firebase = false;
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'suket updated successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -633,7 +677,30 @@ class SuketController extends BaseController
         $suket->reason_disposisi=$request->reason;
         $suket->status_disposisi=$request->status;
         $suket->save();
+        
         $data['status'] = true;
+        $keluarga       = User::keluargataruna($suket->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suket->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $data=['title'=>Str::words('Pemberitahuan disposisi surat keterangan baru'),
+                'body'=>Str::words('surat keterangan baru telah diposisi'),
+                'page'=>'/suket/detail/id/'.$id,
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($data);
+                    $status_firebase = true;
+                } catch (\Throwable $th) {
+                    $status_firebase = false;
+                }
+                sleep(1);
+            }
+        }
         return $this->sendResponse($data, 'disposisi suket success');
     }
 
@@ -652,6 +719,12 @@ class SuketController extends BaseController
                                 ->where('status', 0)
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
+
+        $keluarga       = User::keluargataruna($suket->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suket->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
             $suket->user_approve_level_1=$request->id_user;
             $suket->date_approve_level_1=date('Y-m-d H:i:s');
@@ -659,6 +732,25 @@ class SuketController extends BaseController
             $suket->reason_level_1=$request->reason;
             $suket->save();
             $data['status'] = true;
+
+            $topic  = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    'body'=>'surat keterangan baru telah disetuji oleh aak',
+                    'page'=>'/suket/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
+                    } catch (\Throwable $th) {
+                        $status_firebase = false;
+                    }
+                    sleep(1);
+                }
+            }
+
             return $this->sendResponse($data, 'approve suket success');
         }
 
@@ -670,7 +762,25 @@ class SuketController extends BaseController
             $suket->status=$request->status;
             $suket->save();
             $data['status'] = true;
+            $topic  = User::topic('approve-direktur', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $data=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    'body'=>'surat keterangan baru telah disetuji oleh direktur',
+                    'page'=>'/suket/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($data);
+                        $status_firebase = true;
+                    } catch (\Throwable $th) {
+                        $status_firebase = false;
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'approve suket success');
+            
         }
 
             $data['status'] = false;
