@@ -1604,6 +1604,7 @@ class LookController extends BaseController
                     KegiatanPesiar::create($dataDetail);
                 }
             DB::commit();
+            $data['firebase'] = false;
             $firebase = [];
             $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
@@ -1614,15 +1615,15 @@ class LookController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>'Pemberitahuan perizinan baru',
+                    $paramsFirebase=['title'=>'Pemberitahuan perizinan baru',
                     'body'=>'perizinan baru telah dibuat',
-                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'page'=>'/riwayat-izin/detail/id/'.$id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }
@@ -1849,6 +1850,7 @@ class LookController extends BaseController
                     ];
                     $table->update($dataDetail);
                 }
+            $data['firebase'] = false;
             $firebase = [];
             $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
@@ -1859,21 +1861,22 @@ class LookController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>'Pemberitahuan perizinan baru',
+                    $paramsFirebase=['title'=>'Pemberitahuan perizinan baru',
                     'body'=>'perizinan baru telah dibuat',
-                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    'page'=>'/riwayat-izin/detail/id/'.$request->id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }
             }
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = $firebase;
             return $this->sendResponse($data, 'surat izin update successfully.');
         } catch (\Throwable $th) {
             @dd($th->getMessage());
@@ -1965,7 +1968,9 @@ class LookController extends BaseController
         $suratIzin->reason_disposisi=$request->reason;
         $suratIzin->status_disposisi=$request->status;
         $suratIzin->save();
+
         $data['status'] = true;
+        $data['firebase'] = false;
 
         $keluarga       = User::keluargataruna($suratIzin->id_user);
         $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
@@ -1976,15 +1981,15 @@ class LookController extends BaseController
         if(!empty($topic)){
             set_time_limit(60);
             for ($i=0; $i < count($topic); $i++) { 
-                $data=['title'=>'Pemberitahuan disposisi perizinan baru',
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi perizinan baru',
                 'body'=>'perizinan baru telah diposisi',
-                'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                'page'=>'/riwayat-izin/detail/id/'.$request->id,
                 'token'=>$topic[$i]];
                 try {
-                    $firebase = $this->pushNotif($data);
-                    $status_firebase = true;
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'] = $firebase;
                 } catch (\Throwable $th) {
-                    $status_firebase = false;
+                    $data['firebase'] = $th->getMessage();
                 }
                 sleep(1);
             }
@@ -2002,6 +2007,7 @@ class LookController extends BaseController
             'id'=>'required'
         ]);
         $data['status']=false;
+        $data['firebase']=false;
         if ($validator->fails()) {
             return $this->sendResponseFalse($data, ['error'=>$validator->errors()]);                            
         }
@@ -2027,15 +2033,15 @@ class LookController extends BaseController
                 if(!empty($topic)){
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
-                        $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
-                        'body'=>'perizinan baru telah disetuji direktur',
-                        'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                        $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        'body'=>'perizinan baru telah disetuji aak',
+                        'page'=>'/riwayat-izin/detail/id/'.$request->id,
                         'token'=>$topic[$i]];
                         try {
-                            $firebase = $this->pushNotif($data);
-                            $status_firebase = true;
+                            $firebase = $this->pushNotif($paramsFirebase);
+                            $data['firebase'] = $firebase;
                         } catch (\Throwable $th) {
-                            $status_firebase = false;
+                            $data['firebase'] = $th->getMessage();
                         }
                         sleep(1);
                     }
@@ -2045,15 +2051,15 @@ class LookController extends BaseController
                 if(!empty($topic)){
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
-                        $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
                         'body'=>'perizinan baru telah disetuji oleh aak',
-                        'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                        'page'=>'/riwayat-izin/detail/id/'.$request->id,
                         'token'=>$topic[$i]];
                         try {
-                            $firebase = $this->pushNotif($data);
-                            $status_firebase = true;
+                            $firebase = $this->pushNotif($paramsFirebase);
+                            $data['firebase'] = $firebase;
                         } catch (\Throwable $th) {
-                            $status_firebase = false;
+                            $data['firebase'] = $th->getMessage();
                         }
                         sleep(1);
                     }
@@ -2071,19 +2077,20 @@ class LookController extends BaseController
             $suratIzin->save();
         }
         $data['status'] = true;
+        $data['firebase'] = false;
         $topic  = User::topic('approve-direktur', $dataFirebase);
                     if(!empty($topic)){
                         set_time_limit(60);
                         for ($i=0; $i < count($topic); $i++) { 
-                            $data=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                            $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
                             'body'=>'perizinan baru telah disetuji direktur',
-                            'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                            'page'=>'/riwayat-izin/detail/id/'.$request->id,
                             'token'=>$topic[$i]];
                             try {
-                                $firebase = $this->pushNotif($data);
-                                $status_firebase = true;
+                                $firebase = $this->pushNotif($paramsFirebase);
+                                $data['firebase'] = $firebase;
                             } catch (\Throwable $th) {
-                                $status_firebase = false;
+                                $data['firebase'] = $th->getMessage();
                             }
                             sleep(1);
                         }

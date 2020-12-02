@@ -459,8 +459,11 @@ class SuketController extends BaseController
                 $input['status']            = 0;
                 Suket::create($input);
 
+                $id = DB::table('tb_suket')->insertGetId($input);
+
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
             $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
             
@@ -470,15 +473,15 @@ class SuketController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>Str::words('Pemberitahuan surat keterangan baru'),
-                    'body'=>Str::words('surat keterangan  baru telah dibuat'),
-                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    $paramsFirebase=['title'=>'Pemberitahuan surat keterangan baru',
+                    'body'=>'surat keterangan  baru telah dibuat',
+                    'page'=>'/riwayat-izin/detail/id/'.$id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }
@@ -552,6 +555,7 @@ class SuketController extends BaseController
             $suket->update($input);
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
             $keluarga = User::keluargataruna($getUser->id);
             $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
             
@@ -561,15 +565,15 @@ class SuketController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>Str::words('Pemberitahuan surat keterangan baru'),
-                    'body'=>Str::words('surat keterangan  baru telah dibuat'),
-                    'page'=>'/riwayat-izin/detail/id/'.$id.'/id_user/',
+                    $paramsFirebase=['title'=>'Pemberitahuan surat keterangan baru',
+                    'body'=>'surat keterangan baru telah dibuat',
+                    'page'=>'/suket/detail/id/'.$id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }
@@ -679,6 +683,7 @@ class SuketController extends BaseController
         $suket->save();
         
         $data['status'] = true;
+        $data['firebase'] = false;
         $keluarga       = User::keluargataruna($suket->id_user);
         $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
         $dataFirebase   = [];
@@ -688,15 +693,15 @@ class SuketController extends BaseController
         if(!empty($topic)){
             set_time_limit(60);
             for ($i=0; $i < count($topic); $i++) { 
-                $data=['title'=>Str::words('Pemberitahuan disposisi surat keterangan baru'),
-                'body'=>Str::words('surat keterangan baru telah diposisi'),
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi surat keterangan baru',
+                'body'=>'surat keterangan baru telah diposisi',
                 'page'=>'/suket/detail/id/'.$id,
                 'token'=>$topic[$i]];
                 try {
-                    $firebase = $this->pushNotif($data);
-                    $status_firebase = true;
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'] = $firebase;
                 } catch (\Throwable $th) {
-                    $status_firebase = false;
+                    $data['firebase'] = $th->getMessage();
                 }
                 sleep(1);
             }
@@ -724,6 +729,8 @@ class SuketController extends BaseController
         $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
         $dataFirebase   = [];
         $dataFirebase   = ['id'=>$suket->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $data['firebase'] = false;
 
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
             $suket->user_approve_level_1=$request->id_user;
@@ -737,15 +744,15 @@ class SuketController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
                     'body'=>'surat keterangan baru telah disetuji oleh aak',
                     'page'=>'/suket/detail/id/'.$id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }
@@ -766,15 +773,15 @@ class SuketController extends BaseController
             if(!empty($topic)){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
-                    $data=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
                     'body'=>'surat keterangan baru telah disetuji oleh direktur',
                     'page'=>'/suket/detail/id/'.$id,
                     'token'=>$topic[$i]];
                     try {
-                        $firebase = $this->pushNotif($data);
-                        $status_firebase = true;
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
                     } catch (\Throwable $th) {
-                        $status_firebase = false;
+                        $data['firebase'] = $th->getMessage();
                     }
                     sleep(1);
                 }

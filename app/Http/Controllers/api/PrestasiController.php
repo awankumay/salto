@@ -410,10 +410,33 @@ class PrestasiController extends BaseController
                 $input['status_level_1']   = 0;
                 $input['status']   = 0;
                 $input['waktu'] = date('Y-m-d H:i:s', strtotime($request->waktu));
-                Prestasi::create($input);
+                $id = DB::table('tb_penghargaan')->insertGetId($input);
 
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
+            $keluarga = User::keluargataruna($getUser->id);
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan prestasi baru',
+                    'body'=>'prestasi baru telah dibuat',
+                    'page'=>'/prestasi/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'prestasi create successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -470,6 +493,29 @@ class PrestasiController extends BaseController
             $prestasi->update($input);
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
+            $keluarga = User::keluargataruna($getUser->id);
+            $keluarga_asuh = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic = User::topic('createsurat', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan prestasi baru',
+                    'body'=>'prestasi baru telah dibuat',
+                    'page'=>'/prestasi/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'prestasi updated successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -572,6 +618,31 @@ class PrestasiController extends BaseController
         $prestasi->status_disposisi=$request->status;
         $prestasi->save();
         $data['status'] = true;
+        $data['firebase'] = false;
+
+        $keluarga       = User::keluargataruna($prestasi->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$prestasi->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi prestasi baru',
+                'body'=>'prestasi baru telah diposisi',
+                'page'=>'/prestasi/detail/id/'.$request->id,
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'] = $firebase;
+                } catch (\Throwable $th) {
+                    $data['firebase'] = $th->getMessage();
+                }
+                sleep(1);
+            }
+        }
+
         return $this->sendResponse($data, 'disposisi prestasi success');
     }
 
@@ -598,6 +669,30 @@ class PrestasiController extends BaseController
             $prestasi->reason_level_1=$request->reason;
             $prestasi->save();
             $data['status'] = true;
+            $data['firebase'] = false;
+
+            $keluarga       = User::keluargataruna($prestasi->id_user);
+            $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            $dataFirebase   = [];
+            $dataFirebase   = ['id'=>$prestasi->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+            $firebase       = [];
+            $topic = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan prestasi baru',
+                    'body'=>'prestasi baru telah disetujui aak',
+                    'page'=>'/prestasi/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'approve prestasi success');
         }
             $data['status'] = false;
