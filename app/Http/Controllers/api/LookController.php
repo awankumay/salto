@@ -66,11 +66,21 @@ class LookController extends BaseController
                 'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
                 ];
         $grade      = Grade::where('id', $user->grade)->first();
+        $keluarga   = User::keluargataruna($user->id);
         $provinces  = Provinces::where('id', $user->province_id)->first();
         $regencies  = Regencies::where('id', $user->regencie_id)->first();
-        
-        if($user->getRoleNames()[0]=='Taruna' && !empty($grade)){
-            $data['grade']=$grade->grade;
+        $data['show_grade']=false;
+        $data['show_keluarga_asuh']=false;
+        if($user->getRoleNames()[0]=='Taruna'){
+            if(!empty($grade)){
+                $data['show_grade']=true;
+                $data['grade']=$grade->grade;
+            }
+        }
+        if(!empty($keluarga)){
+            $data['show_keluarga_asuh']=true;
+            $data['keluarga_asuh']=$keluarga->name;
+          
         }
         $data['provinces']  = !empty($provinces) ? $provinces->name : null;
         $data['regencies']  = !empty($regencies) ? $regencies->name : null;
@@ -1355,6 +1365,7 @@ class LookController extends BaseController
                 break;
         }
         #bugs
+        $data['menginap']='Izin Tidak Menginap';
         if(strtotime(date_format(date_create($getSurat->end), 'Y-m-d')) > strtotime(date_format(date_create($getSurat->start), 'Y-m-d'))){
             //if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
                 $data['user_approve_2']=$getSurat->user_approve_2;

@@ -403,7 +403,32 @@ class HukumanDinasController extends BaseController
                 $input['status']            = 0;
                 $input['start_time']        = date('Y-m-d H:i:s', strtotime($request->start_time));
                 $input['end_time']          = date('Y-m-d H:i:s', strtotime($request->end_time));
-                HukumanDinas::create($input);
+               
+                $id                         = DB::table('tb_hukdis')->insertGetId($input);
+                
+                $data['firebase']           = false;
+                $keluarga                   = User::keluargataruna($getTaruna->id);
+                $keluarga_asuh              = !empty($keluarga) ? strtolower($keluarga->name) : null;
+                
+                $dataFirebase = [];
+                $dataFirebase = ['id'=>$getTaruna->id, 'keluarga_asuh'=>$keluarga_asuh];
+                $topic = User::topic('createhukdis', $dataFirebase);
+                if(!empty($topic)){
+                    set_time_limit(60);
+                    for ($i=0; $i < count($topic); $i++) { 
+                        $paramsFirebase=['title'=>'Pemberitahuan hukuman dinas baru',
+                        'body'=>'hukuman dinas baru telah dibuat',
+                        'page'=>'/hukdis/detail/id/'.$id,
+                        'token'=>$topic[$i]];
+                        try {
+                            $firebase = $this->pushNotif($paramsFirebase);
+                            $data['firebase'] = $firebase;
+                        } catch (\Throwable $th) {
+                            $data['firebase'] = $th->getMessage();
+                        }
+                        sleep(1);
+                    }
+                }
 
             DB::commit();
             $data['status'] = true;
@@ -470,7 +495,31 @@ class HukumanDinasController extends BaseController
             $input['status_level_1']   = 0;
             $prestasi->update($input);
             DB::commit();
-            $data['status'] = true;
+            $data['status']     = true;
+            $data['firebase']   = false;
+
+            $keluarga       = User::keluargataruna($getTaruna->id);
+            $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            
+            $dataFirebase   = [];
+            $dataFirebase   = ['id'=>$getTaruna->id, 'keluarga_asuh'=>$keluarga_asuh];
+            $topic          = User::topic('createhukdis', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan hukuman dinas baru',
+                    'body'=>'hukuman dinas baru telah dibuat',
+                    'page'=>'/hukdis/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'hukdis updated successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -568,6 +617,31 @@ class HukumanDinasController extends BaseController
             $hukdis->reason_level_1=$request->reason;
             $hukdis->save();
             $data['status'] = true;
+            $data['firebase'] = false;
+
+            $keluarga       = User::keluargataruna($hukdis->taruna_id);
+            $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+            $dataFirebase   = [];
+            $dataFirebase   = ['id'=>$hukdis->taruna_id, 'keluarga_asuh'=>$keluarga_asuh];
+            $firebase       = [];
+            $topic          = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan hukuman dinas baru',
+                    'body'=>'hukuman dinas baru telah disetujui aak',
+                    'page'=>'/hukdis/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
+
             return $this->sendResponse($data, 'approve hukdis success');
         }
             $data['status'] = false;
