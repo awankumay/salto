@@ -11,7 +11,7 @@
                 <div class="p-2">Pengasuhan Daring</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('pengasuhan-daring-create'))
-                        <a href="{{route('pengasuhan.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah</a>
+                        <!-- <a href="{{route('pengasuhan.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah</a> -->
                     @endif
                 </div>
             </div>

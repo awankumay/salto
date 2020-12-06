@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\Pengasuhan;
-use App\Traits\ActionTableWithDetail;
+use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
 use DataTables;
@@ -14,7 +14,7 @@ use DB;
 use Auth;
 class PengasuhanController extends Controller
 {
-    use ActionTableWithDetail;
+    use ActionTable;
     /**
      * Create a new controller instance.
      *
@@ -50,7 +50,7 @@ class PengasuhanController extends Controller
                 8=>'created_at'
             );
             $model  = New Pengasuhan();
-            return $this->ActionTableWithDetail($columns, $model, $request, 'pengasuhan.edit', 'pengasuhan.show', 'pengasuhan-daring-edit', 'pengasuhan-daring-delete', 'pengasuhan-daring-list');
+            return $this->ActionTable($columns, $model, $request, 'pengasuhan.edit', null, null, 'pengasuhan-daring-list');
         }
         return view('pengasuhan.index');
     }

@@ -52,7 +52,12 @@ trait ActionTable
                 }else{
                     $edit    = '';
                 }
-                $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this,\"$nama_model\")' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
+                if($permissionDelete!=null){
+                    $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this,\"$nama_model\")' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
+                }else{
+                    $delete  = '';
+                }
+                
                 for ($i=0; $i < count($columns); $i++) {
                     if($columns[$i]=='created_at'){
                         $nestedData['created_at'] = date('d-m-Y H:i',strtotime($val->created_at));

@@ -54,10 +54,11 @@ class Pengasuhan extends Authenticatable
         if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Pengasuhan::count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
-            return Pengasuhan::where('user_created', $currentUser->id)->count();
+            return Pengasuhan::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga_asuh_id', '=', 'tb_pengasuhan_daring.keluarga_asuh_id')
+                    ->where('taruna_keluarga_asuh.taruna_id', $currentUser->id)
+                    ->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
-            return Pengasuhan::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring')
-                            ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+            return Pengasuhan::join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'tb_pengasuhan_daring.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
@@ -65,7 +66,8 @@ class Pengasuhan extends Authenticatable
                             ->where('tb_pengasuhan_daring.id_user', $currentUser->id)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
-            return Pengasuhan::join('orang_tua_taruna', 'taruna_id.id', '=', 'tb_pengasuhan_daring')
+            return Pengasuhan::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga_asuh_id', '=', 'tb_pengasuhan_daring.keluarga_asuh_id')
+                            ->join('orang_tua_taruna', 'taruna_id.id', '=', 'tb_pengasuhan_daring')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
                             ->count();
         }
@@ -79,29 +81,26 @@ class Pengasuhan extends Authenticatable
 
         $currentUser = Auth::user();
         if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
-            return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
-                            ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+            return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
-            return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
-                            ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->where('tb_pengasuhan_daring.id_user', $currentUser->id)
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+            return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga_asuh_id', '=', 'tb_pengasuhan_daring.keluarga_asuh_id')
+                            ->where('taruna_keluarga_asuh.taruna_id', $currentUser->id)
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
-            return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
-                            ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+            return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'tb_pengasuhan_daring.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -109,7 +108,7 @@ class Pengasuhan extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
                             ->where('tb_pengasuhan_daring.id_user', $currentUser->id)
-                            ->select('tb_pengasuhan_daring.id',
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*',
                                     'users.name as name', 
                                     'tb_pengasuhan_daring.keluarga_asuh', 
                                     'tb_pengasuhan_daring.media', 
@@ -127,7 +126,7 @@ class Pengasuhan extends Authenticatable
                             ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
                             ->join('orang_tua_taruna', 'taruna_id.id', '=', 'tb_pengasuhan_daring.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -142,13 +141,12 @@ class Pengasuhan extends Authenticatable
     {
         $currentUser = Auth::user();
         if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
-            return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
-                            ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
+            return Pengasuhan::join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
                                 ->orWhere('tb_pengasuhan_daring.id', 'LIKE',"%{$search}%");
                             })
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -160,7 +158,7 @@ class Pengasuhan extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -168,14 +166,14 @@ class Pengasuhan extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
                             ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga', '=', 'tb_pengasuhan_daring.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
                                 ->orWhere('tb_pengasuhan_daring.id', 'LIKE',"%{$search}%");
                             })
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -183,13 +181,13 @@ class Pengasuhan extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
                             ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga', '=', 'tb_pengasuhan_daring.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -202,7 +200,7 @@ class Pengasuhan extends Authenticatable
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%");
                             })
-                            ->select('tb_pengasuhan_daring.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
+                            ->select('tb_pengasuhan_daring.id as id', 'tb_pengasuhan_daring.*', 'users.name as name', 'tb_pengasuhan_daring.status', 'tb_pengasuhan_daring.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -232,7 +230,7 @@ class Pengasuhan extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
                             ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga', '=', 'tb_pengasuhan_daring.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->Where(function($q) use ($search) {
@@ -242,7 +240,7 @@ class Pengasuhan extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Pengasuhan::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'tb_pengasuhan_daring.id_category')
                              ->join('users', 'users.id', '=', 'tb_pengasuhan_daring.id_user')
-                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_pengasuhan_daring.id_user')
+                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.keluarga', '=', 'tb_pengasuhan_daring.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->Where(function($q) use ($search) {
