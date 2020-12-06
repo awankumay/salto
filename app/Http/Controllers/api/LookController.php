@@ -2115,7 +2115,9 @@ class LookController extends BaseController
     {
         $getUser    = User::find($request->id_user);
         $id_user    = $request->id_user; 
+        $name       = $request->nama_taruna;
         $roleName   = $getUser->getRoleNames()[0];
+        $tarunaWithName = [];
         if($roleName=='Taruna'){
             $tarunaId   = [];
             //$orangtua   = OrangTua::where('taruna_id', )->get();
@@ -2125,6 +2127,7 @@ class LookController extends BaseController
             $taruna         = OrangTua::join('users', 'users.id', '=', 'orang_tua_taruna.taruna_id')
                                 ->select('orang_tua_taruna.taruna_id', 'users.name')
                                 ->where('orangtua_id', $id_user)
+                                //->where('users.name', 'LIKE', "%{$name}%")
                                 ->get();
             $tarunaId       = [];
             $tarunaData     = [];
@@ -2140,6 +2143,7 @@ class LookController extends BaseController
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
+                            //->where('users.name', 'LIKE', "%{$name}%")
                             ->get();
 
             $tarunaId       = [];
@@ -2156,6 +2160,7 @@ class LookController extends BaseController
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
                             ->where('pembina_keluarga_asuh.pembina_id', $id_user)
+                           // ->where('users.name', 'LIKE', "%{$name}%")
                             ->get();
   
             $tarunaId       = [];
@@ -2173,6 +2178,96 @@ class LookController extends BaseController
                             ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
                             ->select('users.id', 'users.name')
                             ->where('model_has_roles.role_id', 7)
+                            //->where('users.name', 'LIKE', "%{$name}%")
+                            ->whereNull('users.deleted_at')
+                            ->get();
+
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->id;
+                $tarunaWithName[]=['id'=>$value->id, 'name'=>$value->name];
+            }
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+        }
+        /* if($option!=1){
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+        }else{ */
+            $tarunaData['taruna']   = $tarunaWithName;
+        //}
+        return $tarunaData;
+    }
+
+    public function gettarunaname(Request $request)
+    {
+        $getUser    = User::find($request->id_user);
+        $id_user    = $request->id_user; 
+        $name       = $request->nama_taruna;
+        $roleName   = $getUser->getRoleNames()[0];
+        $tarunaWithName = [];
+        if($roleName=='Taruna'){
+            $tarunaId   = [];
+            //$orangtua   = OrangTua::where('taruna_id', )->get();
+            $tarunaData['taruna'] = ['id'=>$getUser->id, 'name'=>$getUser->name];
+            return $tarunaData;
+        }else if($roleName=='OrangTua'){
+            $taruna         = OrangTua::join('users', 'users.id', '=', 'orang_tua_taruna.taruna_id')
+                                ->select('orang_tua_taruna.taruna_id', 'users.name')
+                                ->where('orangtua_id', $id_user)
+                                ->where('users.name', 'LIKE', "%{$name}%")
+                                ->get();
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            //return $tarunaData;
+        }else if($roleName=='Wali Asuh'){
+            $taruna     = WaliasuhKeluargaAsuh::join('taruna_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
+                            ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
+                            ->where('waliasuh_keluarga_asuh.waliasuh_id', $id_user)
+                            ->where('users.name', 'LIKE', "%{$name}%")
+                            ->get();
+
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            //return $tarunaData;
+        }else if($roleName=='Pembina'){
+            $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                            ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
+                            ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
+                            ->where('pembina_keluarga_asuh.pembina_id', $id_user)
+                            ->where('users.name', 'LIKE', "%{$name}%")
+                            ->get();
+  
+            $tarunaId       = [];
+            $tarunaData     = [];
+            foreach ($taruna as $key => $value) {
+                $tarunaId[]=$value->taruna_id;
+                $tarunaWithName[]=['id'=>$value->taruna_id, 'name'=>$value->name];
+            }
+            //$tarunaData['id']       = implode(',',$tarunaId);
+            $tarunaData['taruna']   = $tarunaWithName;
+            //return $tarunaData;
+        }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            $taruna     = DB::table('users')
+                            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                            ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                            ->select('users.id', 'users.name')
+                            ->where('model_has_roles.role_id', 7)
+                            ->where('users.name', 'LIKE', "%{$name}%")
                             ->whereNull('users.deleted_at')
                             ->get();
 
