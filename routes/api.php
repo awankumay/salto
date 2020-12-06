@@ -90,7 +90,7 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('inputjurnal', 'api\LookController@inputjurnal')->name('inputjurnal');
     Route::post('deletejurnal', 'api\LookController@deletejurnal')->name('deleterjurnal');
     Route::get('gettaruna/id_user/{id_user}', 'api\LookController@gettaruna')->name('gettaruna');
-    Route::get('searchtaruna/id_user/{id_user}/name/{nama_taruna}', 'api\LookController@gettarunaname')->name('searchtaruna');
+    Route::get('searchtaruna/id_user/{id_user}/name', 'api\LookController@gettarunaname')->name('searchtaruna');
     Route::post('getjurnal', 'api\LookController@getjurnal')->name('getjurnal');
 
     Route::post('getsuratizin', 'api\LookController@getsuratizin')->name('getsuratizin');

@@ -2204,7 +2204,10 @@ class LookController extends BaseController
     {
         $getUser    = User::find($request->id_user);
         $id_user    = $request->id_user; 
-        $name       = $request->nama_taruna;
+        $name       = $request->get('query');
+        if(empty($name)){
+            $name = 'xxx';
+        }
         $roleName   = $getUser->getRoleNames()[0];
         $tarunaWithName = [];
         if($roleName=='Taruna'){
