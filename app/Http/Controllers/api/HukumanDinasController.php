@@ -286,7 +286,7 @@ class HukumanDinasController extends BaseController
             case 2:
                 $tingkat = 'Sedang';
                 break;
-            case 2:
+            case 3:
                 $tingkat = 'Berat';
                 break;
             
