@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\Absensi;
+use App\OrangTua;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
 use Spatie\Permission\Models\Role;
@@ -41,7 +42,7 @@ class AbsensiController extends Controller
             $columns = array(
                 0=>'id',
                 1=>'stb',
-                2=>'nama',
+                2=>'name',
                 3=>'clock_in',
                 4=>'file_clock_in',
                 5=>'clock_out',

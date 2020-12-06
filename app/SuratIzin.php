@@ -11,7 +11,7 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Support\Str;
 use DB;
 use Auth;
-use OrangTua;
+use App\OrangTua;
 
 class SuratIzin extends Authenticatable
 {

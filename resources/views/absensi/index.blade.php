@@ -187,7 +187,7 @@
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'stb', name: 'stb'},
-                {data: 'nama', name: 'nama'},
+                {data: 'name', name: 'name'},
                 {data: 'clock_in', name: 'clock_in'},
                 {data: 'file_clock_in', name: 'file_clock_in',
                     render:function(row, type, val, meta){
