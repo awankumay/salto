@@ -569,7 +569,7 @@ class SuketController extends BaseController
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan surat keterangan baru',
                     'body'=>'surat keterangan baru telah dibuat',
-                    'page'=>'/suket/detail/id/'.$id,
+                    'page'=>'/suket/detail/id/'.$request->id,
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
