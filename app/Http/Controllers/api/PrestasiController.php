@@ -512,7 +512,7 @@ class PrestasiController extends BaseController
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan prestasi baru',
                     'body'=>'prestasi baru telah dibuat',
-                    'page'=>'/prestasi/detail/id/'.$id,
+                    'page'=>'/prestasi/detail/id/'.$request->id,
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
@@ -525,6 +525,7 @@ class PrestasiController extends BaseController
             }
             return $this->sendResponse($data, 'prestasi updated successfully.');
         } catch (\Throwable $th) {
+            @dd($th);
             DB::rollBack();
             if(isset($image)){
                 if($image!=false){

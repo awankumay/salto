@@ -2027,16 +2027,17 @@ class LookController extends BaseController
                                 ->where('status', 0)
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
+        
+        $keluarga       = User::keluargataruna($suratIzin->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
         if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
             $suratIzin->user_approve_level_1=$request->id_user;
             $suratIzin->date_approve_level_1=date('Y-m-d H:i:s');
             $suratIzin->status_level_1=$request->status;
             $suratIzin->reason_level_1=$request->reason;
-
-            $keluarga       = User::keluargataruna($suratIzin->id_user);
-            $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
-            $dataFirebase   = [];
-            $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
 
             if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
                 $suratIzin->status=$request->status;

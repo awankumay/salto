@@ -87,7 +87,11 @@ class LoginController extends BaseController
     public function logout(Request $request)
     {
         try {
+            $user = $request->user();
+            $user->fcm_id = null;
+            $user->save();
             $request->user()->token()->revoke();
+            
         } catch (\Throwable $th) {   
             $success['messsage']='terjadi kesalahan';
             return $this->sendResponse($success, 'Force Logout.');
