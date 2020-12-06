@@ -15,12 +15,14 @@ use Illuminate\Support\Facades\Auth;
 use Validator;
 use DB;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 
 class PengasuhanController extends BaseController
 {
     use ImageTrait;
+    use Firebase;
     
     public function getpengasuhan(Request $request){
         $limit  = 5;
@@ -281,10 +283,33 @@ class PengasuhanController extends BaseController
                 $input['keluarga_asuh_id']   = $getKeluargaAsuh->id;
                 $input['start_time'] = date('Y-m-d H:i:s', strtotime($request->start_time));
                 $input['end_time'] = date('Y-m-d H:i:s', strtotime($request->end_time));
-                Pengasuhan::create($input);
+                $id = DB::table('tb_pengasuhan_daring')->insertGetId($input);
 
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
+            $keluarga_asuh = !empty($getKeluargaAsuh) ? strtolower($getKeluargaAsuh->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$request->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+            
+            $topic = User::topic('createpengasuhan', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengasuhan baru',
+                    'body'=>'pengasuhan baru telah dibuat',
+                    'page'=>'/pengasuhan/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'pengasuhan create successfully.');
         } catch (\Throwable $th) {
             //@dd($th->getMessage());
@@ -337,9 +362,32 @@ class PengasuhanController extends BaseController
             $pengasuhan->update($input);
             DB::commit();
             $data['status'] = true;
+            $data['firebase'] = false;
+            $keluarga_asuh = !empty($getKeluargaAsuh) ? strtolower($getKeluargaAsuh->name) : null;
+            
+            $dataFirebase = [];
+            $dataFirebase = ['id'=>$request->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+            
+            $topic = User::topic('createpengasuhan', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengasuhan baru',
+                    'body'=>'pengasuhan baru telah dibuat',
+                    'page'=>'/pengasuhan/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             return $this->sendResponse($data, 'pengasuhan updated successfully.');
         } catch (\Throwable $th) {
-            @dd($th->getMessage());
+            //@dd($th->getMessage());
             DB::rollBack();
             $data['status'] = false;
             return $this->sendResponseFalse($data, 'pengasuhan failure updated.');
