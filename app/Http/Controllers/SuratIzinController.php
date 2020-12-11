@@ -17,6 +17,7 @@ use App\OrangTuaSakit;
 use App\KegiatanDalam;
 use App\Tugas;
 use App\KegiatanPesiar;
+use App\OrangTua;
 use App\Permission;
 use App\Traits\ActionTableWithDetail;
 use App\Traits\ImageTrait;
@@ -77,8 +78,13 @@ class SuratIzinController extends Controller
     {
         $getSurat       = SuratIzin::find($id);
         $currentUser    = Auth::user();
-        if($currentUser->getRoleNames()[0]!='Super Admin'){
-            if ($currentUser->id!=$getSurat->id_user) {
+        if($currentUser->getRoleNames()[0]=='Orang Tua'){
+            if($currentUser->id!=$getSurat->user_created){
+                return view('surat-izin.index');
+            }
+        }
+        if($currentUser->getRoleNames()[0]=='Taruna'){
+            if($currentUser->id!=$getSurat->user_created){
                 return view('surat-izin.index');
             }
         }
@@ -129,8 +135,14 @@ class SuratIzinController extends Controller
     {
         $getSurat       = SuratIzin::find($id);
         $currentUser    = Auth::user();
-        if($currentUser->getRoleNames()[0]!='Super Admin'){
-            if ($currentUser->id!=$getSurat->id_user) {
+        if($currentUser->getRoleNames()[0]=='Orang Tua'){
+            $orangTua = OrangTua::where('taruna_id', $getSurat->id_user)->first();
+            if(empty($orangTua)){
+                return view('surat-izin.index');
+            }
+        }
+        if($currentUser->getRoleNames()[0]=='Taruna'){
+            if($currentUser->id!=$getSurat->id_user){
                 return view('surat-izin.index');
             }
         }
@@ -167,14 +179,13 @@ class SuratIzinController extends Controller
                 break;
         }
         $currentUser        = Auth::user();
-        $suratIzin          = Permission::pluck('nama_menu', 'id')->all();
         $selectTaruna       = User::find($getSurat->id_user);
-        $selectSuratIzin    = $getSurat->id_category;
-        $start              = date_format(date_create($getSurat->start), 'Y-m-d');
+        $selectSuratIzin    = Permission::find($getSurat->id_category);
+        $start              = date_format(date_create($getSurat->start), 'd-m-Y');
         $start_time         = date_format(date_create($getSurat->start), 'H:i:s');
-        $end                = date_format(date_create($getSurat->end), 'Y-m-d');
+        $end                = date_format(date_create($getSurat->end), 'd-m-Y');
         $end_time           = date_format(date_create($getSurat->end), 'H:i:s');
-        return view('surat-izin.show', compact('getSurat', 'currentUser', 'suratIzin', 'selectSuratIzin', 'getSuratDetail', 'selectTaruna', 'start', 'end', 'start_time', 'end_time'));
+        return view('surat-izin.show', compact('getSurat', 'currentUser', 'selectSuratIzin', 'getSuratDetail', 'selectTaruna', 'start', 'end', 'start_time', 'end_time'));
     }
 
     public function store(Request $request)
@@ -581,7 +592,18 @@ class SuratIzinController extends Controller
 
     public function destroy($id)
     {
-        $suratIzin = SuratIzin::find($id);
+        $suratIzin      = SuratIzin::find($id);
+        $currentUser    = Auth::user();
+        if($currentUser->getRoleNames()[0]=='Orang Tua'){
+            if($currentUser->id!=$getSurat->user_created){
+                return false;
+            }
+        }
+        if($currentUser->getRoleNames()[0]=='Taruna'){
+            if($currentUser->id!=$getSurat->user_created){
+                return false;
+            }
+        }
         try {
             DB::beginTransaction();
                 $this->DeleteImage($suratIzin->photo, config('app.documentImagePath'));

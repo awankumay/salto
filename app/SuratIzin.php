@@ -75,7 +75,7 @@ class SuratIzin extends Authenticatable
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
-            return SuratIzin::join('orang_tua_taruna', 'taruna_id.id', '=', 'surat_header.user_created')
+            return SuratIzin::join('orang_tua_taruna', 'orang_tua_taruna.id', '=', 'surat_header.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
                             ->count();
         }
@@ -100,7 +100,7 @@ class SuratIzin extends Authenticatable
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->where('surat_header.id_user', $currentUser->id)
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
+                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at', 'surat_header.user_created')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)
@@ -130,9 +130,9 @@ class SuratIzin extends Authenticatable
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
-                            ->join('orang_tua_taruna', 'taruna_id.id', '=', 'surat_header.id_user')
+                            ->join('orang_tua_taruna', 'orang_tua_taruna.taruna_id', '=', 'surat_header.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
-                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
+                            ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at', 'surat_header.user_created')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)

@@ -29,6 +29,7 @@ trait ActionTableWithDetail
         {
             foreach ($dataModel as $key => $val) {
                 #$show =  route('post-category.show',$val->id);
+                $detail  = '';
                 $edit    = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
                 $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this)' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
                 if($permissionDetail=='surat-izin-list'){
@@ -61,7 +62,16 @@ trait ActionTableWithDetail
                 if($routeDetail=='jurnal.show'){
                     $nestedData['action'] = "&emsp;".$detail;
                 }else{
-                    $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
+                    if($routeDetail=='surat-izin.show'){
+                        if($val->user_created==Auth::user()->id || Auth::user()->getRoleNames()['0']=='Super Admin'){
+                            $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
+                        }else{
+                            $nestedData['action'] = "&emsp;".$detail;
+                        }
+                    }else{
+                        $nestedData['action'] = "&emsp;".$delete."&emsp;".$edit."&emsp;".$detail;
+                    }
+                    
                 }
                 $data[] = $nestedData;
             }
