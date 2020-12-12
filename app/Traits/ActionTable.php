@@ -8,15 +8,19 @@ trait ActionTable
 {
     public function ActionTable($columns, $model, $request, $routeEdit, $permissionEdit, $permissionDelete)
     {
-        $limit = $request->input('length');
-        $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
-        $dir   = $request->input('order.0.dir');
-        $id    = !empty($request->input('id')) ? $request->input('id'): '';
-        
+        $limit   = $request->input('length');
+        $start   = $request->input('start');
+        $order   = $columns[$request->input('order.0.column')];
+        $dir     = $request->input('order.0.dir');
+        $id      = !empty($request->input('id')) ? $request->input('id'): '';
+        $id_user = !empty($request->input('id_user')) ? $request->input('id_user'): '';
+        $date    = !empty($request->input('date')) ? $request->input('date'): '';
         if(!empty($id)){
             $totalData = $model->GetCount($id);
-        }else{
+        }else if(!empty($id_user) && !empty($date)){
+            $totalData = $model->GetCount($id_user, $date);
+        }
+        else{
             $totalData = $model->GetCount();
         }
         $totalFiltered = $totalData;
@@ -33,7 +37,11 @@ trait ActionTable
         }
         else{
             $search = $request->input('search.value');
-            if(!empty($id)){
+            if(!empty($id_user) && !empty($date)){
+                $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search, $id_user, $date);
+                $totalFiltered = $model->GetCountDataFilter($search, $id_user, $date); 
+            }
+            else if(!empty($id)){
                 $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search, $id);
                 $totalFiltered = $model->GetCountDataFilter($search, $id);
             }else{
@@ -48,7 +56,11 @@ trait ActionTable
             foreach ($dataModel as $key => $val) {
                 #$show =  route('post-category.show',$val->id);
                 if($permissionEdit!=null){
-                    $edit    = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
+                    if($nama_model=='JurnalTarunaDetail'){
+                        $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a  href='javascript:void(0)' class='action-table text-success text-sm' data-toggle='modal' data-id=".$val->id." data-target='#editJurnal' id='btnJurnal'><i class='fas fa-edit'></i></a>" : '';
+                    }else{
+                        $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
+                    }
                 }else{
                     $edit    = '';
                 }

@@ -11,7 +11,9 @@ use App\Regencies;
 use App\User;
 use App\Absensi;
 use App\JurnalTaruna;
+use App\SuratIzin;
 use App\Traits\ImageTrait;
+use App\Traits\Firebase;
 use Hash;
 use DataTables;
 use DB;
@@ -22,6 +24,7 @@ use Carbon\Carbon;
 class SaltoController extends Controller
 {
     use ImageTrait;
+    use Firebase;
     /**
      * Create a new controller instance.
      *
@@ -181,4 +184,264 @@ class SaltoController extends Controller
         }
         
     }
+
+    public function disposisisuratizin(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        $suratIzin = SuratIzin::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $suratIzin->user_disposisi=$request->id_user;
+        $suratIzin->date_disposisi=date('Y-m-d H:i:s');
+        $suratIzin->reason_disposisi=$request->reason;
+        $suratIzin->status_disposisi=$request->status;
+        $suratIzin->save();
+
+        $data['status'] = true;
+        $keluarga       = User::keluargataruna($suratIzin->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi perizinan baru',
+                'body'=>'perizinan baru telah diposisi',
+                'page'=>'/riwayat-izin/detail/id/'.$request->id,
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'][$i] = $firebase;
+                } catch (\Throwable $th) {
+                    $data['firebase'] = $th->getMessage();
+                }
+                sleep(1);
+            }
+        }
+        
+        return response()->json([
+            "success" => true,
+            "message" => "Disposisi berhasil",
+            "data" => $data
+        ]);
+    }
+
+    public function approvesuratizin(Request $request)
+    {
+        #categorytugas
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        $suratIzin = SuratIzin::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+        
+        $keluarga       = User::keluargataruna($suratIzin->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suratIzin->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
+            $suratIzin->user_approve_level_1=$request->id_user;
+            $suratIzin->date_approve_level_1=date('Y-m-d H:i:s');
+            $suratIzin->status_level_1=$request->status;
+            $suratIzin->reason_level_1=$request->reason;
+
+            if(strtotime(date_format(date_create($suratIzin->end), 'Y-m-d')) == strtotime(date_format(date_create($suratIzin->start), 'Y-m-d'))){
+                $suratIzin->status=$request->status;
+                $suratIzin->save();
+                $topic  = User::topic('approve-direktur', $dataFirebase);
+                if(!empty($topic)){
+                    set_time_limit(60);
+                    for ($i=0; $i < count($topic); $i++) { 
+                        $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        'body'=>'perizinan baru telah ditindaklanjuti aak',
+                        'page'=>'/riwayat-izin/detail/id/'.$request->id,
+                        'token'=>$topic[$i]];
+                        try {
+                            $firebase = $this->pushNotif($paramsFirebase);
+                            $data['firebase'][$i] = $firebase;
+                        } catch (\Throwable $th) {
+                            $data['firebase'] = $th->getMessage();
+                        }
+                        sleep(1);
+                    }
+                }
+            }else{
+                $topic  = User::topic('approve-aak', $dataFirebase);
+                if(!empty($topic)){
+                    set_time_limit(60);
+                    for ($i=0; $i < count($topic); $i++) { 
+                        $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                        'body'=>'perizinan baru telah ditindaklanjuti oleh aak',
+                        'page'=>'/riwayat-izin/detail/id/'.$request->id,
+                        'token'=>$topic[$i]];
+                        try {
+                            $firebase = $this->pushNotif($paramsFirebase);
+                            $data['firebase'][$i] = $firebase;
+                        } catch (\Throwable $th) {
+                            $data['firebase'] = $th->getMessage();
+                        }
+                        sleep(1);
+                    }
+                }
+
+            }
+            $suratIzin->save();
+        }
+        if($getUser->getRoleNames()[0]=='Direktur' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $suratIzin->user_approve_level_2=$request->id_user;
+            $suratIzin->date_approve_level_2=date('Y-m-d H:i:s');
+            $suratIzin->status_level_2=$request->status;
+            $suratIzin->reason_level_2=$request->reason;
+            $suratIzin->status=$request->status;
+            $suratIzin->save();
+        }
+        $data['status'] = true;
+        $data['firebase'] = false;
+        $topic  = User::topic('approve-direktur', $dataFirebase);
+                    if(!empty($topic)){
+                        set_time_limit(60);
+                        for ($i=0; $i < count($topic); $i++) { 
+                            $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
+                            'body'=>'perizinan baru telah ditindaklanjuti direktur',
+                            'page'=>'/riwayat-izin/detail/id/'.$request->id,
+                            'token'=>$topic[$i]];
+                            try {
+                                $firebase = $this->pushNotif($paramsFirebase);
+                                $data['firebase'][$i] = $firebase;
+                            } catch (\Throwable $th) {
+                                $data['firebase'] = $th->getMessage();
+                            }
+                            sleep(1);
+                        }
+                    }
+        return response()->json([
+            "success" => true,
+            "message" => "Persetujuan berhasil",
+            "data" => $data
+        ]);
+    }
+
+    public function cetaksurat(Request $request){
+        $data   = ['id'=>$request->id, 'id_user'=>$request->id_user, 'cetak'=>$request->cetak];
+        $res    = [];
+        $data   = SuratIzin::tmpreport($data);
+        
+        $res['link'] = $data; 
+        $res['status'] = true;
+        return response()->json([
+            "success" => true,
+            "message" => "Link generate berhasil",
+            "data" => $res
+        ]);
+    }
+
+    public function inputjurnal(Request $request)
+    {
+        date_default_timezone_set("Asia/Jakarta");
+        $data = [];
+        $validator = Validator::make($request->all(), 
+                    [ 
+                        'id_user' => 'required',
+                        'kegiatan' => 'required',
+                        'start_time' => 'required',
+                        'end_time' => 'required',
+                    ]);   
+ 
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+
+        $getUser = User::where('id', $request->id_user)->first();
+        
+        if($request->id){
+            try {
+                DB::beginTransaction();
+                $jurnal = JurnalTaruna::where('id', $request->id)->first();
+                $input = $request->all();
+                Arr::forget($input, array('start_time', 'end_time'));
+                $input['start_time'] = date_create(date('Y-m-d').' '.$request->start_time);
+                $input['end_time'] = date_create(date('Y-m-d').' '.$request->end_time);
+                //$input['updated_at'] = date('Y-m-d H:i:s');
+                $input['status'] = 0;
+                $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
+                $jurnal->update($input);
+                DB::commit();
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                $response = [
+                    'success' => false,
+                    'data'    => [],
+                    'message' => 'Terjadi Kesalahan Server',
+                ];
+                return response()->json($response, 500);
+            }
+        }else{
+            try {
+                DB::beginTransaction();
+                $input = $request->all();
+                Arr::forget($input, array('start_time', 'end_time'));
+                $input['start_time'] = date_create(date('Y-m-d').' '.$request->start_time);
+                $input['end_time'] = date_create(date('Y-m-d').' '.$request->end_time);
+                //$input['created_at'] = date('Y-m-d H:i:s');
+                $input['status'] = 0;
+                $input['tanggal'] = date('Y-m-d');
+                $input['grade'] = !empty($getUser->grade) ? $getUser->grade : null;
+                JurnalTaruna::create($input);
+                DB::commit();
+            } catch (\Throwable $th) {
+                DB::rollBack();
+                $response = [
+                    'success' => false,
+                    'data'    => [],
+                    'message' => 'Terjadi Kesalahan Server',
+                ];
+                return response()->json($response, 500);
+            }
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Data berhasil disimpan",
+            "data" => []
+        ]);
+        
+    }
+
+
 }

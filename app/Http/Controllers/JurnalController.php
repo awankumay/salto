@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 use App\JurnalTaruna;
+use App\JurnalTarunaDetail;
 use App\Traits\ActionTableWithDetail;
 use App\Traits\ActionTable;
 use App\Traits\ImageTrait;
@@ -98,17 +99,15 @@ class JurnalController extends Controller
 
     public function jurnaldetail(Request $request)
     {
-        $model  = New JurnalTaruna();
+        $model  = New JurnalTarunaDetail();
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
                 1=>'nama',
                 2=>'tanggal',
                 3=>'kegiatan',
-                4=>'start',
-                5=>'end',
-                6=>'created_at',
-                7=>'updated_at',
+                4=>'start_time',
+                5=>'end_time'
             );
             return $this->ActionTable($columns, $model, $request, 'jurnal.edit', 'jurnal-harian-edit', 'jurnal-harian-delete');
         }

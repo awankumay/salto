@@ -15,7 +15,6 @@ trait ActionTableWithDetail
 
         $totalData = $model->GetCount();
         $totalFiltered = $totalData;
-
         if(empty($request->input('search.value'))) {
             $dataModel = $model->GetCurrentData($start, $limit, $order, $dir);
         }

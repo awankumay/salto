@@ -24,8 +24,6 @@
                             <th>Kegiatan</th>
                             <th>Start</th>
                             <th>End</th>
-                            <th>Dibuat</th>
-                            <th>Diubah</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -35,27 +33,62 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editJurnal" tabindex="-1" role="dialog" aria-labelledby="editJurnalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editJurnalLabel">Edit Jurnal</h5>
+                    <button type="button" class="close" onclick="refresh();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form name="edit_jurnal" id="edit_jurnal" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="id_user" value="{{$jurnal->id_user}}">
+                        <div class="form-group col-md-10">
+                            <strong>Mulai</strong>
+                            <input type="time" class="form-control form-control-sm" name="start_time" value="{{date_format(date_create($jurnal->start_time), 'H:i')}}">
+                        </div>
+                        <div class="form-group col-md-10">
+                            <strong>Akhir</strong>
+                            <input type="time" class="form-control form-control-sm" name="end_time" value="{{date_format(date_create($jurnal->end_time), 'H:i')}}">
+                        </div>
+                        <div class="form-group col-md-10">
+                            <strong>Kegiatan</strong>
+                            <input type="text" class="form-control form-control-sm" name="kegiatan" value="{{$jurnal->kegiatan}}">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="refresh();">Close</button>
+                        <button type="button" id="edit_jurnal_btn" class="btn btn-danger">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 @push('scripts')
 <script type="text/javascript">
     $(function () {
+        const url = "{{ route('jurnaldetail', ['id_user'=>$jurnal->id_user, 'date'=>$jurnal->tanggal]) }}";
+        const parseResult = new DOMParser().parseFromString(url, "text/html");
+        const parsedUrl = parseResult.documentElement.textContent;
         var table = $('.jurnal-detail-table').DataTable({
             processing: true,
             serverSide: true,
+            searching: false,
             rowReorder: {
                 selector: 'td:nth-child(2)'
             },
             responsive: true,
-            ajax: "{{ route('jurnaldetail', ['id_user'=>$jurnal->id_user, 'date'=>$jurnal->tanggal]) }}",
+            ajax: parsedUrl,
             columns: [
                 {data: 'id', name: 'id'},
                 {data: 'nama', name: 'nama'},
                 {data: 'tanggal', name: 'tanggal'},
                 {data: 'kegiatan', name: 'kegiatan'},
-                {data: 'start', name: 'start'},
-                {data: 'end', name: 'end'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'updated_at', name: 'updated_at'},
+                {data: 'start_time', name: 'start_time'},
+                {data: 'end_time', name: 'end_time'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });
@@ -72,7 +105,6 @@
         });
     });
 
-
     function deleteRecord(id, row_index) {
         let deleteUrl = 'jurnal/'+id;
         let token ="{{csrf_token()}}";
@@ -81,39 +113,91 @@
                 text: "Data ini tidak dapat dikembalikan jika telah terhapus",
                 icon: "warning",
                 buttons: true
-            }).then((willDelete) => {
-                    if (willDelete) {
-                        $.ajax({
-                            url: deleteUrl,
-                            type: 'DELETE',
-                            beforeSend:function () {
-                                $("#overlay").fadeIn(300);
-                            },　
-                            data: {
-                            "_token": token,
-                            },
-                            success:function(){
-                                setTimeout(function(){
-				                    $("#overlay").fadeOut(300);
-                                    toastr.success("Sukses, data berhasil dihapus");
-			                    },500);
-                                let i = row_index.parentNode.parentNode.rowIndex;
-                                let table = $('.jurnal-detail-table').DataTable();
-                                table.draw();
-                                window.location.reload();
-                            },
-                            error:function(){
-                                setTimeout(function(){
-				                    $("#overlay").fadeOut(300);
-                                    toastr.error("Gagal, data gagal dihapus");
-			                    },500);
-                            }
-                        });
-                    } else {
-                        //swal("Your imaginary file is safe!");
+            }).
+        then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'DELETE',
+                    beforeSend:function () {
+                        $("#overlay").fadeIn(300);
+                    },　
+                    data: {
+                    "_token": token,
+                    },
+                    success:function(){
+                        setTimeout(function(){
+                            $("#overlay").fadeOut(300);
+                            toastr.success("Sukses, data berhasil dihapus");
+                        },500);
+                        let i = row_index.parentNode.parentNode.rowIndex;
+                        let table = $('.jurnal-detail-table').DataTable();
+                        table.draw();
+                        window.location.reload();
+                    },
+                    error:function(){
+                        setTimeout(function(){
+                            $("#overlay").fadeOut(300);
+                            toastr.error("Gagal, data gagal dihapus");
+                        },500);
+                    }
+                });
+            } else {
+                //swal("Your imaginary file is safe!");
+            }
+        });
+    }
+
+    function refresh() {
+        window.location.reload()
+    }
+
+    $(function() {
+        $('#edit_jurnal_btn').on('click', function(e){
+            var fd = new FormData(document.querySelector('#edit_jurnal'));  
+            document.querySelector('#btnJurnal');  
+            fd.append('id', document.querySelector('#btnJurnal').dataset.id);					      
+            $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
             });
-    }
+            $.ajax({
+                url: "{{url('/')}}/dashboard/inputjurnal", 
+                data: fd,
+                processData: false,
+                contentType: false,
+                beforeSend:function () {
+                                $("#overlay").fadeIn(300);
+                },
+                type: 'POST',
+                success: function(data, textStatus, xhr){
+                    $("#overlay").fadeOut();
+                    toastr.success("Sukses", data.message);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                },
+                error : function(data, textStatus, xhr) {
+                    $("#overlay").fadeOut();
+                    if(data.responseJSON.error){
+                        if(data.responseJSON.error.kegiatan){
+                            $('#kegiatan-error').text(data.responseJSON.error.kegiatan[0])
+                        }
+                        if(data.responseJSON.error.start_time){
+                            $('#start_time-error').text(data.responseJSON.error.start_time[0])
+                        }
+                        if(data.responseJSON.error.end_time){
+                            $('#end_time-error').text(data.responseJSON.error.end_time[0])
+                        }
+                    }
+                }
+            });
+            
+        }); 
+    });
+
+    
   </script>
 @endpush
 @endsection

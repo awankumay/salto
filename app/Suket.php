@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Passport\HasApiTokens;
 use DB;
 use Auth;
+use App\OrangTua;
 
 class Suket extends Authenticatable
 {

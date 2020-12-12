@@ -42,7 +42,7 @@
         var table = $('.surat-izin-table').DataTable({
             processing: true,
             serverSide: true,
-            order: [[ 3, "ASC" ], [4, "DESC"]],
+            order: [[ 3, "ASC" ], [0, "DESC"]],
   /*           rowReorder: {
                 selector: 'td:nth-child(2)'
             }, */
@@ -57,9 +57,9 @@
                         if(val.status==1){
                             return '<span class="badge badge-success">Disetujui</span>';
                         }else if(val.status==2){
-                            return '<span class="badge badge-info">Dibatalkan</span>';
+                            return '<span class="badge badge-danger">Dibatalkan</span>';
                         }else{
-                            return '<span class="badge badge-info">Belum Disetujui</span>';
+                            return '<span class="badge badge-warning">Belum Disetujui</span>';
                         }
                     }, orderable: false, searchable: false
                 },

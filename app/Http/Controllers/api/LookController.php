@@ -2047,7 +2047,7 @@ class LookController extends BaseController
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
                         $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
-                        'body'=>'perizinan baru telah disetuji aak',
+                        'body'=>'perizinan baru telah ditindaklanjuti aak',
                         'page'=>'/riwayat-izin/detail/id/'.$request->id,
                         'token'=>$topic[$i]];
                         try {
@@ -2065,7 +2065,7 @@ class LookController extends BaseController
                     set_time_limit(60);
                     for ($i=0; $i < count($topic); $i++) { 
                         $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
-                        'body'=>'perizinan baru telah disetuji oleh aak',
+                        'body'=>'perizinan baru telah ditindaklanjuti oleh aak',
                         'page'=>'/riwayat-izin/detail/id/'.$request->id,
                         'token'=>$topic[$i]];
                         try {
@@ -2096,7 +2096,7 @@ class LookController extends BaseController
                         set_time_limit(60);
                         for ($i=0; $i < count($topic); $i++) { 
                             $paramsFirebase=['title'=>'Pemberitahuan persetujuan perizinan baru',
-                            'body'=>'perizinan baru telah disetuji direktur',
+                            'body'=>'perizinan baru telah ditindaklanjuti direktur',
                             'page'=>'/riwayat-izin/detail/id/'.$request->id,
                             'token'=>$topic[$i]];
                             try {

@@ -62,5 +62,9 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('updatedItem', 'TransactionController@updatedItem')->name('updatedItem');
         Route::post('clockin', 'SaltoController@clockin')->name('clockin');
         Route::post('clockout', 'SaltoController@clockout')->name('clockout');
+        Route::post('inputjurnal', 'SaltoController@inputjurnal')->name('inputjurnal');
+        Route::post('disposisisuratizin', 'SaltoController@disposisisuratizin')->name('disposisisuratizin');
+        Route::post('approvesuratizin', 'SaltoController@approvesuratizin')->name('approvesuratizin');
+        Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'SaltoController@cetaksurat')->name('cetaksurat');
     });
 });

@@ -7,8 +7,16 @@
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
+            <div class="row">
+                <div class="col-md-12">Absensi</div>
+                <div class="col-md-6">
+                    <span class="text-help">
+                        DATE FILTER
+                    </span>
+                </div>
+                <div class="col-md-6">Export</div>
+            </div>
             <div class="d-flex justify-content-between">
-                <div class="p-2">Absensi</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('absensi-create') && $clockIn==null)
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#clockIn">
@@ -42,9 +50,9 @@
                     </div>
                     @endif
                     @if(auth()->user()->hasPermissionTo('absensi-create') && $clockOut==null)
-                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#clockOut">
-                        Clock Out
-                    </button>
+                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#clockOut">
+                            Clock Out
+                        </button>
                     <!-- Modal -->
                     <div class="modal fade" id="clockOut" tabindex="-1" role="dialog" aria-labelledby="clockOutLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
