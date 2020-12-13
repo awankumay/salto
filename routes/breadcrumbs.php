@@ -149,7 +149,7 @@ Breadcrumbs::register('jurnal.edit', function ($breadcrumbs, $jurnal) {
 });
 Breadcrumbs::register('jurnal.show', function ($breadcrumbs, $jurnal) {
     $breadcrumbs->parent('jurnal');
-    $breadcrumbs->push($jurnal->id, route('jurnal.show', $jurnal->id));
+    $breadcrumbs->push(date_format(date_create($jurnal->tanggal), 'd-m-Y'), route('jurnal.show', $jurnal->id));
 });
 Breadcrumbs::register('pengasuhan', function ($breadcrumbs) {
     $breadcrumbs->parent('home');
@@ -166,5 +166,21 @@ Breadcrumbs::register('pengasuhan.edit', function ($breadcrumbs, $pengasuhan) {
 Breadcrumbs::register('pengasuhan.show', function ($breadcrumbs, $pengasuhan) {
     $breadcrumbs->parent('pengasuhan');
     $breadcrumbs->push($pengasuhan->id, route('pengasuhan.show', $pengasuhan->id));
+});
+Breadcrumbs::register('suket', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('suket', route('suket.index'));
+});
+Breadcrumbs::register('suket.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('suket');
+    $breadcrumbs->push('Tambah Suket', route('suket.create'));
+});
+Breadcrumbs::register('suket.edit', function ($breadcrumbs, $suket) {
+    $breadcrumbs->parent('suket');
+    $breadcrumbs->push($suket->id, route('suket.edit', $suket->id));
+});
+Breadcrumbs::register('suket.show', function ($breadcrumbs, $suket) {
+    $breadcrumbs->parent('suket');
+    $breadcrumbs->push($suket->id, route('suket.show', $suket->id));
 });
 ?>

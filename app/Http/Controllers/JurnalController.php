@@ -94,7 +94,11 @@ class JurnalController extends Controller
     {
         $model  = New JurnalTaruna();
         $jurnal = $model::find($id);
-        return view('jurnal.show', compact('jurnal'));
+        if(!empty($jurnal)){
+            return view('jurnal.show', compact('jurnal'));
+        }else{
+            return view('jurnal.index');
+        }
     }
 
     public function jurnaldetail(Request $request)

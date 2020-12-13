@@ -384,7 +384,7 @@ class SaltoController extends Controller
                 'data'    => [],
                 'message' => ['error'=>$validator->errors()],
             ];
-            return response()->json($response, 422);                     
+            return response()->json(['error'=>$validator->errors()], 422);                     
         }
 
         $getUser = User::where('id', $request->id_user)->first();

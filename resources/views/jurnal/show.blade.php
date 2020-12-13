@@ -10,6 +10,11 @@
             <div class="d-flex justify-content-between">
                 <div class="p-2">Detail Jurnal</div>
                 <div class="p-2">
+                @if(auth()->user()->hasPermissionTo('jurnal-harian-create') && $jurnal->tanggal==date('d-m-Y'))
+                    <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#tambahJurnal">
+                       Tambah Jurnal
+                    </button>
+                @endif
                 </div>
             </div>
         </div>
@@ -48,19 +53,71 @@
                         <div class="form-group col-md-10">
                             <strong>Mulai</strong>
                             <input type="time" class="form-control form-control-sm" name="start_time" value="{{date_format(date_create($jurnal->start_time), 'H:i')}}">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="start_time-error"></span>
+                            </span>
                         </div>
                         <div class="form-group col-md-10">
                             <strong>Akhir</strong>
                             <input type="time" class="form-control form-control-sm" name="end_time" value="{{date_format(date_create($jurnal->end_time), 'H:i')}}">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="end_time-error"></span>
+                            </span>
                         </div>
                         <div class="form-group col-md-10">
                             <strong>Kegiatan</strong>
                             <input type="text" class="form-control form-control-sm" name="kegiatan" value="{{$jurnal->kegiatan}}">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="kegiatan-error"></span>
+                            </span>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" onclick="refresh();">Close</button>
                         <button type="button" id="edit_jurnal_btn" class="btn btn-danger">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="tambahJurnal" tabindex="-1" role="dialog" aria-labelledby="tambahJurnalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tambahJurnalLabel">Tambah Jurnal</h5>
+                    <button type="button" class="close" onclick="refresh();" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form name="tambah_jurnal" id="tambah_jurnal" method="post" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="id_user">
+                        <div class="form-group col-md-10">
+                            <strong>Mulai</strong>
+                            <input type="time" class="form-control form-control-sm" name="start_time">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="start_time-error"></span>
+                            </span>
+                        </div>
+                        <div class="form-group col-md-10">
+                            <strong>Akhir</strong>
+                            <input type="time" class="form-control form-control-sm" name="end_time">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="end_time-error"></span>
+                            </span>
+                        </div>
+                        <div class="form-group col-md-10">
+                            <strong>Kegiatan</strong>
+                            <input type="text" class="form-control form-control-sm" name="kegiatan">
+                            <span class="form-text">
+                                <span class="text-danger text-help" id="kegiatan-error"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="refresh();">Close</button>
+                        <button type="button" id="tambah_jurnal_btn" class="btn btn-danger">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -89,7 +146,15 @@
                 {data: 'kegiatan', name: 'kegiatan'},
                 {data: 'start_time', name: 'start_time'},
                 {data: 'end_time', name: 'end_time'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
+                {data: 'action', name: 'action', orderable: false, searchable: false, 
+                    render:function(row, type, val, meta){
+                        if (val.tanggal!=new Date().toISOString().slice(0, 10)) {
+                            return '';
+                        }else{
+                            return val.action;
+                        }
+                    }
+                },
             ]
         });
         $(".dataTables_filter input")
@@ -106,7 +171,7 @@
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'jurnal/'+id;
+        let deleteUrl = "{{url('/')}}/dashboard/jurnal/"+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Ingin menghapus data ini?",
@@ -133,7 +198,6 @@
                         let i = row_index.parentNode.parentNode.rowIndex;
                         let table = $('.jurnal-detail-table').DataTable();
                         table.draw();
-                        window.location.reload();
                     },
                     error:function(){
                         setTimeout(function(){
@@ -155,7 +219,6 @@
     $(function() {
         $('#edit_jurnal_btn').on('click', function(e){
             var fd = new FormData(document.querySelector('#edit_jurnal'));  
-            document.querySelector('#btnJurnal');  
             fd.append('id', document.querySelector('#btnJurnal').dataset.id);					      
             $.ajaxSetup({
                     headers: {
@@ -193,7 +256,48 @@
                     }
                 }
             });
-            
+        }); 
+
+        $('#tambah_jurnal_btn').on('click', function(e){
+            var fd = new FormData(document.querySelector('#tambah_jurnal'));  
+            fd.append('id_user', "{{$jurnal->id_user}}");			
+            fd.append('tanggal', "{{$jurnal->tanggal}}");			
+            $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+            });
+            $.ajax({
+                url: "{{url('/')}}/dashboard/inputjurnal", 
+                data: fd,
+                processData: false,
+                contentType: false,
+                beforeSend:function () {
+                                $("#overlay").fadeIn(300);
+                },
+                type: 'POST',
+                success: function(data, textStatus, xhr){
+                    $("#overlay").fadeOut();
+                    toastr.success("Sukses", data.message);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                },
+                error : function(data, textStatus, xhr) {
+                    $("#overlay").fadeOut();
+                    if(data.responseJSON.error){
+                        if(data.responseJSON.error.kegiatan){
+                            $('#kegiatan-error').text(data.responseJSON.error.kegiatan[0])
+                        }
+                        if(data.responseJSON.error.start_time){
+                            $('#start_time-error').text(data.responseJSON.error.start_time[0])
+                        }
+                        if(data.responseJSON.error.end_time){
+                            $('#end_time-error').text(data.responseJSON.error.end_time[0])
+                        }
+                    }
+                }
+            });
         }); 
     });
 
