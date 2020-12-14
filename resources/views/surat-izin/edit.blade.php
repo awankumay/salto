@@ -15,7 +15,7 @@
         <div class="card-body">
             {!! Form::model($getSurat, ['method' => 'PATCH','route' => ['surat-izin.update', $getSurat->id], 'enctype' => 'multipart/form-data']) !!}
             <div class="row">
-                @if($currentUser->getRoleNames()[0]!='Taruna')
+                @if($currentUser->getRoleNames()[0]=='Super Admin')
                     <div class="col-md-12">
                         <div class="form-group col-md-6">
                             <strong>Nama Taruna:</strong>

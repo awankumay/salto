@@ -230,7 +230,7 @@ class SuratIzinController extends Controller
                 Arr::forget($input, array('_token', 'file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $getUser = User::where('id', $request->id_user)->first();
 
-                if($currentUser->getRoleNames()[0]!='Taruna'){
+                if($currentUser->getRoleNames()[0]=='Super Admin'){
                     $input['start'] = $request->start.' '.$request->start_time;
                     $input['end']   = $request->end.' '.$request->end_time;
                     $input['status'] = 1;
@@ -427,7 +427,7 @@ class SuratIzinController extends Controller
                 $input = $request->all();
                 Arr::forget($input, array('_token', 'file', 'start_time', 'end_time', 'keluhan', 'diagnosa', 'rekomendasi', 'dokter', 'pendamping', 'keperluan', 'tujuan', 'nm_tc', 'pelatih'));
                 $currentUser = Auth::user();
-                if($currentUser->getRoleNames()[0]!='Taruna'){
+                if($currentUser->getRoleNames()[0]=='Super Admin'){
                     $input['start'] = $request->start.' '.$request->start_time;
                     $input['end']   = $request->end.' '.$request->end_time;
                     $input['status'] = 1;

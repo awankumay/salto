@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('absensi', 'AbsensiController');
         Route::resource('jurnal', 'JurnalController');
         Route::resource('pengasuhan', 'PengasuhanController');
+        Route::resource('suket', 'SuketController');
         Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
@@ -58,13 +59,16 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('deleteExistImagePayment', 'PaymentController@deleteExistImagePayment')->name('deleteExistImagePayment');
         Route::post('deleteExistImageSlider', 'SliderController@deleteExistImageSlider')->name('deleteExistImageSlider');
         Route::post('deleteExistImageSurat', 'SuratIzinController@deleteExistImageSurat')->name('deleteExistImageSurat');
+        Route::post('deleteExistImageSuket', 'SuketController@deleteExistImageSuket')->name('deleteExistImageSuket');
         Route::post('deleteItem', 'TransactionController@deleteItem')->name('deleteItem');
         Route::post('updatedItem', 'TransactionController@updatedItem')->name('updatedItem');
         Route::post('clockin', 'SaltoController@clockin')->name('clockin');
         Route::post('clockout', 'SaltoController@clockout')->name('clockout');
         Route::post('inputjurnal', 'SaltoController@inputjurnal')->name('inputjurnal');
         Route::post('disposisisuratizin', 'SaltoController@disposisisuratizin')->name('disposisisuratizin');
+        Route::post('disposisisuket', 'SaltoController@disposisisuket')->name('disposisisuket');
         Route::post('approvesuratizin', 'SaltoController@approvesuratizin')->name('approvesuratizin');
+        Route::post('approvesuket', 'SaltoController@approvesuket')->name('approvesuket');
         Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'SaltoController@cetaksurat')->name('cetaksurat');
     });
 });

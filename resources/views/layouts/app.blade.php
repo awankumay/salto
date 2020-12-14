@@ -124,7 +124,7 @@
                         @if(auth()->user()->hasPermissionTo('prestasi-taruna-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Penghargaan Taruna</a>@endif
                         @if(auth()->user()->hasPermissionTo('hukuman-dinas-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
                         @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('pengasuhan.index')}}">Pengasuhan Daring</a>@endif
-                        @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('content.index')}}">Surat Keterangan</a>@endif
+                        @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('suket.index')}}">Surat Keterangan</a>@endif
                         @if(auth()->user()->hasPermissionTo('absensi-list'))<a class="collapse-item" href="{{route('absensi.index')}}">Absensi Harian</a>@endif
                         @if(auth()->user()->hasPermissionTo('jurnal-harian-list'))<a class="collapse-item" href="{{route('jurnal.index')}}">Jurnal Harian</a>@endif
                         </div>

@@ -12,6 +12,7 @@ use App\User;
 use App\Absensi;
 use App\JurnalTaruna;
 use App\SuratIzin;
+use App\Suket;
 use App\Traits\ImageTrait;
 use App\Traits\Firebase;
 use Hash;
@@ -242,9 +243,67 @@ class SaltoController extends Controller
         ]);
     }
 
+    public function disposisisuket(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        $suket = Suket::where('id', $request->id)
+                ->where('status', 0)
+                ->first();
+        $suket->user_disposisi=$request->id_user;
+        $suket->date_disposisi=date('Y-m-d H:i:s');
+        $suket->reason_disposisi=$request->reason;
+        $suket->status_disposisi=$request->status;
+        $suket->save();
+
+        $data['status'] = true;
+        $data['firebase'] = false;
+        $keluarga       = User::keluargataruna($suket->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suket->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi surat keterangan baru',
+                'body'=>'surat keterangan baru telah diposisi',
+                'page'=>'/suket/detail/id/'.$request->id,
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'][$i] = $firebase;
+                } catch (\Throwable $th) {
+                    $data['firebase'] = $th->getMessage();
+                }
+                sleep(1);
+            }
+        }
+       
+        
+        return response()->json([
+            "success" => true,
+            "message" => "Disposisi berhasil",
+            "data" => $data
+        ]);
+    }
+
     public function approvesuratizin(Request $request)
     {
-        #categorytugas
         $validator = Validator::make($request->all(), [
             'id_user' => 'required',
             'status' => 'required',
@@ -350,6 +409,109 @@ class SaltoController extends Controller
             "message" => "Persetujuan berhasil",
             "data" => $data
         ]);
+    }
+
+    public function approvesuket(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        
+        $suket = Suket::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+
+        $keluarga       = User::keluargataruna($suket->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$suket->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $data['firebase'] = false;
+
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan'){
+            $suket->user_approve_level_1=$request->id_user;
+            $suket->date_approve_level_1=date('Y-m-d H:i:s');
+            $suket->status_level_1=$request->status;
+            $suket->reason_level_1=$request->reason;
+            $suket->save();
+            $data['status'] = true;
+
+            $topic  = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    'body'=>'surat keterangan baru telah disetuji oleh aak',
+                    'page'=>'/suket/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
+
+            return response()->json([
+                "success" => true,
+                "message" => "Persetujuan berhasil",
+                "data" => $data
+            ]);
+        }
+
+        if($getUser->getRoleNames()[0]=='Direktur' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $suket->user_approve_level_2=$request->id_user;
+            $suket->date_approve_level_2=date('Y-m-d H:i:s');
+            $suket->status_level_2=$request->status;
+            $suket->reason_level_2=$request->reason;
+            $suket->status=$request->status;
+            $suket->save();
+            $data['status'] = true;
+            $topic  = User::topic('approve-direktur', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
+                    'body'=>'surat keterangan baru telah disetuji oleh direktur',
+                    'page'=>'/suket/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
+            return response()->json([
+                "success" => true,
+                "message" => "Persetujuan berhasil",
+                "data" => $data
+            ]); 
+            
+        }
+        $response = [
+            'success' => false,
+            'data'    => [],
+            'message' => 'Persetujuan gagal',
+        ];
+        return response()->json($response, 500); 
     }
 
     public function cetaksurat(Request $request){
