@@ -45,6 +45,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('absensi', 'AbsensiController');
         Route::resource('jurnal', 'JurnalController');
         Route::resource('pengasuhan', 'PengasuhanController');
+        Route::resource('prestasi', 'PrestasiController');
         Route::resource('suket', 'SuketController');
         Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');

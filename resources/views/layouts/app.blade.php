@@ -121,7 +121,7 @@
                     <div id="data-monitoring" class="collapse" aria-labelledby="data-monitoring" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('prestasi-taruna-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Penghargaan Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('prestasi-taruna-list'))<a class="collapse-item" href="{{route('prestasi.index')}}">Penghargaan Taruna</a>@endif
                         @if(auth()->user()->hasPermissionTo('hukuman-dinas-list'))<a class="collapse-item" href="{{route('post-category.index')}}">Hukuman Dinas</a>@endif
                         @if(auth()->user()->hasPermissionTo('pengasuhan-daring-list'))<a class="collapse-item" href="{{route('pengasuhan.index')}}">Pengasuhan Daring</a>@endif
                         @if(auth()->user()->hasPermissionTo('surat-keterangan-list'))<a class="collapse-item" href="{{route('suket.index')}}">Surat Keterangan</a>@endif
