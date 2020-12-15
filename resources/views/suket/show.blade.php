@@ -187,7 +187,8 @@
         fd.append('id', "{{$data->id}}");	      
         fd.append('id_user', "{{Auth::user()->id}}");	      
         fd.append('reason', $('#reason').val());	      
-        fd.append('status', status);	      
+        fd.append('status', status);	
+        $(".modal").css( "z-index", 1);  	      
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -225,7 +226,8 @@
         fd.append('id', "{{$data->id}}");	      
         fd.append('id_user', "{{Auth::user()->id}}");	      
         fd.append('reason', $('#reason').val());	      
-        fd.append('status', status);	      
+        fd.append('status', status);
+        $(".modal").css( "z-index", 1);  		      
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
