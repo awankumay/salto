@@ -10,6 +10,9 @@
             <div class="d-flex justify-content-between">
                 <div class="p-2">Pengaduan</div>
                 <div class="p-2">
+                    @if(auth()->user()->hasPermissionTo('pengaduan-create'))
+                        <a href="{{route('report.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Pengaduan</a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -19,10 +22,9 @@
                     <thead>
                         <tr>
                             <th style="width:5%;">ID</th>
-                            <th style="width:25%;">Name</th>
-                            <th style="width:25%;">Pengaduan</th>
-                            <th style="width:25%;">Dibuat</th>
-                            <th style="width:25%;">Diubah</th>
+                            <th style="width:65%;">Pengaduan</th>
+                            <th style="width:15%%;">Tanggal Followup</th>
+                            <th style="width:15%%;">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,10 +47,9 @@
             ajax: "{{ route('report.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
-                {data: 'name', name: 'name'},
-                {data: 'report', name:'report'},
-                {data: 'created_at', name: 'created_at'},
-                {data: 'updated_at', name: 'updated_at'}
+                {data: 'pengaduan', name: 'pengaduan'},
+                {data: 'date_follow_up', name: 'date_follow_up'},
+                {data: 'action', name: 'action'}
             ]
         });
         $(".dataTables_filter input")

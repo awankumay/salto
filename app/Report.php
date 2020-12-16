@@ -2,13 +2,15 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
 use DB;
+use Auth;
+use Illuminate\Database\Eloquent\Model;
+
 class Report extends Model
 {
-    protected $table = 'reports';
+    protected $table = 'tb_pengaduan';
     protected $fillable = [
-        'users_id', 'report'
+        'id_user', 'report'
     ];
     protected $primaryKey = 'id';
 
@@ -19,32 +21,40 @@ class Report extends Model
 
     public function GetCurrentData($start, $limit, $order, $dir)
     {
-        $data = Report::select(DB::raw("reports.id as id, users.name as name, reports.report, reports.created_at, reports.updated_at"))
-                            ->leftJoin('users', 'users.id', '=', 'reports.users_id')
-                            ->offset($start)
-                            ->limit($limit)
-                            ->orderBy('reports.'.$order,$dir)
-                            ->get();
+        $currentUser = Auth::user();
+
+        $data = Report::select('tb_pengaduan.id','tb_pengaduan.pengaduan','tb_pengaduan.id_user','tb_pengaduan.date_follow_up')
+            ->leftJoin('users', 'users.id', '=', 'tb_pengaduan.id_user')
+            ->offset($start)
+            ->limit($limit)
+            ->when($currentUser, function($query, $currentUser) {
+                if($currentUser->getRoleNames()[0] != "Super Admin") {
+                    $query->where('tb_pengaduan.id_user', $currentUser->id);
+                }
+            })
+            ->orderBy('tb_pengaduan.'.$order,$dir)
+            ->get();
+
         return $data;
     }
 
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
-        $data = Report::where('reports.id','LIKE',"%{$search}%")
+        $data = Report::where('tb_pengaduan.id','LIKE',"%{$search}%")
                             ->orWhere('users.name', 'LIKE', "%{$search}%")
-                            ->select(DB::raw("reports.id as id, users.name as name, reports.report, reports.created_at, reports.updated_at"))
-                            ->leftJoin('users', 'users.id', '=', 'reports.users_id')
+                            ->select(DB::raw("tb_pengaduan.id as id, users.name as name, tb_pengaduan.report, tb_pengaduan.created_at, tb_pengaduan.updated_at"))
+                            ->leftJoin('users', 'users.id', '=', 'tb_pengaduan.id_user')
                             ->offset($start)
                             ->limit($limit)
-                            ->orderBy('reports.'.$order,$dir)
+                            ->orderBy('tb_pengaduan.'.$order,$dir)
                             ->get();
         return $data;
     }
 
     public function GetCountDataFilter($search){
-        $data = Report::where('reports.id','LIKE',"%{$search}%")->orWhere('users.name', 'LIKE', "%{$search}%")
-                            ->select(DB::raw("reports.id as id, users.name as name, reports.report, reports.created_at, reports.updated_at"))
-                            ->leftJoin('users', 'users.id', '=', 'reports.users_id')
+        $data = Report::where('tb_pengaduan.id','LIKE',"%{$search}%")->orWhere('users.name', 'LIKE', "%{$search}%")
+                            ->select(DB::raw("tb_pengaduan.id as id, users.name as name, tb_pengaduan.report, tb_pengaduan.created_at, tb_pengaduan.updated_at"))
+                            ->leftJoin('users', 'users.id', '=', 'tb_pengaduan.id_user')
                             ->count();
         return $data;
     }

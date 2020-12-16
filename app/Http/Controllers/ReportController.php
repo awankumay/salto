@@ -29,10 +29,8 @@ class ReportController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('permission:send-report-list');
-        $this->middleware('permission:send-report-create', ['only' => ['create','store']]);
-        $this->middleware('permission:send-report-edit', ['only' => ['edit','update']]);
-        $this->middleware('permission:send-report-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:pengaduan-list');
+        $this->middleware('permission:pengaduan-create');
     }
 
     /**
@@ -45,19 +43,19 @@ class ReportController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                1=>'name',
-                2=>'report',
-                3=>'created_at',
-                4=>'updated_at'
+                1=>'pengaduan',
+                2=>'date_follow_up',
+                3=>'action'
             );
             $model  = New Report();
-            return $this->ActionTable($columns, $model, $request, 'report.edit', 'send-report-edit', 'send-report-delete');
+            return $this->ActionTable($columns, $model, $request, 'report.edit', 'pengaduan-edit', null);
         }
         return view('send-report.index');
     }
 
     public function create()
     {
+        return view('send-report.create');
     }
 
     public function edit($id)
@@ -67,7 +65,11 @@ class ReportController extends Controller
 
     public function store(Request $request)
     {
-
+        $this->validate($request, ['pengaduan' => 'required']);
+        if(Report::create($request->all())) {
+            \Session::flash('success','Data berhasil ditambah.');
+            return redirect()->route('report.index');
+        }
     }
 
     public function update(Request $request, $id)
