@@ -28,7 +28,7 @@ class JurnalTaruna extends Model
                 }
                 $id[]=$currentUser->id;
                 //$getTaruna  = implode(',',$id);
-            return JurnalTaruna::whereIn('id_user', $id)->count();
+            return JurnalTaruna::whereIn('id_user', $id)->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
