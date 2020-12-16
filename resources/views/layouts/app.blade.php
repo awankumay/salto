@@ -164,7 +164,7 @@
                     <div id="pengaduan" class="collapse" aria-labelledby="pengaduan" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan (WBS)</a>@endif
+                        @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan</a>@endif
                         </div>
                     </div>
                 </li>

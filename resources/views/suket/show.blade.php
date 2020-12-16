@@ -66,7 +66,7 @@
                             <div class="form-group col-md-12" ng-controller="SelectFileController">
                                 <strong>Lampiran:</strong><br>
                                 @if($data->photo)
-                                <img src="{{URL::to('/')}}/storage/{{config('app.documentImagePath')}}/{{$data->photo}}" width="100%"/> 
+                                <img src="{{$data->photo}}" width="100%"/> 
                                 @else
                                 Tidak ada Lampiran
                                 @endif

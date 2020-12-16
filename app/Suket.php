@@ -145,7 +145,7 @@ class Suket extends Authenticatable
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
-                            ->select('tb_suket.id', 'users.name as name', 'tb_suket.status', 'tb_suket.created_at')
+                            ->select('tb_suket.keperluan', 'tb_suket.id', 'users.name as name', 'tb_suket.status', 'tb_suket.created_at')
                             ->offset($start)
                             ->limit($limit)
                             ->orderBy($order,$dir)

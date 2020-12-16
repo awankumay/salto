@@ -88,7 +88,7 @@
                         <input type="file" name="file" onchange="angular.element(this).scope().SelectFile(event)">
                         <div class="mt-1"><img ng-src="<%= PreviewImage %>" ng-if="PreviewImage != null" alt="" style="height:200px;width:400px" /></div>
                         <span class="form-text {{isset($errors->messages()['file']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Ukuran foto < 300kb *'}}
+                        {{isset($errors->messages()['file']) ? $errors->messages()['file'][0] .'*' : 'Lampiran tidak wajib diisi'}}
                         </span>
                         @if($getSurat->photo)<img src="{{URL::to('/')}}/storage/{{config('app.documentImagePath')}}/{{$getSurat->photo}}" height="50"/><span style="cursor: pointer;color:red;" onclick="deleteExist('{{$getSurat->photo}}', '{{$getSurat->id}}')"> x </span> @endif
                     </div>

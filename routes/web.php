@@ -53,14 +53,10 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
-        Route::post('deleteExistImageCampaign', 'CampaignController@deleteExistImageCampaign')->name('deleteExistImageCampaign');
-        Route::post('deleteExistImageAuction', 'AuctionController@deleteExistImageAuction')->name('deleteExistImageAuction');
-        Route::post('deleteExistImageConvict', 'ConvictController@deleteExistImageConvict')->name('deleteExistImageConvict');
-        Route::post('deleteExistImageProduct', 'ProductController@deleteExistImageProduct')->name('deleteExistImageProduct');
-        Route::post('deleteExistImagePayment', 'PaymentController@deleteExistImagePayment')->name('deleteExistImagePayment');
         Route::post('deleteExistImageSlider', 'SliderController@deleteExistImageSlider')->name('deleteExistImageSlider');
         Route::post('deleteExistImageSurat', 'SuratIzinController@deleteExistImageSurat')->name('deleteExistImageSurat');
         Route::post('deleteExistImageSuket', 'SuketController@deleteExistImageSuket')->name('deleteExistImageSuket');
+        Route::post('deleteExistImagePrestasi', 'PrestasiController@deleteExistImagePrestasi')->name('deleteExistImagePrestasi');
         Route::post('deleteItem', 'TransactionController@deleteItem')->name('deleteItem');
         Route::post('updatedItem', 'TransactionController@updatedItem')->name('updatedItem');
         Route::post('clockin', 'SaltoController@clockin')->name('clockin');
@@ -68,8 +64,10 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('inputjurnal', 'SaltoController@inputjurnal')->name('inputjurnal');
         Route::post('disposisisuratizin', 'SaltoController@disposisisuratizin')->name('disposisisuratizin');
         Route::post('disposisisuket', 'SaltoController@disposisisuket')->name('disposisisuket');
+        Route::post('disposisiprestasi', 'SaltoController@disposisiprestasi')->name('disposisiprestasi');
         Route::post('approvesuratizin', 'SaltoController@approvesuratizin')->name('approvesuratizin');
         Route::post('approvesuket', 'SaltoController@approvesuket')->name('approvesuket');
+        Route::post('approveprestasi', 'SaltoController@approveprestasi')->name('approveprestasi');
         Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'SaltoController@cetaksurat')->name('cetaksurat');
     });
 });

@@ -3,28 +3,32 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('suket') }}
+        {{ Breadcrumbs::render('prestasi') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Surat Keterangan</div>
+                <div class="p-2">Prestasi Taruna</div>
                 <div class="p-2">
-                    @if(auth()->user()->hasPermissionTo('surat-keterangan-create'))
-                        <a href="{{route('suket.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Surat Keterangan</a>
+                    @if(auth()->user()->hasPermissionTo('prestasi-taruna-create'))
+                        <a href="{{route('prestasi.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Prestasi</a>
                     @endif
                 </div>
             </div>
         </div>
         <div class="cards card-body">
             <div class="table table-responsive">
-                <table class="table display nowrap suket-table" style="width:100%">
+                <table class="table display nowrap prestasi-table" style="width:100%">
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>STB</th>
                             <th>Nama</th>
-                            <th>Keperluan</th>
                             <th>Status</th>
+                            <th>Keterangan</th>
+                            <th>Tingkat</th>
+                            <th>Tempat</th>
+                            <th>Waktu</th>
                             <th>Dibuat</th>
                             <th>Action</th>
                         </tr>
@@ -39,16 +43,16 @@
 @push('scripts')
 <script type="text/javascript">
     $(function () {
-        var table = $('.suket-table').DataTable({
+        var table = $('.prestasi-table').DataTable({
             processing: true,
             serverSide: true,
-            order: [[ 3, "ASC" ], [0, "DESC"]],
+            order: [[ 7, "ASC" ], [0, "DESC"]],
             responsive: true,
-            ajax: "{{ route('suket.index') }}",
+            ajax: "{{ route('prestasi.index') }}",
             columns: [
                 {data: 'id', name: 'id'},
+                {data: 'stb', name: 'stb'},
                 {data: 'name', name: 'name'},
-                {data: 'keperluan', name: 'keperluan', orderable: false, searchable: false},
                 {data: 'status', name: 'status',
                     render:function(row, type, val, meta){
                         if(val.status==1){
@@ -60,6 +64,10 @@
                         }
                     }, orderable: false, searchable: false
                 },
+                {data: 'keterangan', name: 'keterangan'},
+                {data: 'tingkat', name: 'tingkat'},
+                {data: 'tempat', name: 'tempat'},
+                {data: 'waktu', name: 'waktu'},
                 {data: 'created_at', name: 'created_at'},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
@@ -78,7 +86,7 @@
     });
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'suket/'+id;
+        let deleteUrl = 'prestasi/'+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Ingin menghapus data ini?",

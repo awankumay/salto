@@ -3,17 +3,17 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('suket.create') }}
+        {{ Breadcrumbs::render('prestasi.create') }}
     </div>
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Tambah Surat Keterangan</div>
-                <a class="btn btn-sm btn-warning" href="{{route('suket.index')}}">Kembali</a>
+                <div class="p-2">Tambah Prestasi</div>
+                <a class="btn btn-sm btn-warning" href="{{route('prestasi.index')}}">Kembali</a>
             </div>
         </div>
         <div class="card-body">
-            {!! Form::open(array('route' => ['suket.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
+            {!! Form::open(array('route' => ['prestasi.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
             <div class="row">
                 @if($currentUser->getRoleNames()[0]=='Super Admin')
                     <div class="col-md-12">
@@ -30,51 +30,41 @@
                 @endif
                 <div class="col-md-12">
                     <div class="form-group col-md-6">
-                        <strong>Tempat & Tanggal Lahir:</strong>
-                        @php isset($errors->messages()['ttl']) ? $x='is-invalid' : $x='' @endphp
-                        {!! Form::text('ttl', null, array('placeholder' => 'Tempat & Tanggal Lahir','class' => 'form-control form-control-sm '.$x.'')) !!}
-                        <span class="form-text {{isset($errors->messages()['ttl']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['ttl']) ? $errors->messages()['ttl'][0] .'*' : 'Tempat tanggal lahir wajib diisi *'}}
+                        <strong>Waktu:</strong>
+                        @php isset($errors->messages()['waktu']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::text('waktu', null, array('placeholder' => 'Waktu','class' => 'form-control form-control-sm '.$x.'')) !!}
+                        <span class="form-text {{isset($errors->messages()['waktu']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['waktu']) ? $errors->messages()['waktu'][0] .'*' : 'Waktu wajib diisi *'}}
                         </span>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group col-md-6">
-                        <strong>Pekerjaan:</strong>
-                        @php isset($errors->messages()['pekerjaan']) ? $x='is-invalid' : $x='' @endphp
-                        {!! Form::text('pekerjaan', null, array('placeholder' => 'Pekerjaan','class' => 'form-control form-control-sm '.$x.'')) !!}
-                        <span class="form-text {{isset($errors->messages()['pekerjaan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['pekerjaan']) ? $errors->messages()['pekerjaan'][0] .'*' : 'Pekerjaan *'}}
+                        <strong>Tingkat:</strong>
+                        @php isset($errors->messages()['tingkat']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::text('tingkat', null, array('placeholder' => 'tingkat','class' => 'form-control form-control-sm '.$x.'')) !!}
+                        <span class="form-text {{isset($errors->messages()['tingkat']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['tingkat']) ? $errors->messages()['tingkat'][0] .'*' : 'Tingkat wajib diisi *'}}
                         </span>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group col-md-6">
-                        <strong>Orang Tua:</strong>
-                        @php isset($errors->messages()['orangtua']) ? $x='is-invalid' : $x='' @endphp
-                        {!! Form::text('orangtua', null, array('placeholder' => 'orangtua','class' => 'form-control form-control-sm '.$x.'')) !!}
-                        <span class="form-text {{isset($errors->messages()['orangtua']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                        {{isset($errors->messages()['orangtua']) ? $errors->messages()['orangtua'][0] .'*' : 'Orang Tua *'}}
+                        <strong>Tempat:</strong>
+                        @php isset($errors->messages()['tempat']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::text('tempat', null, array('placeholder' => 'tempat','class' => 'form-control form-control-sm '.$x.'')) !!}
+                        <span class="form-text {{isset($errors->messages()['tempat']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                        {{isset($errors->messages()['tempat']) ? $errors->messages()['tempat'][0] .'*' : 'Tempat wajib diisi *'}}
                         </span>
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group col-md-6">
-                        <strong>Keperluan:</strong>
-                        @php isset($errors->messages()['keperluan']) ? $x='is-invalid' : $x='' @endphp
-                        {!! Form::textarea('keperluan', null, array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'Keperluan')) !!}
-                        <span class="form-text {{isset($errors->messages()['keperluan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['keperluan']) ? $errors->messages()['keperluan'][0] .'*' : 'Keperluan wajib diisi *'}}
-                        </span>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group col-md-6">
-                        <strong>Alamat:</strong>
-                        @php isset($errors->messages()['alamat']) ? $x='is-invalid' : $x='' @endphp
-                        {!! Form::textarea('alamat', null, array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'alamat')) !!}
-                        <span class="form-text {{isset($errors->messages()['alamat']) ? 'text-danger text-help' : 'text-muted text-help'}}">
-                            {{isset($errors->messages()['alamat']) ? $errors->messages()['alamat'][0] .'*' : 'alamat wajib diisi *'}}
+                        <strong>Keterangan:</strong>
+                        @php isset($errors->messages()['keterangan']) ? $x='is-invalid' : $x='' @endphp
+                        {!! Form::textarea('keterangan', null, array('rows' => 4, 'cols' => 54, 'class'=>'form-control form-control-sm '.$x.'', 'placeholder'=>'keterangan')) !!}
+                        <span class="form-text {{isset($errors->messages()['keterangan']) ? 'text-danger text-help' : 'text-muted text-help'}}">
+                            {{isset($errors->messages()['keterangan']) ? $errors->messages()['keterangan'][0] .'*' : 'Keterangan wajib diisi *'}}
                         </span>
                     </div>
                 </div>

@@ -183,4 +183,20 @@ Breadcrumbs::register('suket.show', function ($breadcrumbs, $suket) {
     $breadcrumbs->parent('suket');
     $breadcrumbs->push($suket->id, route('suket.show', $suket->id));
 });
+Breadcrumbs::register('prestasi', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('prestasi', route('prestasi.index'));
+});
+Breadcrumbs::register('prestasi.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('prestasi');
+    $breadcrumbs->push('Tambah Prestasi', route('prestasi.create'));
+});
+Breadcrumbs::register('prestasi.edit', function ($breadcrumbs, $prestasi) {
+    $breadcrumbs->parent('prestasi');
+    $breadcrumbs->push($prestasi->id, route('prestasi.edit', $prestasi->id));
+});
+Breadcrumbs::register('prestasi.show', function ($breadcrumbs, $prestasi) {
+    $breadcrumbs->parent('prestasi');
+    $breadcrumbs->push($prestasi->id, route('prestasi.show', $prestasi->id));
+});
 ?>

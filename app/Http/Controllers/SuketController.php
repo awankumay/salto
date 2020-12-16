@@ -173,7 +173,7 @@ class SuketController extends Controller
         }else {
             $data['status_name'] = 'Tidak Disetujui';
         }
-    
+        $data['show_persetujuan'] = false;
         if($roleName=='Pembina' && $data['status_level_1']!=1 && $getSurat->status!=1){
             $data['show_disposisi'] = true;
         }
@@ -249,7 +249,7 @@ class SuketController extends Controller
                 $input['nama']              = $getUser->name;
                 $input['id_user']           = $getUser->id;
                 $input['stb']               = $getUser->stb;
-                if($getUser->getRoleNames()[0]=='Super Admin'){
+                if(Auth::user()->getRoleNames()['0']=='Super Admin'){
                     $input['status'] = 1;
                     $input['status_level_1'] = 1;
                     $input['status_level_2'] = 1;
@@ -267,7 +267,6 @@ class SuketController extends Controller
                     $input['status']            = 0;
                 }
                 Arr::forget($input, array('_token', 'file'));
-                Suket::create($input);
 
                 $id = DB::table('tb_suket')->insertGetId($input);
 
@@ -280,7 +279,7 @@ class SuketController extends Controller
             $dataFirebase = [];
             $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
             $topic = User::topic('createsurat', $dataFirebase);
-            if(!empty($topic) && $getUser->getRoleNames()[0]!='Super Admin'){
+            if(!empty($topic) && Auth::user()->getRoleNames()['0']!='Super Admin'){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan surat keterangan baru',
@@ -387,7 +386,7 @@ class SuketController extends Controller
             $dataFirebase = [];
             $dataFirebase = ['id'=>$getUser->id, 'keluarga_asuh'=>$keluarga_asuh];
             $topic = User::topic('createsurat', $dataFirebase);
-            if(!empty($topic) && $getUser->getRoleNames()[0]=='Super Admin'){
+            if(!empty($topic) && Auth::user()->getRoleNames()['0']!='Super Admin'){
                 set_time_limit(60);
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan surat keterangan baru',
