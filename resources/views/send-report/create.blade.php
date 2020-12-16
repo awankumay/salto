@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-body">
-            {!! Form::open(array('route' => ['report.store'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
+            {!! Form::open(array('route' => ['report.store'],'method'=>'POST')) !!}
                 <input type="hidden" name="id_user" value="{{ auth()->user()->id }}">
                 <div class="row">
                     <div class="col-md-6">

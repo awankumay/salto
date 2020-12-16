@@ -48,7 +48,7 @@ class ReportController extends Controller
                 3=>'action'
             );
             $model  = New Report();
-            return $this->ActionTable($columns, $model, $request, 'report.edit', 'pengaduan-edit', null);
+            return $this->ActionTable($columns, $model, $request, 'report.show', 'pengaduan-followup', null);
         }
         return view('send-report.index');
     }
@@ -63,6 +63,22 @@ class ReportController extends Controller
 
     }
 
+    public function show($id)
+    {
+        $currentUser = Auth::user();
+        $data = Report::select('tb_pengaduan.id','tb_pengaduan.pengaduan','tb_pengaduan.follow_up', 'tb_pengaduan.created_at', 'users.name as username')
+            ->leftJoin('users', 'users.id', '=', 'tb_pengaduan.id_user')
+            ->when($currentUser, function($query, $currentUser) {
+                if($currentUser->getRoleNames()[0] != "Super Admin") {
+                    $query->where('tb_pengaduan.id_user', $currentUser->id);
+                }
+            })
+            ->where('tb_pengaduan.id', $id)
+            ->first();
+
+        return view('send-report.show', ['data' => $data]);
+    }
+
     public function store(Request $request)
     {
         $this->validate($request, ['pengaduan' => 'required']);
@@ -74,7 +90,9 @@ class ReportController extends Controller
 
     public function update(Request $request, $id)
     {
-
+        if(Report::where('id', $id)->update(['follow_up' => $request->pengaduan])) {
+            return redirect()->route('report.show', ['report' => $id]);
+        }
     }
 
     public function destroy($id)

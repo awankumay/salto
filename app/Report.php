@@ -10,7 +10,7 @@ class Report extends Model
 {
     protected $table = 'tb_pengaduan';
     protected $fillable = [
-        'id_user', 'report'
+        'id_user', 'report', 'follow_up'
     ];
     protected $primaryKey = 'id';
 
