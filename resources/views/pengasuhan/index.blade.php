@@ -29,7 +29,6 @@
                             <th>Akhir</th>
                             <th>ID Media</th>
                             <th>Password</th>
-                            <th>Status</th>
                             <th>Dibuat</th>
                             <th>Action</th>
                         </tr>
@@ -61,15 +60,6 @@
                 {data: 'end_time', name: 'end_time',  orderable: false, searchable: false},
                 {data: 'id_media', name: 'id_media'},
                 {data: 'password', name: 'password'},
-                {data: 'status', name: 'status',
-                    render:function(data){
-                            if(data==1){
-                                return '<span class="badge badge-success">Disetujui</span>';
-                            }else{
-                                return '<span class="badge badge-warning">Tidak Disetujui</span>';
-                            }
-                        }
-                },
                 {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
