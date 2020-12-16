@@ -101,7 +101,7 @@ class UserController extends Controller
                 'password' => 'required|same:confirm-password',
                 'phone' => 'required|numeric|unique:users,phone,NULL,id,deleted_at,NULL',
                 'whatsapp' => 'numeric|unique:users,whatsapp,NULL,id,deleted_at,NULL',
-                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'file' => 'nullable|mimes:jpeg,bmp,png',
                 'role'=>'required',
                 'sex'=>'required',
                 'status'=>'required',
@@ -118,15 +118,15 @@ class UserController extends Controller
                 'password' => 'required|same:confirm-password',
                 'phone' => 'required|numeric|unique:users,phone,NULL,id,deleted_at,NULL',
                 'whatsapp' => 'numeric|unique:users,whatsapp,NULL,id,deleted_at,NULL',
-                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'file' => 'nullable|mimes:jpeg,bmp,png',
                 'role'=>'required',
                 'sex'=>'required',
                 'status'=>'required'
             ]);
         }
         if($request->file){
-
-            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            $convert = true;
+            $image = $this->UploadImage($request->file, config('app.userImagePath'), $convert);
             if($image==false){
                 \Session::flash('error','image upload failure');
                 return redirect()->route('user.create');
@@ -185,7 +185,7 @@ class UserController extends Controller
                 'password' => 'same:confirm-password',
                 'phone' => "required|numeric|unique:users,phone,{$id},id,deleted_at,NULL",
                 'whatsapp' => "numeric|unique:users,whatsapp,{$id},id,deleted_at,NULL",
-                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'file' => 'nullable|mimes:jpeg,bmp,png',
                 'role'=>'required',
                 'sex'=>'required',
                 'status'=>'required',
@@ -202,7 +202,7 @@ class UserController extends Controller
                 'password' => 'same:confirm-password',
                 'phone' => "required|numeric|unique:users,phone,{$id},id,deleted_at,NULL",
                 'whatsapp' => "numeric|unique:users,whatsapp,{$id},id,deleted_at,NULL",
-                'file' => 'nullable|mimes:jpeg,bmp,png|max:500',
+                'file' => 'nullable|mimes:jpeg,bmp,png',
                 'role'=>'required',
                 'sex'=>'required',
                 'status'=>'required'
@@ -212,7 +212,8 @@ class UserController extends Controller
 
         $user = User::find($id);
         if($request->file){
-            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            $convert = true;
+            $image = $this->UploadImage($request->file, config('app.userImagePath'), $convert);
             if($image==false){
                 \Session::flash('error','image upload failure');
                 return redirect()->route('user.index');

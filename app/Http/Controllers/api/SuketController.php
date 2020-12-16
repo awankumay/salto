@@ -459,8 +459,6 @@ class SuketController extends BaseController
                 $input['status_level_1']    = 0;
                 $input['status_level_2']    = 0;
                 $input['status']            = 0;
-                Suket::create($input);
-
                 $id = DB::table('tb_suket')->insertGetId($input);
 
             DB::commit();
