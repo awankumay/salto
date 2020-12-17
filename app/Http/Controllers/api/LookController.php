@@ -171,8 +171,13 @@ class LookController extends BaseController
 
     public function getberitadetail(Request $request)
     {
-        $data = Content::where('status', 1)->where('id', $request->id)->select('id','photo','title','content','created_at')->first();
+        $data = Content::where('status', 1)->where('id', $request->id)->select('id','photo','title','content','created_at', 'post_categories_id', 'file')->first();
         $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
+        if($data->post_categories_id==2){
+          !empty($data->file) ? $file = url('/')."/storage/".config('app.documentImagePath')."/".$data->file : $file='';
+          !empty($data->file) ? $link = "<a href=$file class='external'>Download</a>" : $link='';
+          //$data->content = $data->content. "<br> Download : ". $file;
+        }
         return $this->sendResponse($data, 'detail slider load successfully.');
 
     }
