@@ -59,12 +59,16 @@ trait ActionTable
                     if($nama_model=='JurnalTarunaDetail'){
                         $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a  href='javascript:void(0)' class='action-table text-success text-sm' data-toggle='modal' data-id=".$val->id." data-target='#editJurnal' id='btnJurnal'><i class='fas fa-edit'></i></a>" : '';
                     }else{
-                        if($permissionEdit == 'pengaduan-followup') {
-                            $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-eye'></i></a>" : '';    
-                        } else {
+
+                        switch ($permissionEdit) {
+                            case 'pengaduan-followup':
+                                $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-eye'></i></a>" : '';    
+                                break;
+                            
+                            default:
                             $edit = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';    
+                                break;
                         }
-                        
                     }
                 }else{
                     $edit    = '';
