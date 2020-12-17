@@ -220,7 +220,8 @@ class LookController extends BaseController
                     'excerpt'=>$value->excerpt,
                     'content'=>$value->content,
                     'created_at'=>date_format($value->created_at, 'Y-m-d H:i'),
-                    'file'=> $value->file!=null ? url('/')."/storage/".config('app.documentImagePath')."/".$value->file : null
+                    'file'=> $value->file!=null ? url('/')."/storage/".config('app.documentImagePath')."/".$value->file : null,
+                    'photo'=> url('/')."/storage/".config('app.postImagePath')."/".$value->photo
                 ];
             }else{
                 $result['berita'][]= [ 
