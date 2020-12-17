@@ -36,6 +36,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('content', 'ContentController');
         Route::resource('slider', 'SliderController');
         Route::resource('report', 'ReportController');
+        Route::resource('reportwbs', 'ReportwbsController');
         Route::resource('grade', 'GradeController');
         Route::resource('keluarga-asuh', 'KeluargaAsuhController');
         Route::resource('pembina-keluarga-asuh', 'PembinaKeluargaAsuhController');

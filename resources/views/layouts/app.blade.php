@@ -151,7 +151,7 @@
                     </div>
                 </li>
                 @endif
-                @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))
+                @if(auth()->user()->hasPermissionTo('pengaduan-list') || auth()->user()->hasPermissionTo('pengaduan-wbs-list'))
                 <hr class="sidebar-divider">
                 <div class="sidebar-heading">
                     Pengaduan
@@ -164,7 +164,8 @@
                     <div id="pengaduan" class="collapse" aria-labelledby="pengaduan" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Menu</h6>
-                        @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan</a>@endif
+                            @if(auth()->user()->hasPermissionTo('pengaduan-list'))<a class="collapse-item" href="{{route('report.index')}}">Pengaduan</a>@endif
+                            @if(auth()->user()->hasPermissionTo('pengaduan-wbs-list'))<a class="collapse-item" href="{{route('reportwbs.index')}}">Pengaduan (WBS)</a>@endif
                         </div>
                     </div>
                 </li>
