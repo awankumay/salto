@@ -3,14 +3,14 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
-        {{ Breadcrumbs::render('suket.show', $data) }}
+        {{ Breadcrumbs::render('prestasi.show', $data) }}
     </div>
 
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
-                <div class="p-2">Detail Surat Keterangan - {{$data->name}} / {{$data->stb}}</div>
-                <a class="btn btn-sm btn-warning" href="{{route('suket.index')}}">Kembali</a>
+                <div class="p-2">Detail Prestasi - {{$data->name}} / {{$data->stb}}</div>
+                <a class="btn btn-sm btn-warning" href="{{route('prestasi.index')}}">Kembali</a>
             </div>
         </div>
         <div class="card-body">
@@ -27,35 +27,29 @@
                         <div class="col-md-12">
                             <div class="row col-md-12">
                                 <div class="form-group col-md-12">
-                                    <strong>Tempat & Tanggal Lahir</strong>
-                                    <div class="form-text">{{$data->ttl}}</div>
+                                    <strong>Tingkat</strong>
+                                    <div class="form-text">{{$data->tingkat}}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="row col-md-12">
                                 <div class="form-group col-md-12">
-                                    <strong>Nama Orang Tua</strong>
-                                    <div class="form-text">{{$data->orangtua}}</div>
+                                    <strong>Waktu</strong>
+                                    <div class="form-text">{{$data->waktu}}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group col-md-12">
-                                <strong>Pekerjaan:</strong>
-                                <div class="form-text">{{!empty($data->pekerjaan) ? $data->pekerjaan : ''}}</div>
+                                <strong>Tempat:</strong>
+                                <div class="form-text">{{!empty($data->tempat) ? $data->tempat : ''}}</div>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group col-md-12">
-                                <strong>Keperluan:</strong>
-                                <div class="form-text">{{!empty($data->keperluan) ? $data->keperluan : ''}}</div>
-                            </div>
-                        </div> 
-                        <div class="col-md-12">
-                            <div class="form-group col-md-12">
-                                <strong>Alamat:</strong>
-                                <div class="form-text">{{!empty($data->alamat) ? $data->alamat : ''}}</div>
+                                <strong>Keterangan:</strong>
+                                <div class="form-text">{{!empty($data->keterangan) ? $data->keterangan : ''}}</div>
                             </div>
                         </div> 
                     </div>
@@ -66,7 +60,7 @@
                             <div class="form-group col-md-12" ng-controller="SelectFileController">
                                 <strong>Lampiran:</strong><br>
                                 @if($data->photo)
-                                <img src="{{URL::to('/')}}/storage/{{config('app.documentImagePath')}}/{{$data->photo}}" width="100%"/> 
+                                <img src="{{$data->photo}}" width="100%"/> 
                                 @else
                                 Tidak ada Lampiran
                                 @endif
@@ -78,8 +72,7 @@
                                 <div class="form-text mb-3">{{$data->reason_disposisi}}</div>
                                 <strong>Aak : </strong>
                                 <div class="form-text mb-3">{{$data->reason_level_1}}</div>
-                                <strong>Direktur : </strong>
-                                <div class="form-text mb-3">{{$data->reason_level_2}}</div>
+                                
                                 
                                 <strong>Status : </strong>
                                 <div class="form-text">
@@ -129,7 +122,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if($data->show_persetujuan==true)
+                            @if($data->show_approve==true)
                                 <button data-toggle="modal" data-target="#persetujuan" style="font-size:12px;" type="button" class="btn btn-sm btn-danger">
                                     Persetujuan Surat Keterangan
                                 </button> 
@@ -195,7 +188,7 @@
             }
         });
         $.ajax({
-            url: "{{url('/')}}/dashboard/disposisisuket", 
+            url: "{{url('/')}}/dashboard/disposisiprestasi", 
             data: fd,
             processData: false,
             contentType: false,
@@ -234,7 +227,7 @@
             }
         });
         $.ajax({
-            url: "{{url('/')}}/dashboard/approvesuket", 
+            url: "{{url('/')}}/dashboard/approveprestasi", 
             data: fd,
             processData: false,
             contentType: false,
@@ -267,7 +260,7 @@
         $.ajaxSetup({
         });
         $.ajax({
-            url: "{{url('/')}}/api/cetaksurat/id/{{$data->id}}/id_user/{{$data->id_user}}/cetak/suket", 
+            url: "{{url('/')}}/api/cetaksurat/id/{{$data->id}}/id_user/{{$data->id_user}}/cetak/prestasi", 
             processData: false,
             contentType: false,
             beforeSend:function () {

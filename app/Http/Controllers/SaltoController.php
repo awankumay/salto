@@ -13,6 +13,8 @@ use App\Absensi;
 use App\JurnalTaruna;
 use App\SuratIzin;
 use App\Suket;
+use App\Prestasi;
+use App\HukumanDinas;
 use App\Traits\ImageTrait;
 use App\Traits\Firebase;
 use Hash;
@@ -302,6 +304,65 @@ class SaltoController extends Controller
         ]);
     }
 
+    public function disposisiprestasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        $prestasi = Prestasi::where('id', $request->id)
+                ->where('status', 0)
+                ->first();
+        $prestasi->user_disposisi=$request->id_user;
+        $prestasi->date_disposisi=date('Y-m-d H:i:s');
+        $prestasi->reason_disposisi=$request->reason;
+        $prestasi->status_disposisi=$request->status;
+        $prestasi->save();
+
+        $data['status'] = true;
+        $data['firebase'] = false;
+        $keluarga       = User::keluargataruna($prestasi->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$prestasi->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+
+        $topic = User::topic('disposisisurat', $dataFirebase);
+        if(!empty($topic)){
+            set_time_limit(60);
+            for ($i=0; $i < count($topic); $i++) { 
+                $paramsFirebase=['title'=>'Pemberitahuan disposisi prestasi',
+                'body'=>'prestasi telah diposisi',
+                'page'=>'/prestasi/detail/id/'.$request->id,
+                'token'=>$topic[$i]];
+                try {
+                    $firebase = $this->pushNotif($paramsFirebase);
+                    $data['firebase'][$i] = $firebase;
+                } catch (\Throwable $th) {
+                    $data['firebase'] = $th->getMessage();
+                }
+                sleep(1);
+            }
+        }
+       
+        
+        return response()->json([
+            "success" => true,
+            "message" => "Disposisi berhasil",
+            "data" => $data
+        ]);
+    }
+
     public function approvesuratizin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -506,6 +567,78 @@ class SaltoController extends Controller
             ]); 
             
         }
+        $response = [
+            'success' => false,
+            'data'    => [],
+            'message' => 'Persetujuan gagal',
+        ];
+        return response()->json($response, 500); 
+    }
+
+    public function approveprestasi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        
+        $prestasi = Prestasi::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+
+        $keluarga       = User::keluargataruna($prestasi->id_user);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$prestasi->id_user, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $data['firebase'] = false;
+
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $prestasi->user_approve_level_1=$request->id_user;
+            $prestasi->date_approve_level_1=date('Y-m-d H:i:s');
+            $prestasi->status_level_1=$request->status;
+            $prestasi->status=$request->status;
+            $prestasi->reason_level_1=$request->reason;
+            $prestasi->save();
+            $data['status'] = true;
+
+            $topic  = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan prestasi',
+                    'body'=>'prestasi telah disetuji oleh aak',
+                    'page'=>'/prestasi/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
+
+            return response()->json([
+                "success" => true,
+                "message" => "Persetujuan berhasil",
+                "data" => $data
+            ]);
+        }
+
         $response = [
             'success' => false,
             'data'    => [],

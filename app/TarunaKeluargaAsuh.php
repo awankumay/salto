@@ -19,7 +19,7 @@ class TarunaKeluargaAsuh extends Model
 
     public function GetCount($id)
     {
-        return TarunaKeluargaAsuh::where('keluarga_asuh_id', $id)->count();
+        return TarunaKeluargaAsuh::where('keluarga_asuh_id', $id)->whereNull('deleted_at')->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir, $id)
@@ -30,6 +30,7 @@ class TarunaKeluargaAsuh extends Model
                     ->where('taruna_keluarga_asuh.keluarga_asuh_id', $id)
                     ->whereNull('keluarga_asuh.deleted_at')
                     ->whereNull('users.deleted_at')
+                    ->whereNull('taruna_keluarga_asuh.deleted_at')
                     ->offset($start)
                     ->limit($limit)
                     ->orderBy($order, $dir)
@@ -47,6 +48,7 @@ class TarunaKeluargaAsuh extends Model
                     ->where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
+                        ->whereNull('taruna_keluarga_asuh.deleted_at')
                         ->where('taruna_keluarga_asuh.keluarga_asuh_id', $params['id']);
                     })
                     ->offset($start)
@@ -66,6 +68,7 @@ class TarunaKeluargaAsuh extends Model
                     ->Where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
+                        ->whereNull('taruna_keluarga_asuh.deleted_at')
                         ->where('taruna_keluarga_asuh.keluarga_asuh_id', $params['id']);
                     })
                     ->count();

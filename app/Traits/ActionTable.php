@@ -15,12 +15,12 @@ trait ActionTable
         $id      = !empty($request->input('id')) ? $request->input('id'): '';
         $id_user = !empty($request->input('id_user')) ? $request->input('id_user'): '';
         $date    = !empty($request->input('date')) ? $request->input('date'): '';
-        if(!empty($id)){
-            $totalData = $model->GetCount($id);
-        }else if(!empty($id_user) && !empty($date)){
+        if(!empty($id_user) && !empty($date)){
             $totalData = $model->GetCount($id_user, $date);
+        }else if(!empty($id)){
+            $totalData = $model->GetCount($id);
         }
-        else{
+        else if(empty($id) && empty($id_user)){
             $totalData = $model->GetCount();
         }
         $totalFiltered = $totalData;
@@ -31,7 +31,7 @@ trait ActionTable
             }
             else if(!empty($id)){
                 $dataModel = $model->GetCurrentData($start, $limit, $order, $dir, $id);
-            }else{
+            }else if (empty($id) && empty($id_user)){
                 $dataModel = $model->GetCurrentData($start, $limit, $order, $dir);
             }
         }
@@ -44,7 +44,7 @@ trait ActionTable
             else if(!empty($id)){
                 $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search, $id);
                 $totalFiltered = $model->GetCountDataFilter($search, $id);
-            }else{
+            }else if(empty($id) && empty($id_user)){
                 $dataModel = $model->GetCurrentDataFilter($start, $limit, $order, $dir, $search);
                 $totalFiltered = $model->GetCountDataFilter($search);
             }

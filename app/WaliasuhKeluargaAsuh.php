@@ -19,7 +19,7 @@ class WaliasuhKeluargaAsuh extends Model
 
     public function GetCount($id)
     {
-        return WaliasuhKeluargaAsuh::where('keluarga_asuh_id', $id)->count();
+        return WaliasuhKeluargaAsuh::where('keluarga_asuh_id', $id)->whereNull('deleted_at')->count();
     }
 
     public function GetCurrentData($start, $limit, $order, $dir, $id)
@@ -29,6 +29,7 @@ class WaliasuhKeluargaAsuh extends Model
                     ->select('waliasuh_keluarga_asuh.id as id', 'users.name', 'users.phone', 'users.whatsapp', 'waliasuh_keluarga_asuh.created_at as date_created')
                     ->where('waliasuh_keluarga_asuh.keluarga_asuh_id', $id)
                     ->whereNull('keluarga_asuh.deleted_at')
+                    ->whereNull('waliasuh_keluarga_asuh.deleted_at')
                     ->whereNull('users.deleted_at')
                     ->offset($start)
                     ->limit($limit)
@@ -47,6 +48,7 @@ class WaliasuhKeluargaAsuh extends Model
                     ->where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
+                        ->whereNull('waliasuh_keluarga_asuh.deleted_at')
                         ->where('waliasuh_keluarga_asuh.keluarga_asuh_id', $params['id']);
                     })
                     ->offset($start)
@@ -66,7 +68,9 @@ class WaliasuhKeluargaAsuh extends Model
                     ->Where(function($q) use ($params) {
                         $q->whereNull('keluarga_asuh.deleted_at')
                         ->where('users.name', 'LIKE', "%{$params['search']}%")
+                        ->whereNull('waliasuh_keluarga_asuh.deleted_at')
                         ->where('waliasuh_keluarga_asuh.keluarga_asuh_id', $params['id']);
+                        
                     })
                     ->count();
 

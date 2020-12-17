@@ -19,7 +19,7 @@ class JurnalTaruna extends Model
     {
         $currentUser = Auth::user();
         if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
-            return JurnalTaruna::count();
+            return JurnalTaruna::groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')->count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
                 $id = [];
                 $orangtua   = OrangTua::where('taruna_id', $currentUser->id)->get();
@@ -28,20 +28,23 @@ class JurnalTaruna extends Model
                 }
                 $id[]=$currentUser->id;
                 //$getTaruna  = implode(',',$id);
-            return JurnalTaruna::whereIn('id_user', $id)->count();
+            return JurnalTaruna::whereIn('id_user', $id)->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
+                            ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
+                            ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
             return JurnalTaruna::join('orang_tua_taruna', 'taruna_id.id', '=', 'jurnal_taruna.user_created')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
+                            ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();
         }
 

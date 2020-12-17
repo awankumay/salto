@@ -459,8 +459,6 @@ class SuketController extends BaseController
                 $input['status_level_1']    = 0;
                 $input['status_level_2']    = 0;
                 $input['status']            = 0;
-                Suket::create($input);
-
                 $id = DB::table('tb_suket')->insertGetId($input);
 
             DB::commit();
@@ -697,7 +695,7 @@ class SuketController extends BaseController
             for ($i=0; $i < count($topic); $i++) { 
                 $paramsFirebase=['title'=>'Pemberitahuan disposisi surat keterangan baru',
                 'body'=>'surat keterangan baru telah diposisi',
-                'page'=>'/suket/detail/id/'.$id,
+                'page'=>'/suket/detail/id/'.$request->id,
                 'token'=>$topic[$i]];
                 try {
                     $firebase = $this->pushNotif($paramsFirebase);
@@ -748,7 +746,7 @@ class SuketController extends BaseController
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
                     'body'=>'surat keterangan baru telah disetuji oleh aak',
-                    'page'=>'/suket/detail/id/'.$id,
+                    'page'=>'/suket/detail/id/'.$request->id,
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);
@@ -777,7 +775,7 @@ class SuketController extends BaseController
                 for ($i=0; $i < count($topic); $i++) { 
                     $paramsFirebase=['title'=>'Pemberitahuan persetujuan surat keterangan baru',
                     'body'=>'surat keterangan baru telah disetuji oleh direktur',
-                    'page'=>'/suket/detail/id/'.$id,
+                    'page'=>'/suket/detail/id/'.$request->id,
                     'token'=>$topic[$i]];
                     try {
                         $firebase = $this->pushNotif($paramsFirebase);

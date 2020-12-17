@@ -39,15 +39,14 @@ class PengasuhanController extends Controller
         if ($request->ajax()) {
             $columns = array(
                 0=>'id',
-                9=>'name',
+                8=>'name',
                 1=>'keluarga_asuh',
                 2=>'media',
                 3=>'start_time',
                 4=>'end_time',
                 5=>'id_media',
                 6=>'password',
-                7=>'status',
-                8=>'created_at'
+                7=>'created_at'
             );
             $model  = New Pengasuhan();
             return $this->ActionTable($columns, $model, $request, 'pengasuhan.edit', null, null, 'pengasuhan-daring-list');

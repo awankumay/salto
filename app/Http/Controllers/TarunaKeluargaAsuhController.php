@@ -87,7 +87,9 @@ class TarunaKeluargaAsuhController extends Controller
     {
         try {
             $data = TarunaKeluargaAsuh::find($id);
-            $data->delete();
+            $data->deleted_at = date('Y-m-d H:i:s');
+            $data->user_deleted = Auth::user()->id;
+            $data->save();
             return true;
         } catch (\Throwable $th) {
             return false;
