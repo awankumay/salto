@@ -11,7 +11,7 @@
                 <div class="p-2">Pengasuhan Daring</div>
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('pengasuhan-daring-create'))
-                        <!-- <a href="{{route('pengasuhan.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah</a> -->
+                         <a href="{{route('pengasuhan.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah</a>
                     @endif
                 </div>
             </div>
@@ -79,7 +79,7 @@
 
 
     function deleteRecord(id, row_index) {
-        let deleteUrl = 'grade/'+id;
+        let deleteUrl = 'pengasuhan/'+id;
         let token ="{{csrf_token()}}";
         swal({
                 title: "Ingin menghapus data ini?",
@@ -105,7 +105,7 @@
                                 let i = row_index.parentNode.parentNode.rowIndex;
                                 let table = $('.pengasuhan-table').DataTable();
                                 table.draw();
-                                window.location.reload();
+                                //window.location.reload();
                             },
                             error:function(){
                                 setTimeout(function(){
