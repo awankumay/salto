@@ -100,7 +100,7 @@ class SuketController extends BaseController
                 $count  = $total;
                 $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -116,7 +116,8 @@ class SuketController extends BaseController
                 $count  = $total;
                 $data   = $this->sukettaruna($condition, $limit, $order, $dir);
                
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */
+                else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -186,7 +187,7 @@ class SuketController extends BaseController
                 $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
 
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -204,7 +205,7 @@ class SuketController extends BaseController
                 $data = $this->sukettaruna($condition, $limit, $order, $dir);
                
 
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')

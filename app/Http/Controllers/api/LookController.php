@@ -2253,7 +2253,7 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
             //return $tarunaData;
-        }else if($roleName=='Pembina'){
+        }/* else if($roleName=='Pembina'){
             $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
@@ -2270,7 +2270,7 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
             //return $tarunaData;
-        }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+        } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
             $taruna     = DB::table('users')
                             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                             ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
