@@ -145,6 +145,8 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::get('getcategorywbs', 'api\WBSController@category')->name('getcategorywbs');
 
     Route::post('settoken', 'api\LookController@settoken')->name('settoken');
+    
+    Route::get('getgrade', 'api\LookController@getgrade')->name('getgrade');
 });
 Route::group([    
     'namespace' => 'Auth',    

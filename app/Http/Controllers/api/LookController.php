@@ -63,7 +63,7 @@ class LookController extends BaseController
                 'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
                 'sex'=>$user->sex,
                 'photo'=>!empty($user->photo) ? url('/')."/storage/".config('app.userImagePath')."/".$user->photo : url('/').'/profile.png',
-                'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'sex', 'file', 'password', 'confirm-password']
+                'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'grade', 'sex', 'file', 'password', 'confirm-password']
                 ];
         $grade      = Grade::where('id', $user->grade)->first();
         $keluarga   = User::keluargataruna($user->id);
@@ -75,6 +75,7 @@ class LookController extends BaseController
             if(!empty($grade)){
                 $data['show_grade']=true;
                 $data['grade']=$grade->grade;
+                $data['grade_select']=$grade;
             }
         }
         if(!empty($keluarga)){
@@ -175,7 +176,7 @@ class LookController extends BaseController
         $data->photo = url('/')."/storage/".config('app.postImagePath')."/".$data->photo;
         if($data->post_categories_id==2){
           !empty($data->file) ? $file = url('/')."/storage/".config('app.documentImagePath')."/".$data->file : $file='';
-          !empty($data->file) ? $link = "<a href=$file class='external'>Download</a>" : $link='';
+          $data->file = $file;
           //$data->content = $data->content. "<br> Download : ". $file;
         }
         return $this->sendResponse($data, 'detail slider load successfully.');
@@ -253,8 +254,6 @@ class LookController extends BaseController
         $result['info']['limit']  = $limit;
         return $this->sendResponse($result, 'berita load successfully.');
     }
-
-
 
     public function checkabsen($request)
     {
@@ -458,7 +457,6 @@ class LookController extends BaseController
         
     }
 
-
     public function getjurnal(Request $request){
         $limit  = 5;
         $id_user = $request->idUser;
@@ -515,7 +513,7 @@ class LookController extends BaseController
                                 ->count(DB::raw('DISTINCT tanggal'));        
                 $count  = $total;
                 $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -530,7 +528,7 @@ class LookController extends BaseController
                                 ->count(DB::raw('DISTINCT tanggal'));        
                 $count  = $total;
                 $data   = $this->jurnaltaruna($condition, $limit, $order, $dir);
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -588,7 +586,7 @@ class LookController extends BaseController
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
 
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -605,7 +603,7 @@ class LookController extends BaseController
                 $count = JurnalTaruna::whereRaw($condition)->count(DB::raw('DISTINCT tanggal'));
                 $data = $this->jurnaltaruna($condition, $limit, $order, $dir);
 
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -832,7 +830,7 @@ class LookController extends BaseController
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
                
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -848,7 +846,7 @@ class LookController extends BaseController
                 $count  = $total;
                 $data   = $this->suratizintaruna($condition, $limit, $order, $dir);
                
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina'  || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -919,7 +917,7 @@ class LookController extends BaseController
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
                
 
-            }else if($roleName=='Pembina'){
+            }/* else if($roleName=='Pembina'){
                 $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                                 ->select('taruna_keluarga_asuh.taruna_id')
                                 ->where('pembina_keluarga_asuh.pembina_id', $id_user)
@@ -937,7 +935,7 @@ class LookController extends BaseController
                 $data = $this->suratizintaruna($condition, $limit, $order, $dir);
                
 
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina'  || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $taruna     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -2161,7 +2159,7 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
             //return $tarunaData;
-        }else if($roleName=='Pembina'){
+        }/* else if($roleName=='Pembina'){
             $taruna     = PembinaKeluargaAsuh::join('taruna_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->join('users', 'users.id', '=', 'taruna_keluarga_asuh.taruna_id')
                             ->select('taruna_keluarga_asuh.taruna_id', 'users.name')
@@ -2178,7 +2176,7 @@ class LookController extends BaseController
             //$tarunaData['id']       = implode(',',$tarunaId);
             $tarunaData['taruna']   = $tarunaWithName;
             //return $tarunaData;
-        }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+        } */else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
             $taruna     = DB::table('users')
                             ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                             ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -2661,6 +2659,12 @@ class LookController extends BaseController
             return $this->sendResponseError(false, 'failure set token');
         }
         
+    }
+
+    public function getgrade(Request $request)
+    {
+        $result = Grade::pluck('grade', 'id')->all();
+        return $this->sendResponse($result, 'grade load successfully.');
     }
     
 }

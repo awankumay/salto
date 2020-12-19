@@ -49,7 +49,7 @@ class PengasuhanController extends BaseController
 
         $permission = [];
         if($lastId==0){
-            if($roleName=='Taruna' || $roleName=='Pembina'){
+            if($roleName=='Taruna'){
                 if($roleName=='Taruna'){
                     $getKeluargaAsuh = TarunaKeluargaAsuh::where('taruna_id', $getUser->id)->first();
                 }else{
@@ -72,7 +72,7 @@ class PengasuhanController extends BaseController
                 $count  = $total;
                 $data   = $this->pengasuhantaruna($condition, $limit, $order, $dir);
                
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $waliasuh     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
@@ -93,7 +93,7 @@ class PengasuhanController extends BaseController
                
             }
         }else {
-            if($roleName=='Taruna' || $roleName=='Pembina'){
+            if($roleName=='Taruna'){
                 if($roleName=='Taruna'){
                     $getKeluargaAsuh = TarunaKeluargaAsuh::where('taruna_id', $getUser->id)->first();
                 }else{
@@ -118,7 +118,7 @@ class PengasuhanController extends BaseController
                 $data = $this->pengasuhantaruna($condition, $limit, $order, $dir);
                
 
-            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Direktur' || $roleName=='Super Admin') {
+            }else if ($roleName=='Akademik dan Ketarunaan' || $roleName=='Pembina' || $roleName=='Direktur' || $roleName=='Super Admin') {
                 $waliasuh     = DB::table('users')
                                 ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
                                 ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
