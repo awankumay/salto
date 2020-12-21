@@ -2673,5 +2673,20 @@ class LookController extends BaseController
         $result = Grade::pluck('grade', 'id')->all();
         return $this->sendResponse($result, 'grade load successfully.');
     }
+
+    public function checkversion(Request $request)
+    {
+       $version = [
+           'versisatu'
+           #,'versidua'
+       ];
+       if(in_array($request->version, $version)==true){
+            $result = ['update'=>true];
+            return $this->sendResponse($result, 'version load successfully.');
+       }else{
+            $result = ['update'=>false];
+            return $this->sendResponse($result, 'version load successfully.');
+       }
+    }
     
 }

@@ -147,6 +147,7 @@ Route::group(['middleware' => ['auth:api', 'CheckUser:api']], function(){
     Route::post('settoken', 'api\LookController@settoken')->name('settoken');
     
     Route::get('getgrade', 'api\LookController@getgrade')->name('getgrade');
+    Route::get('checkversion/{version}', 'api\LookController@checkversion')->name('checkversion');
 });
 Route::group([    
     'namespace' => 'Auth',    

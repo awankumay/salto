@@ -15,7 +15,7 @@ trait ImageTrait
         $file_ext   = $data->getClientOriginalExtension();
         $file_name  = md5(Carbon::now()->format('Ymd H:i:s')) . '.' . $file_ext ;
         try {
-            if($convert==false){
+            if($file_ext!='pdf'){
                 $data->storeAs($this->publicStorage.$path, $file_name);
             }else{
                 $img = Image::make($data->getRealPath());
