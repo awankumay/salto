@@ -1375,6 +1375,7 @@ class LookController extends BaseController
                 break;
         }
         #bugs
+        $data['stb'] = $author->stb;
         $data['menginap']='Izin Tidak Menginap';
         if(strtotime(date_format(date_create($getSurat->end), 'Y-m-d')) > strtotime(date_format(date_create($getSurat->start), 'Y-m-d'))){
             //if(in_array($data['id_category'], ['1', '4', '5', '6', '9'])){
