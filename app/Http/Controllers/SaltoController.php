@@ -666,7 +666,7 @@ class SaltoController extends Controller
         }
         
         $hukdis = HukumanDinas::where('id', $request->id)
-                                ->where('status', 0)
+                                ->where('status', '0')
                                 ->first();
         $getUser = User::where('id', $request->id_user)->first();
 

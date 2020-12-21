@@ -170,7 +170,7 @@ class HukumanDinasController extends Controller
             $data['show_persetujuan'] = true;
         }
         if($getSurat['status']==1){
-            $data['download'] = \URL::to('/').'/api/cetaksurat/id/'.$request->id.'/id_user/'.$request->id_user.'/cetak/hukdis';
+            $data['download'] = \URL::to('/').'/api/cetaksurat/id/'.$getSurat->id.'/id_user/'.$getSurat->id_user.'/cetak/hukdis';
         }
 
         $data = json_decode(json_encode($data));
