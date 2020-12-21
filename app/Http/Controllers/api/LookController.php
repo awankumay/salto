@@ -2677,12 +2677,12 @@ class LookController extends BaseController
     public function checkversion(Request $request)
     {
        $version = [
-           '2.1.0'
-           #,'versidua'
+        '2.1.0'
+        ,'2.2.0'
        ];
        if(in_array($request->version, $version)==true){
             $result = ['update'=>true, 'link'=>'https://play.google.com/store/apps/details?id=com.saltopoltekip.app'];
-            return $this->sendResponse($result, 'version load successfully.');
+            return $this->sendResponse($result, 'Update aplikasi untuk fitur salto terbaru');
        }else{
             $result = ['update'=>false, 'link'=>''];
             return $this->sendResponse($result, 'version load successfully.');
