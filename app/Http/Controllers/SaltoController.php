@@ -8,7 +8,9 @@ use Validator,Redirect,Response,File;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Regencies;
+use App\Provinces;
 use App\User;
+use App\Grade;
 use App\Absensi;
 use App\JurnalTaruna;
 use App\SuratIzin;
@@ -58,7 +60,105 @@ class SaltoController extends Controller
 
     public function editprofile()
     {
-        return view('salto.profile');
+        $user = User::where('id', Auth::user()->id)->first();
+        
+        $data=['id'=>$user->id,
+                'name'=>$user->name,
+                'email'=>$user->email,
+                'phone'=>$user->phone,
+                'whatsapp'=>$user->whatsapp,
+                'alamat'=>$user->address,
+                'sex_name'=>$user->sex==1 ? 'Laki-laki' : 'Perempuan',
+                'sex'=>$user->sex,
+                'photo'=>!empty($user->photo) ? url('/')."/storage/".config('app.userImagePath')."/".$user->photo : url('/').'/profile.png',
+                'form'=>['name', 'email', 'phone', 'whatsapp', 'address', 'grade', 'sex', 'file', 'password', 'confirm-password']
+                ];
+        $grade      = Grade::where('id', $user->grade)->first();
+        $keluarga   = User::keluargataruna($user->id);
+        $provinces  = Provinces::where('id', $user->province_id)->first();
+        $regencies  = Regencies::where('id', $user->regencie_id)->first();
+        $data['show_grade']=false;
+        $data['show_keluarga_asuh']=false;
+        $data['keluarga_asuh'] = '';
+        $data['grade_select']='';
+        $data['grade']='';
+        $data['grade_option'] = [];
+        if($user->getRoleNames()[0]=='Taruna'){
+            $data['grade_select']='';
+            $data['grade']='';
+            $data['grade_option'] = Grade::pluck('grade', 'id')->all();
+            if(!empty($grade)){
+                $data['show_grade']=true;
+                $data['grade']=$grade->grade;
+                $data['grade_select']=$grade->id;
+            }
+        }
+        if(!empty($keluarga)){
+            $data['show_keluarga_asuh']=true;
+            $data['keluarga_asuh']=$keluarga->name;
+          
+        }
+        $data['provinces']  = !empty($provinces) ? $provinces->name : null;
+        $data['regencies']  = !empty($regencies) ? $regencies->name : null;
+        return view('salto.profile', compact('data'));
+    }
+
+    public function setprofile(Request $request)
+    {
+        $user = User::where('id', Auth::user()->id)->first();
+        $data = [];
+
+        $data['success'] = false;
+        $this->validate($request, 
+        [ 
+            'file' => 'nullable|mimes:jpg,jpeg,png|max:2048',
+            'email' => "required|email|unique:users,email,{$user->id},id,deleted_at,NULL",
+            'password' => 'same:confirm-password',
+            'phone' => "required|numeric|unique:users,phone,{$user->id},id,deleted_at,NULL",
+            'whatsapp' => "numeric|unique:users,whatsapp,{$user->id},id,deleted_at,NULL",
+            'sex'=>'required',
+            'address'=>'required',
+            'name'=>'required'
+        ]); 
+
+        $image=false;
+        if($request->file){
+            $image = $this->UploadImage($request->file, config('app.userImagePath'));
+            if($image==false){
+                return $this->sendResponseError($data, 'failure upload image'); 
+            }
+            $this->DeleteImage($user->photo, config('app.userImagePath'));
+        }
+        try {
+            if(!empty($image)){
+                if($image!=false){
+                    $request->request->add(['photo'=> $image]);
+                }
+            }
+            $request->request->add(['user_updated'=> $user->id]);
+            $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
+            $input = $request->all();
+
+            if(!empty($input['password'])){
+                $input['password'] = Hash::make($input['password']);
+            }else{
+               Arr::forget($input, array('password', 'confirm-password'));
+            }
+            DB::beginTransaction();
+                $user->update($input);
+            DB::commit();
+            \Session::flash('success','profile berhasil disimpan');
+            return redirect()->route('editprofile');
+        } catch (\Throwable $th) {
+            @dd($th->getMessage());
+            DB::rollBack();
+                if($image!=false){
+                    $this->DeleteImage($image, config('app.userImagePath'));
+                }
+                \Session::flash('error','profile gagal disimpan');
+                return redirect()->route('editprofile');
+        }
+
     }
 
     public function gettaruna(Request $request)

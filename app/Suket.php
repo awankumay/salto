@@ -76,7 +76,7 @@ class Suket extends Authenticatable
     public function GetCount()
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Suket::count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
             $id = [];
@@ -92,12 +92,12 @@ class Suket extends Authenticatable
             return Suket::whereRaw($condition)
                             ->count(); 
             
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Suket::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Suket::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
@@ -125,7 +125,7 @@ class Suket extends Authenticatable
     {
 
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->select('tb_suket.keperluan', 'tb_suket.id', 'users.name as name', 'tb_suket.status', 'tb_suket.created_at')
                             ->offset($start)
@@ -140,7 +140,7 @@ class Suket extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -150,7 +150,7 @@ class Suket extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -178,7 +178,7 @@ class Suket extends Authenticatable
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
@@ -201,7 +201,7 @@ class Suket extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -215,7 +215,7 @@ class Suket extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -248,7 +248,7 @@ class Suket extends Authenticatable
 
     public function GetCountDataFilter($search){
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
@@ -263,7 +263,7 @@ class Suket extends Authenticatable
                                 ->orWhere('tb_suket.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -273,7 +273,7 @@ class Suket extends Authenticatable
                                 ->orWhere('tb_suket.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Suket::join('users', 'users.id', '=', 'tb_suket.id_user')
                              ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_suket.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')

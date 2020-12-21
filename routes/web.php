@@ -51,6 +51,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('hukuman-dinas', 'HukumanDinasController');
         Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
+        Route::patch('setprofile', 'SaltoController@setprofile')->name('setprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');

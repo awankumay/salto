@@ -69,7 +69,7 @@ class Prestasi extends Authenticatable
     public function GetCount()
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Prestasi::count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
             $id = [];
@@ -85,12 +85,12 @@ class Prestasi extends Authenticatable
             return Prestasi::whereRaw($condition)
                             ->count(); 
             
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Prestasi::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Prestasi::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
@@ -118,7 +118,7 @@ class Prestasi extends Authenticatable
     {
 
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->select('tb_penghargaan.*', 'tb_penghargaan.id', 'users.name as name', 'tb_penghargaan.status', 'tb_penghargaan.created_at')
                             ->offset($start)
@@ -133,7 +133,7 @@ class Prestasi extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -143,7 +143,7 @@ class Prestasi extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -171,7 +171,7 @@ class Prestasi extends Authenticatable
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
@@ -194,7 +194,7 @@ class Prestasi extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -208,7 +208,7 @@ class Prestasi extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -241,7 +241,7 @@ class Prestasi extends Authenticatable
 
     public function GetCountDataFilter($search){
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->Where(function($q) use ($search) {
                                 $q->where('users.name','LIKE',"%{$search}%")
@@ -256,7 +256,7 @@ class Prestasi extends Authenticatable
                                 ->orWhere('tb_penghargaan.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
@@ -266,7 +266,7 @@ class Prestasi extends Authenticatable
                                 ->orWhere('tb_penghargaan.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return Prestasi::join('users', 'users.id', '=', 'tb_penghargaan.id_user')
                              ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'tb_penghargaan.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')

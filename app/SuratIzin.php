@@ -53,7 +53,7 @@ class SuratIzin extends Authenticatable
     public function GetCount()
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return SuratIzin::count();
         }else if ($currentUser->getRoleNames()[0]=='Taruna'){
                 $id = [];
@@ -64,12 +64,12 @@ class SuratIzin extends Authenticatable
                 $id[]=$currentUser->id;
                 //$getTaruna  = implode(',',$id);
             return SuratIzin::whereIn('id_user', $id)->count();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.user_created')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.user_created')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
@@ -88,7 +88,7 @@ class SuratIzin extends Authenticatable
     {
 
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->select('surat_header.id', 'users.name as name', 'menu_persetujuan.nama_menu', 'surat_header.status', 'surat_header.created_at')
@@ -105,7 +105,7 @@ class SuratIzin extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
@@ -116,7 +116,7 @@ class SuratIzin extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
@@ -146,7 +146,7 @@ class SuratIzin extends Authenticatable
     public function GetCurrentDataFilter($start, $limit, $order, $dir, $search)
     {
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->Where(function($q) use ($search) {
@@ -171,7 +171,7 @@ class SuratIzin extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
@@ -186,7 +186,7 @@ class SuratIzin extends Authenticatable
                             ->limit($limit)
                             ->orderBy($order,$dir)
                             ->get();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
@@ -221,7 +221,7 @@ class SuratIzin extends Authenticatable
 
     public function GetCountDataFilter($search){
         $currentUser = Auth::user();
-        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Pembina' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->Where(function($q) use ($search) {
@@ -238,7 +238,7 @@ class SuratIzin extends Authenticatable
                                 ->orWhere('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Pembina'){
+        }/* else if ($currentUser->getRoleNames()[0]=='Pembina'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                             ->join('users', 'users.id', '=', 'surat_header.id_user')
                             ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
@@ -249,7 +249,7 @@ class SuratIzin extends Authenticatable
                                 ->orWhere('surat_header.id', 'LIKE',"%{$search}%");
                             })
                             ->count();
-        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+        } */else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
             return SuratIzin::join('menu_persetujuan', 'menu_persetujuan.id', '=', 'surat_header.id_category')
                              ->join('users', 'users.id', '=', 'surat_header.id_user')
                              ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'surat_header.id_user')
