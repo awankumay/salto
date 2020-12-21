@@ -54,6 +54,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::patch('setprofile', 'SaltoController@setprofile')->name('setprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
+        Route::get('totaluser', 'SaltoController@totaluser')->name('totaluser');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
         Route::post('deleteExistImageSlider', 'SliderController@deleteExistImageSlider')->name('deleteExistImageSlider');

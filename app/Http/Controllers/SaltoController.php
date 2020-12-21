@@ -910,5 +910,62 @@ class SaltoController extends Controller
         
     }
 
+    public function totaluser()
+    {
+        $taruna =  DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                    ->select('users.id', 'users.name')
+                    ->where('model_has_roles.role_id', 7)
+                    ->whereNull('users.deleted_at')
+                    ->where('users.status', 1)
+                    ->count();
+
+        $orangtua =  DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                    ->select('users.id', 'users.name')
+                    ->where('model_has_roles.role_id', 8)
+                    ->whereNull('users.deleted_at')
+                    ->where('users.status', 1)
+                    ->count();
+
+        $waliasuh =  DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                    ->select('users.id', 'users.name')
+                    ->where('model_has_roles.role_id', 4)
+                    ->whereNull('users.deleted_at')
+                    ->where('users.status', 1)
+                    ->count();
+
+        $pembina =  DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                    ->select('users.id', 'users.name')
+                    ->where('model_has_roles.role_id', 5)
+                    ->whereNull('users.deleted_at')
+                    ->where('users.status', 1)
+                    ->count();
+
+        return response()->json([
+            "success" => true,
+            "data" => ['total_taruna'=>$taruna, 'total_orang_tua'=>$orangtua, 'total_waliasuh'=>$waliasuh, 'total_pembina'=>$pembina]
+        ]);
+    }
+
+    public function absen(Request $request)
+    {
+        
+        $taruna =  DB::table('users')
+                    ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                    ->leftJoin('orang_tua_taruna', 'users.id', '=', 'orang_tua_taruna.orangtua_id')
+                    ->select('users.id', 'users.name')
+                    ->where('model_has_roles.role_id', 7)
+                    ->whereRaw('users.id not in('.$id.')')
+                    ->whereNull('users.deleted_at')
+                    ->get();
+    }
+
 
 }

@@ -17,7 +17,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Taruna</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-taruna"></div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -32,7 +32,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Orang Tua</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-orang-tua">-</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -49,7 +49,7 @@
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Wali Asuh</div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">-</div>
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="total-waliasuh">-</div>
                                 </div>
                             </div>
                         </div>
@@ -66,7 +66,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Pembina</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-pembina">-</div>
                             </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -107,4 +107,16 @@
         </div> -->
     </div>
 </div>
+@push('scripts')
+    <script>
+        $(window).load(function(){
+            $.get( "{{ url('/dashboard/totaluser') }}").done(function( res ) {
+                $( "#total-taruna" ).html(res.data.total_taruna);
+                $( "#total-orang-tua" ).html(res.data.total_orang_tua);
+                $( "#total-waliasuh" ).html(res.data.total_waliasuh);
+                $( "#total-pembina" ).html(res.data.total_pembina);
+            });
+        });
+    </script>
+@endpush('scripts')
 @endsection
