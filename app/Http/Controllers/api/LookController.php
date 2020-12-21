@@ -72,11 +72,13 @@ class LookController extends BaseController
         $data['show_grade']=false;
         $data['show_keluarga_asuh']=false;
         if($user->getRoleNames()[0]=='Taruna'){
+            $data['grade_select']='';
+            $data['grade']='';
+            $data['grade_option'] = Grade::pluck('grade', 'id')->all();
             if(!empty($grade)){
                 $data['show_grade']=true;
                 $data['grade']=$grade->grade;
                 $data['grade_select']=$grade;
-                $data['grade_option'] = Grade::pluck('grade', 'id')->all();
             }
         }
         if(!empty($keluarga)){
@@ -710,15 +712,18 @@ class LookController extends BaseController
         $jurnal     = JurnalTaruna::whereRaw('tanggal = ?', $date)
                     ->where('jurnal_taruna.id', $id)
                     ->first();
-        $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
-        $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
-        $grade  = Grade::where('id', $jurnal->grade)->first();
-        if(!empty($grade)){
-            $jurnal->grade_name = $grade->grade;
-        }
-        $jurnal->permission=[];
-        if($jurnal->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi' && $roleName=='Taruna'){
-            $jurnal->permission=['edit', 'delete'];
+        if(!empty($jurnal)){
+            $jurnal->start_time = date_format(date_create($jurnal->start_time), 'H:i');
+            $jurnal->end_time = date_format(date_create($jurnal->end_time), 'H:i');
+            $grade  = Grade::where('id', $jurnal->grade)->first();
+            if(!empty($grade)){
+                $jurnal->grade_name = $grade->grade;
+            }
+            $jurnal->permission=[];
+            if($jurnal->status==0 && $jurnal->kegiatan!='Clock In / Apel Pagi' && $roleName=='Taruna'){
+                $jurnal->permission=['edit', 'delete'];
+            }
+            $jurnal['stb'] = User::find($jurnal->id_user)->stb;
         }
         return $this->sendResponse($jurnal, 'jurnal load successfully.');
     }
