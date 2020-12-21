@@ -199,4 +199,20 @@ Breadcrumbs::register('prestasi.show', function ($breadcrumbs, $prestasi) {
     $breadcrumbs->parent('prestasi');
     $breadcrumbs->push($prestasi->id, route('prestasi.show', $prestasi->id));
 });
+Breadcrumbs::register('hukuman-dinas', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Hukuman Disiplin', route('hukuman-dinas.index'));
+});
+Breadcrumbs::register('hukuman-dinas.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('hukuman-dinas');
+    $breadcrumbs->push('Tambah Hukuman', route('hukuman-dinas.create'));
+});
+Breadcrumbs::register('hukuman-dinas.edit', function ($breadcrumbs, $hukumandinas) {
+    $breadcrumbs->parent('hukuman-dinas');
+    $breadcrumbs->push($hukumandinas->id, route('hukuman-dinas.edit', $hukumandinas->id));
+});
+Breadcrumbs::register('hukuman-dinas.show', function ($breadcrumbs, $hukumandinas) {
+    $breadcrumbs->parent('hukuman-dinas');
+    $breadcrumbs->push($hukumandinas->id, route('hukuman-dinas.show', $hukumandinas->id));
+});
 ?>

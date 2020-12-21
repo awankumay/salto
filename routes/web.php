@@ -48,6 +48,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::resource('pengasuhan', 'PengasuhanController');
         Route::resource('prestasi', 'PrestasiController');
         Route::resource('suket', 'SuketController');
+        Route::resource('hukuman-dinas', 'HukumanDinasController');
         Route::get('jurnaldetail', 'JurnalController@jurnaldetail')->name('jurnaldetail');
         Route::get('editprofile', 'SaltoController@editprofile')->name('editprofile');
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
@@ -69,6 +70,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('approvesuratizin', 'SaltoController@approvesuratizin')->name('approvesuratizin');
         Route::post('approvesuket', 'SaltoController@approvesuket')->name('approvesuket');
         Route::post('approveprestasi', 'SaltoController@approveprestasi')->name('approveprestasi');
+        Route::post('approvehukdis', 'SaltoController@approvehukdis')->name('approvehukdis');
         Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'SaltoController@cetaksurat')->name('cetaksurat');
     });
 });

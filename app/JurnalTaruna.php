@@ -30,19 +30,19 @@ class JurnalTaruna extends Model
                 //$getTaruna  = implode(',',$id);
             return JurnalTaruna::whereIn('id_user', $id)->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
-            return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
+            return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
-            return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
+            return JurnalTaruna::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
-            return JurnalTaruna::join('orang_tua_taruna', 'taruna_id.id', '=', 'jurnal_taruna.user_created')
+            return JurnalTaruna::join('orang_tua_taruna', 'taruna_id.id', '=', 'jurnal_taruna.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
                             ->groupBy('jurnal_taruna.id_user','jurnal_taruna.tanggal')
                             ->count();

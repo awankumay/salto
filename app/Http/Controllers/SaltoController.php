@@ -647,6 +647,78 @@ class SaltoController extends Controller
         return response()->json($response, 500); 
     }
 
+    public function approvehukdis(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_user' => 'required',
+            'status' => 'required',
+            'id'=>'required'
+        ]);
+        $data['status']=false;
+        $data['firebase']=false;
+        if ($validator->fails()) {
+            $response = [
+                'success' => false,
+                'data'    => [],
+                'message' => ['error'=>$validator->errors()],
+            ];
+            return response()->json($response, 422);                     
+        }
+        
+        $hukdis = HukumanDinas::where('id', $request->id)
+                                ->where('status', 0)
+                                ->first();
+        $getUser = User::where('id', $request->id_user)->first();
+
+        $keluarga       = User::keluargataruna($hukdis->id_taruna);
+        $keluarga_asuh  = !empty($keluarga) ? strtolower($keluarga->name) : null;
+        $dataFirebase   = [];
+        $dataFirebase   = ['id'=>$hukdis->id_taruna, 'keluarga_asuh'=>$keluarga_asuh];
+        
+        $data['firebase'] = false;
+
+        if($getUser->getRoleNames()[0]=='Akademik dan Ketarunaan' || $getUser->getRoleNames()[0]=='Super Admin'){
+            $hukdis->user_approve_level_1=$request->id_user;
+            $hukdis->date_approve_level_1=date('Y-m-d H:i:s');
+            $hukdis->status_level_1=$request->status;
+            $hukdis->status=$request->status;
+            $hukdis->reason_level_1=$request->reason;
+            $hukdis->save();
+            $data['status'] = true;
+
+            $topic  = User::topic('approve-aak', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan persetujuan hukuman disiplin',
+                    'body'=>'hukuman disiplin telah disetuji oleh aak',
+                    'page'=>'/hukdis/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
+
+            return response()->json([
+                "success" => true,
+                "message" => "Persetujuan berhasil",
+                "data" => $data
+            ]);
+        }
+
+        $response = [
+            'success' => false,
+            'data'    => [],
+            'message' => 'Persetujuan gagal',
+        ];
+        return response()->json($response, 500); 
+    }
+
     public function cetaksurat(Request $request){
         $data   = ['id'=>$request->id, 'id_user'=>$request->id_user, 'cetak'=>$request->cetak];
         $res    = [];

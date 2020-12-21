@@ -31,7 +31,7 @@ trait ActionTableWithDetail
                 $detail  = '';
                 $edit    = Auth::user()->hasPermissionTo($permissionEdit) ? "<a href=".route($routeEdit, $val->id)." class='action-table text-success text-sm'><i class='fas fa-edit'></i></a>" : '';
                 $delete  = Auth::user()->hasPermissionTo($permissionDelete) ? "<a href='javascript:void(0)' onclick='deleteRecord(".$val->id.",this)' class='action-table text-danger text-sm'><i class='fas fa-trash'></i></a>" : '';
-                if($permissionDetail=='surat-izin-list' || $permissionDetail=='jurnal-harian-list'){
+                if($permissionDetail!='keluarga-asuh-list'){
                     $detail  = Auth::user()->hasPermissionTo($permissionDetail) ? "<a href=".route($routeDetail, $val->id)." class='action-table text-info text-sm'><i class='fa fa-eye'></i></a>" : '';
                 }else{
                     $detail  = Auth::user()->hasPermissionTo($permissionDetail) ? "<a href=".route($routeDetail, $val->id)." class='action-table text-info text-sm'><i class='fas fa-cogs'></i></a>" : '';

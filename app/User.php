@@ -243,12 +243,12 @@ class User extends Authenticatable
         return $data;
     }
 
-    public static function topic($category, $data)
+    public static function topicbackup($category, $data)
     {
         
         switch ($category) {
             case 'createsurat':
-                $data = ['pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
+                $data = ['pembina', 'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
             case 'disposisisurat':
@@ -257,13 +257,13 @@ class User extends Authenticatable
                 break;
             case 'approve-aak':
                 $data = ['taruna-'.$data['id'], 
-                        'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 
+                        'pembina', 
                         'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
             case 'approve-direktur':
                 $data = ['taruna-'.$data['id'], 
-                        'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-')), 
+                        'pembina', 
                         'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
                 return $data;
                 break;
@@ -275,6 +275,51 @@ class User extends Authenticatable
             case 'createpengasuhan':
                 $data = ['taruna-'.strtolower(Str::slug($data['keluarga_asuh'], '-')),
                         'pembina-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))]; 
+                return $data; 
+            case 'wbs':
+                $data = ['admin']; 
+            case 'pengaduan':
+                $data = ['admin']; 
+                return $data;         
+            default:
+                $data = [];
+                return $data;
+                break;
+        }
+    }
+
+    public static function topic($category, $data)
+    {
+        
+        switch ($category) {
+            case 'createsurat':
+                $data = ['pembina', 'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
+                return $data;
+                break;
+            case 'disposisisurat':
+                $data = ['taruna-'.$data['id'], 'akademik-dan-ketarunaan'];
+                return $data;
+                break;
+            case 'approve-aak':
+                $data = ['taruna-'.$data['id'], 
+                        'pembina', 
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
+                return $data;
+                break;
+            case 'approve-direktur':
+                $data = ['taruna-'.$data['id'], 
+                        'pembina', 
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-'))];
+                return $data;
+                break;
+            case 'createhukdis':
+                $data = ['taruna-'.$data['id'],
+                        'waliasuh-'.strtolower(Str::slug($data['keluarga_asuh'], '-')),
+                        'akademik-dan-ketarunaan'];  
+                return $data;
+            case 'createpengasuhan':
+                $data = ['taruna-'.strtolower(Str::slug($data['keluarga_asuh'], '-')),
+                        'pembina']; 
                 return $data; 
             case 'wbs':
                 $data = ['admin']; 

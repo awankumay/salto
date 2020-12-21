@@ -27,21 +27,21 @@ class JurnalTarunaDetail extends Model
                                      ->where('jurnal_taruna.tanggal', $date)
                                      ->count();
         }else if ($currentUser->getRoleNames()[0]=='Pembina'){
-            return JurnalTarunaDetail::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
+            return JurnalTarunaDetail::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.id_user')
                             ->join('pembina_keluarga_asuh', 'pembina_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('pembina_keluarga_asuh.pembina_id', $currentUser->id)
                             ->where('jurnal_taruna.id_user', $id_user)
                             ->where('jurnal_taruna.tanggal', $date)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
-            return JurnalTarunaDetail::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.user_created')
+            return JurnalTarunaDetail::join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'jurnal_taruna.id_user')
                             ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
                             ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
                             ->where('jurnal_taruna.id_user', $id_user)
                             ->where('jurnal_taruna.tanggal', $date)
                             ->count();
         }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
-            return JurnalTarunaDetail::join('orang_tua_taruna', 'taruna_id.id', '=', 'jurnal_taruna.user_created')
+            return JurnalTarunaDetail::join('orang_tua_taruna', 'taruna_id.id', '=', 'jurnal_taruna.id_user')
                             ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
                             ->where('jurnal_taruna.id_user', $id_user)
                             ->where('jurnal_taruna.tanggal', $date)
