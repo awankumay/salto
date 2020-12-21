@@ -76,6 +76,7 @@ class LookController extends BaseController
                 $data['show_grade']=true;
                 $data['grade']=$grade->grade;
                 $data['grade_select']=$grade;
+                $data['grade_option'] = Grade::pluck('grade', 'id')->all();
             }
         }
         if(!empty($keluarga)){
