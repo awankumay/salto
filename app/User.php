@@ -322,9 +322,9 @@ class User extends Authenticatable
                         'pembina']; 
                 return $data; 
             case 'wbs':
-                $data = ['admin']; 
+                $data = ['admin', 'superadmin']; 
             case 'pengaduan':
-                $data = ['admin']; 
+                $data = ['admin', 'superadmin']; 
                 return $data;         
             default:
                 $data = [];

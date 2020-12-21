@@ -222,9 +222,27 @@ class WBSController extends BaseController
                 $request->request->add(['created_at'=> date('Y-m-d H:i:s')]);
                 $request->request->add(['updated_at'=> date('Y-m-d H:i:s')]);
                 $input = $request->all();
-                WBS::create($input);
-
+                $id = DB::table('tb_wbs')->insertGetId($input);
             DB::commit();
+            $dataFirebase       = [];
+            $data['firebase']   = false;
+            $topic              = User::topic('wbs', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengaduan wbs baru',
+                    'body'=>'pengaduan wbs baru',
+                    'page'=>'/wbs/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             $data['status'] = true;
             return $this->sendResponse($data, 'wbs create successfully.');
         } catch (\Throwable $th) {
@@ -270,6 +288,25 @@ class WBSController extends BaseController
 
             $wbs->update($input);
             DB::commit();
+            $dataFirebase       = [];
+            $data['firebase']   = false;
+            $topic              = User::topic('wbs', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengaduan wbs baru',
+                    'body'=>'pengaduan wbs baru',
+                    'page'=>'/wbs/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             $data['status'] = true;
             return $this->sendResponse($data, 'wbs updated successfully.');
         } catch (\Throwable $th) {

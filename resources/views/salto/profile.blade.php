@@ -19,27 +19,19 @@
                             <div class="form-group">
                                 <div class="col-xs-6">
                                     <label for="first_name">Nama</label>
-                                    <input type="text" class="form-control" name="nama" id="nama" placeholder="first name" title="masukan nama anda">
+                                    <input type="text" class="form-control" name="nama" id="nama" placeholder="Nama">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-6">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" title="enter your email.">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-xs-6">
                                     <label for="phone">Phone</label>
                                     <input type="text" class="form-control" name="phone" id="phone" placeholder="enter phone" title="enter your phone number if any.">
-                                </div>
-                            </div>
-                
-                            <div class="form-group">
-                                <div class="col-xs-6">
-                                    <label for="mobile">Mobile</label>
-                                    <input type="text" class="form-control" name="mobile" id="mobile" placeholder="enter mobile number" title="enter your mobile number if any.">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                
-                                <div class="col-xs-6">
-                                    <label for="email">Email</label>
-                                    <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" title="enter your email.">
                                 </div>
                             </div>
                             <div class="form-group">

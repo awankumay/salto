@@ -193,9 +193,28 @@ class PengaduanController extends BaseController
                 $input = $request->all();
                 $input['id_user'] = $request->id_user;
                 $input['pengaduan']   = $request->pengaduan;
-                Pengaduan::create($input);
+                $id = DB::table('tb_pengaduan')->insertGetId($input);
 
             DB::commit();
+            $dataFirebase       = [];
+            $data['firebase']   = false;
+            $topic              = User::topic('pengaduan', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengaduan baru',
+                    'body'=>'pengaduan baru',
+                    'page'=>'/pengaduan/detail/id/'.$id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             $data['status'] = true;
             return $this->sendResponse($data, 'pengaduan create successfully.');
         } catch (\Throwable $th) {
@@ -234,6 +253,25 @@ class PengaduanController extends BaseController
 
             $pengaduan->update($input);
             DB::commit();
+            $dataFirebase       = [];
+            $data['firebase']   = false;
+            $topic              = User::topic('pengaduan', $dataFirebase);
+            if(!empty($topic)){
+                set_time_limit(60);
+                for ($i=0; $i < count($topic); $i++) { 
+                    $paramsFirebase=['title'=>'Pemberitahuan pengaduan baru',
+                    'body'=>'pengaduan baru',
+                    'page'=>'/pengaduan/detail/id/'.$request->id,
+                    'token'=>$topic[$i]];
+                    try {
+                        $firebase = $this->pushNotif($paramsFirebase);
+                        $data['firebase'][$i] = $firebase;
+                    } catch (\Throwable $th) {
+                        $data['firebase'] = $th->getMessage();
+                    }
+                    sleep(1);
+                }
+            }
             $data['status'] = true;
             return $this->sendResponse($data, 'pengaduan updated successfully.');
         } catch (\Throwable $th) {
