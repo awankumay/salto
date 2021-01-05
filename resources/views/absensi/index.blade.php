@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+.export-btn {
+    margin-left: -8px;
+}
+.btn-no-focus{
+    outline: 0;
+    box-shadow:0 0 0 0.2rem rgb(255 255 255) !important;
+}
+</style>
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
         {{ Breadcrumbs::render('absensi') }}
@@ -9,14 +18,8 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-md-12">Absensi</div>
-                <div class="col-md-6">
-                    <span class="text-help">
-                        DATE FILTER
-                    </span>
-                </div>
-                <div class="col-md-6">Export</div>
             </div>
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between" style="position:absolute;right:0px;">
                 <div class="p-2">
                     @if(auth()->user()->hasPermissionTo('absensi-create') && $clockIn==null)
                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#clockIn">
@@ -80,6 +83,25 @@
                         </div>
                     </div>
                     @endif
+                </div>
+            </div>
+            <div class="export-btn">
+                <a class="btn btn-default btn-sm btn-no-focus" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    <i class="fas fa-file"> Export </i>
+                </a>
+                <div class="collapse" id="collapseExample">
+                {!! Form::open(array('route' => ['exportdata'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
+                        <div class="form-group col-md-4">
+                            <strong>Tanggal 1</strong>
+                            <input type="date" required name="date_1" class="form-control form-control-sm"> 
+                            <input type="hidden" name="data" value="absensi"> 
+                        </div>
+                        <div class="form-group col-md-4">
+                            <strong>Tanggal 2</strong>
+                            <input type="date" required name="date_2" class="form-control form-control-sm"> <br>
+                            <button type="submit" class="btn btn-danger btn-sm">Export</button>
+                        </div>
+                {!! Form::close() !!}
                 </div>
             </div>
         </div>

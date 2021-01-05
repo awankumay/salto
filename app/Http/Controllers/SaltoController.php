@@ -967,5 +967,85 @@ class SaltoController extends Controller
                     ->get();
     }
 
+    public function exportdata(Request $request)
+    {
+        switch ($request->data) {
+            case 'absensi':
+                return $this->exportAbsensi($request->date_1, $request->date_2);
+                break;
+            case 'prestasi':
+                return $this->exportPrestasi($request->date_1, $request->date_2);
+                break;
+            
+            default:
+                return redirect()->back();;
+                break;
+        }
+    }
+
+    public function exportAbsensi($date_1, $date_2)
+    {
+       
+        $currentUser = Auth::user();
+        $data        = [];
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+            $data = User::leftJoin('absensi_taruna', 'users.id', '=', 'absensi_taruna.id_user')
+                            ->join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+                            ->select('users.id as id', 'users.name as name', 'users.stb as stb', 'absensi_taruna.*')
+                            ->whereDate('absensi_taruna.created_at','<=', $date_2)
+                            ->whereDate('absensi_taruna.created_at','>=', $date_1)
+                            ->where('users.status','=', '1')
+                            ->where('model_has_roles.role_id', 7)
+                            ->orWhere(function($q) {
+                                $q->whereNull('absensi_taruna.created_at')
+                                ->where('model_has_roles.role_id', 7)
+                                ->where('users.status','=', '1');
+             
+                            })
+                            ->orderBy('absensi_taruna.created_at', 'DESC')
+                            ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Taruna'){
+            $data = User::leftJoin('absensi_taruna', 'users.id', '=', 'absensi_taruna.id_user')
+                            ->where('users.id', $currentUser->id)
+                            ->select('users.id as id', 'users.name as name', 'users.stb as stb', 'absensi_taruna.*')
+                            ->whereDate('absensi_taruna.created_at','<=', $date_2)
+                            ->whereDate('absensi_taruna.created_at','>=', $date_1)
+                            ->orderBy('absensi_taruna.created_at', 'DESC')
+                            ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+            $data = User::leftJoin('absensi_taruna', 'users.id', '=', 'absensi_taruna.id_user')
+                            ->join('taruna_keluarga_asuh', 'taruna_keluarga_asuh.taruna_id', '=', 'absensi_taruna.id_user')
+                            ->join('waliasuh_keluarga_asuh', 'waliasuh_keluarga_asuh.keluarga_asuh_id', '=', 'taruna_keluarga_asuh.keluarga_asuh_id')
+                            ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
+                            ->select('users.id as id', 'users.name as name', 'users.stb as stb', 'absensi_taruna.*')
+                            ->whereDate('absensi_taruna.created_at','<=', $date_2)
+                            ->whereDate('absensi_taruna.created_at','>=', $date_1)
+                            ->orderBy('absensi_taruna.created_at', 'DESC')
+                            ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
+            $data = User::leftJoin('absensi_taruna', 'users.id', '=', 'absensi_taruna.id_user')
+                            ->join('orang_tua_taruna', 'orang_tua_taruna.taruna_id', '=', 'absensi_taruna.id_user')
+                            ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
+                            ->select('users.id as id', 'users.name as name', 'users.stb as stb', 'absensi_taruna.*')
+                            ->whereDate('absensi_taruna.created_at','<=', $date_2)
+                            ->whereDate('absensi_taruna.created_at','>=', $date_1)
+                            ->orderBy('absensi_taruna.created_at', 'DESC')
+                            ->get();
+        }
+        $report=[];
+        foreach ($data as $key => $value) {
+            $report['body'][]=['no'=>$key+1, 'nama'=>$value->name, 'stb'=>$value->stb, 'in'=>$value->clock_in, 'out'=>$value->clock_out];
+        }
+        if(!empty($data)){
+            $report['judul']    = 'Laporan Absensi Periode '.date('d-m-Y', strtotime($date_1)). ' - '.date('d-m-Y', strtotime($date_2));
+            $report['header']   = ['No', 'Nama', 'STB', 'Clock In', 'Clock Out'];
+            $report['template'] = 1;
+            
+            $data   = $report;
+            return view('cetakabsensi', compact('data'));
+            
+        }
+        return $data;
+    }
 
 }

@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('approvesuket', 'SaltoController@approvesuket')->name('approvesuket');
         Route::post('approveprestasi', 'SaltoController@approveprestasi')->name('approveprestasi');
         Route::post('approvehukdis', 'SaltoController@approvehukdis')->name('approvehukdis');
+        Route::post('exportdata', 'SaltoController@exportdata')->name('exportdata');
         Route::get('cetaksurat/id/{id}/id_user/{id_user}/cetak/{cetak}', 'SaltoController@cetaksurat')->name('cetaksurat');
     });
 });

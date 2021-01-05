@@ -1,6 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+.btn-no-focus:focus {
+    outline: 0;
+    box-shadow:0 0 0 0.2rem rgb(255 255 255);
+}
+</style>
 <div class="container-fluid">
     <div class="d-sm-flex align-items-center justify-content-between">
         {{ Breadcrumbs::render('surat-izin') }}
@@ -63,7 +69,7 @@
                         }
                     }, orderable: false, searchable: false
                 },
-                {data: 'created_at', name: 'created_at'},
+                {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

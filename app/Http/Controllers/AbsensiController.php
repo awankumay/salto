@@ -57,7 +57,8 @@ class AbsensiController extends Controller
             $clockIn = $data->clock_in;
             $clockOut = $data->clock_out;
         }
-        return view('absensi.index', compact('clockIn', 'clockOut'));
+        $roleName = !empty(Auth::user()->getRoleNames()) ? Auth::user()->getRoleNames()['0'] : '-' ;
+        return view('absensi.index', compact('clockIn', 'clockOut', 'roleName'));
     }
 
     public function create()
