@@ -36,7 +36,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::post('user/import_excel', 'UserController@import_excel');
         Route::resource('post-category', 'PostCategoryController');
         Route::resource('permission', 'PermissionCategoryController');
-        Route::resource('materi-wbs', 'MateriWBSController');
+        // Route::resource('materi-wbs', 'MateriWBSController');
         // Route::get('materi-wbs/data', 'MateriWBSController@loadData')->name('data.load');
         Route::resource('content', 'ContentController');
         Route::resource('slider', 'SliderController');
