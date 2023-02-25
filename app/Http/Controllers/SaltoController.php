@@ -947,10 +947,34 @@ class SaltoController extends Controller
                     ->whereNull('users.deleted_at')
                     ->where('users.status', 1)
                     ->count();
+        
+        
 
         return response()->json([
             "success" => true,
             "data" => ['total_taruna'=>$taruna, 'total_orang_tua'=>$orangtua, 'total_waliasuh'=>$waliasuh, 'total_pembina'=>$pembina]
+        ]);
+    }
+
+    public function totalSurat()
+    {
+              
+        $suratTotal = DB::table('surat_header')
+                        ->count();
+
+        $suratPending = DB::table('surat_header')
+                        ->where('surat_header.status', 0)
+                        ->count();
+        
+        $suratDateNow = DB::table('surat_header')
+                        ->whereDate('created_at','like',Carbon::now())
+                        ->count();
+
+
+
+        return response()->json([
+            "success" => true,
+            "data" => ['total_surat'=> $suratTotal,'total_suratPending'=>$suratPending, 'total_suratDateNow'=>$suratDateNow ]
         ]);
     }
 
@@ -973,8 +997,11 @@ class SaltoController extends Controller
             case 'absensi':
                 return $this->exportAbsensi($request->date_1, $request->date_2);
                 break;
-            case 'prestasi':
-                return $this->exportPrestasi($request->date_1, $request->date_2);
+            // case 'prestasi':
+            //     return $this->exportPrestasi($request->date_1, $request->date_2);
+            //     break;
+            case 'surat-izin':
+                return $this->exportSuratIzi($request->date_1, $request->date_2);
                 break;
             
             default:
@@ -983,6 +1010,73 @@ class SaltoController extends Controller
         }
     }
 
+
+    public function exportSuratIzi($date_1, $date_2)
+    {
+        $currentUser = Auth::user();
+        $data        = [];
+        if ($currentUser->getRoleNames()[0]!='Taruna' && $currentUser->getRoleNames()[0]!='Wali Asuh' && $currentUser->getRoleNames()[0]!='Orang Tua') {
+            // Kosong
+            $data = SuratIzin::Join('users','surat_header.id_user','=','users.id')
+                    ->Join('opsi_persetujuan','opsi_persetujuan.kode_opsi','=','surat_header.status')
+                    ->Join('menu_persetujuan','menu_persetujuan.id','=','surat_header.id_category')
+                    ->select('users.name','menu_persetujuan.nama_menu','opsi_persetujuan.opsi','surat_header.created_at')
+                    ->whereDate('surat_header.created_at', '>=', $date_1)
+                    ->whereDate('surat_header.created_at', '<=', $date_2)
+                    ->orderBy('surat_header.created_at', 'DESC')
+                    ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Taruna'){
+            // Kosong
+            $data = SuratIzin::Join('users','surat_header.id_user','=','users.id')
+                    ->Join('opsi_persetujuan','opsi_persetujuan.kode_opsi','=','surat_header.status')
+                    ->Join('menu_persetujuan','menu_persetujuan.id','=','surat_header.id_category')
+                    ->where('surat_header.id_user', $currentUser->id)
+                    ->select('users.name','menu_persetujuan.nama_menu','opsi_persetujuan.opsi','surat_header.created_at')
+                    ->whereDate('surat_header.created_at', '>=', $date_1)
+                    ->whereDate('surat_header.created_at', '<=', $date_2)
+                    ->orderBy('surat_header.created_at', 'DESC')
+                    ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Wali Asuh'){
+            $data = SuratIzin::Join('users','surat_header.id_user','=','users.id')
+                    ->Join('opsi_persetujuan','opsi_persetujuan.kode_opsi','=','surat_header.status')
+                    ->Join('menu_persetujuan','menu_persetujuan.id','=','surat_header.id_category')
+                    ->Join('taruna_keluarga_asuh','taruna_keluarga_asuh.taruna_id','=','id_user')
+                    ->Join('waliasuh_keluarga_asuh','waliasuh_keluarga_asuh.keluarga_asuh_id','=','taruna_keluarga_asuh.keluarga_asuh_id')
+                    ->where('waliasuh_keluarga_asuh.waliasuh_id', $currentUser->id)
+                    ->select('users.name','menu_persetujuan.nama_menu','opsi_persetujuan.opsi','surat_header.created_at')
+                    ->whereDate('surat_header.created_at', '>=', $date_1)
+                    ->whereDate('surat_header.created_at', '<=', $date_2)
+                    ->orderBy('surat_header.created_at', 'DESC')
+                    ->get();
+        }else if ($currentUser->getRoleNames()[0]=='Orang Tua'){
+            $data = SuratIzin::Join('users','surat_header.id_user','=','users.id')
+                    ->Join('opsi_persetujuan','opsi_persetujuan.kode_opsi','=','surat_header.status')
+                    ->Join('menu_persetujuan','menu_persetujuan.id','=','surat_header.id_category')
+                    ->Join('orang_tua_taruna','orang_tua_taruna.taruna_id','=','id_user')
+                    ->where('orang_tua_taruna.orangtua_id', $currentUser->id)
+                    ->select('users.name','menu_persetujuan.nama_menu','opsi_persetujuan.opsi','surat_header.created_at')
+                    ->whereDate('surat_header.created_at', '>=', $date_1)
+                    ->whereDate('surat_header.created_at', '<=', $date_2)
+                    ->orderBy('surat_header.created_at', 'DESC')
+                    ->get();
+            
+        }
+        $report=[];
+        foreach ($data as $key => $value) {
+            $report['body'][]=['no'=>$key+1, 'name'=>$value->name, 'jenis_izin'=>$value->nama_menu, 'status_izin'=>$value->opsi, 'create_date'=>$value->created_at];
+        }
+        if(!empty($data)){
+            $report['judul']    = 'Laporan Surat Izin Periode '.date('d-m-Y', strtotime($date_1)). ' - '.date('d-m-Y', strtotime($date_2));
+            $report['header']   = ['No', 'Nama', 'Jenis Izin', 'Status', 'Dibuat',];
+            $report['template'] = 1;
+            
+            $data   = $report;
+            return view('cetakreportizin', compact('data'));
+            
+        }
+        // dd($data);
+        return $data;
+    }
     public function exportAbsensi($date_1, $date_2)
     {
        
@@ -1038,7 +1132,7 @@ class SaltoController extends Controller
         }
         if(!empty($data)){
             $report['judul']    = 'Laporan Absensi Periode '.date('d-m-Y', strtotime($date_1)). ' - '.date('d-m-Y', strtotime($date_2));
-            $report['header']   = ['No', 'Nama', 'STB', 'Clock In', 'Clock Out'];
+            $report['header']   = ['No', 'Nama', 'STB', 'Clock In', 'Clock Out',];
             $report['template'] = 1;
             
             $data   = $report;

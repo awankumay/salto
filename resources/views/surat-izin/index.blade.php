@@ -22,6 +22,25 @@
                 </div>
             </div>
         </div>
+        <div class="export-btn">
+            <a class="btn btn-default btn-sm btn-no-focus" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <i class="fas fa-file"> Export </i>
+            </a>
+            <div class="collapse" id="collapseExample">
+            {!! Form::open(array('route' => ['exportdata'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
+                    <div class="form-group col-md-4">
+                        <strong>Start Date</strong>
+                        <input type="date" required name="date_1" class="form-control form-control-sm"> 
+                        <input type="hidden" name="data" value="surat-izin"> 
+                    </div>
+                    <div class="form-group col-md-4">
+                        <strong>End Date</strong>
+                        <input type="date" required name="date_2" class="form-control form-control-sm"> <br>
+                        <button type="submit" class="btn btn-danger btn-sm">Export</button>
+                    </div>
+            {!! Form::close() !!}
+            </div>
+        </div>
         <div class="cards card-body">
             <div class="table table-responsive">
                 <table class="table display nowrap surat-izin-table" style="width:100%">
@@ -67,9 +86,9 @@
                         }else{
                             return '<span class="badge badge-warning">Belum Disetujui</span>';
                         }
-                    }, orderable: false, searchable: false
+                    }, orderable: true, searchable: false
                 },
-                {data: 'created_at', name: 'created_at', orderable: false, searchable: false},
+                {data: 'created_at', name: 'created_at', orderable: true, searchable: false},
                 {data: 'action', name: 'action', orderable: false, searchable: false},
             ]
         });

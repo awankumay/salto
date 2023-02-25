@@ -215,4 +215,24 @@ Breadcrumbs::register('hukuman-dinas.show', function ($breadcrumbs, $hukumandina
     $breadcrumbs->parent('hukuman-dinas');
     $breadcrumbs->push($hukumandinas->id, route('hukuman-dinas.show', $hukumandinas->id));
 });
+
+
+// Breadcrumbs::register('post-category', function ($breadcrumbs) {
+//     $breadcrumbs->parent('home');
+//     $breadcrumbs->push('Kategori Berita', route('post-category.index'));
+// });
+// Breadcrumbs::register('post-category.create', function ($breadcrumbs) {
+//     $breadcrumbs->parent('post-category');
+//     $breadcrumbs->push('Tambah Kategori Berita', route('post-category.create'));
+// });
+
+
+Breadcrumbs::register('materi-wbs', function ($breadcrumbs) {
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Materi WBS', route('materi-wbs.index'));
+});
+Breadcrumbs::register('materi-wbs.create', function ($breadcrumbs) {
+    $breadcrumbs->parent('materi-wbs');
+    $breadcrumbs->push('Tambah Materi WBS', route('materi-wbs.create'));
+});
 ?>

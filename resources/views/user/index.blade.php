@@ -5,17 +5,65 @@
     <div class="d-sm-flex align-items-center justify-content-between">
         {{ Breadcrumbs::render('user') }}
     </div>
+    
     <div class="card table col-md-12 px-1 py-1" style="background-color: #fdfdfd !important;">
         <div class="card-header">
             <div class="d-flex justify-content-between">
                 <div class="p-2"> Pengguna</div>
                 <div class="p-2">
+                    {{-- notifikasi form validasi --}}
+                    @if ($errors->has('file'))
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $errors->first('file') }}</strong>
+                    </span>
+                    @endif
+            
+                    {{-- notifikasi sukses --}}
+                    @if ($sukses = Session::get('sukses'))
+                    <div class="alert alert-success alert-block">
+                        <button type="button" class="close" data-dismiss="alert">×</button> 
+                        <strong>{{ $sukses }}</strong>
+                    </div>
+                    @endif
+
+                    {{-- Notifikasi end --}}
+                    @if(auth()->user()->hasPermissionTo('user-upload'))
+                    <button type="button" class="btn btn-danger btn-sm text-white btn-add" data-toggle="modal" data-target="#importExcel">Import Excel</button>
+                    @endif
                     @if(auth()->user()->hasPermissionTo('user-create'))
                         <a href="{{route('user.create')}}" class="btn btn-danger btn-sm text-white btn-add">Tambah Pengguna</a>
                     @endif
                 </div>
             </div>
         </div>
+
+        <!-- Import Excel -->
+		<div class="modal fade" id="importExcel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<form method="post" action="/dashboard/user/import_excel" enctype="multipart/form-data">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Import Excel</h5>
+						</div>
+						<div class="modal-body">
+ 
+							{{ csrf_field() }}
+ 
+							<label>Pilih file excel</label>
+							<div class="form-group">
+								<input type="file" name="file" required="required">
+							</div>
+ 
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button type="submit" class="btn btn-primary">Import</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
         <div class="card-body">
             <div class="table table-responsive">
                 <table class="table display nowrap user-table" style="width:100%">

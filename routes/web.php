@@ -31,8 +31,11 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::get('/home', 'HomeController@index')->name('home');
         Route::resource('role', 'RoleController');
         Route::resource('user', 'UserController');
+        Route::post('user/import_excel', 'UserController@import_excel');
         Route::resource('post-category', 'PostCategoryController');
         Route::resource('permission', 'PermissionCategoryController');
+        Route::resource('materi-wbs', 'MateriWBSController');
+        // Route::get('materi-wbs/data', 'MateriWBSController@loadData')->name('data.load');
         Route::resource('content', 'ContentController');
         Route::resource('slider', 'SliderController');
         Route::resource('report', 'ReportController');
@@ -55,6 +58,7 @@ Route::group(['middleware' => ['auth:web']], function(){
         Route::get('gettaruna', 'SaltoController@gettaruna')->name('gettaruna');
         Route::post('getregencies', 'SaltoController@getregencies')->name('getregencies');
         Route::get('totaluser', 'SaltoController@totaluser')->name('totaluser');
+        Route::get('totalSurat', 'SaltoController@totalSurat')->name('totalSurat');
         Route::post('deleteExistImageUser', 'UserController@deleteExistImageUser')->name('deleteExistImageUser');
         Route::post('deleteExistImagePost', 'ContentController@deleteExistImagePost')->name('deleteExistImagePost');
         Route::post('deleteExistImageSlider', 'SliderController@deleteExistImageSlider')->name('deleteExistImageSlider');

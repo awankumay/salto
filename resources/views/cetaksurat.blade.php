@@ -11,6 +11,36 @@
             border-spacing: 0px;
             font-size:14px;
 		}
+		* {
+		box-sizing: border-box;
+		}
+
+		/* Create two equal columns that floats next to each other */
+		.column {
+		/* margin-top: 15%; */
+		float: left;
+		width: 50%;
+		/* padding: 10px;
+		height: 300px; Should be removed. Only for demonstration */
+		}
+
+		.column2 {
+		float: right;
+		width: 50%;
+		/* padding: 10px;
+		height: 300px; Should be removed. Only for demonstration */
+		}
+
+		/* Clear floats after the columns */
+		.row:after {
+		content: "";
+		display: table;
+		clear: both;
+		}
+		.center {
+		text-align: center;
+		/* border: 3px solid green; */
+		}
 	</style>
 </head>  
 <body>
@@ -39,15 +69,28 @@
 			@endforeach
             </tr>
 	</table>
-	<p align="center" style="margin-left:40%">
-		Depok, {{$data['tanggal_cetak']}}<!--  --><br>
-		Ka. Sub Bagian Ketarunaan,<br>
-        <!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
-        <br><br>
-		<img src="jauhar.png"  alt="Logo" /> 
-		<br><b><u>JAUHAR MUSTOFA</u></b><br>
-		NIP. 197906092000121001<br>
-	</p>
+
+	<div class="row">
+		<div class="column center">
+			<br>
+			Ka. Sub Bagian Ketarunaan,<br>
+			<!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
+			<br><br>
+			<img src="jauhar.png"  alt="Logo" /> 
+			<br><b><u>JAUHAR MUSTOFA</u></b><br>
+			NIP. 197906092000121001<br>
+		</div>
+		<div class="column center">
+			Depok, {{$data['tanggal_cetak']}}<!--  --><br>
+			Ka. Sub Bagian Ketarunaan,<br>
+			<!--$pdf->Image(base_url().'/assets/images/logo.png', 10, 10, 20);-->
+			<br><br>
+			<img src="jauhar.png"  alt="Logo" /> 
+			<br><b><u>JAUHAR MUSTOFA</u></b><br>
+			NIP. 197906092000121001<br>
+		</div>
+	  </div>
+
 	@elseif($data['template']==2)
 	<p align=center>
 		<b><u> SURAT IZIN </u></b><br>

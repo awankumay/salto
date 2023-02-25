@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use App\User;
@@ -17,6 +19,7 @@ use DataTables;
 use DB;
 use Spatie\Permission\Models\Role;
 use Auth;
+
 
 class UserController extends Controller
 {
@@ -34,6 +37,7 @@ class UserController extends Controller
         $this->middleware('permission:user-create', ['only' => ['create','store']]);
         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-upload', ['only' => ['destroy']]);
     }
 
     /**
@@ -307,4 +311,35 @@ class UserController extends Controller
             return false;
         }
     }
+
+    public function import_excel(Request $request) 
+	{
+		// validasi
+		$this->validate($request, [
+			'file' => 'required|mimes:csv,xls,xlsx'
+		]);
+ 
+		$file = $request->file('file');
+        $data = Excel::load($file)->get();
+        foreach ($data as $row) {
+            User::create([
+                'name' => $row['Name'],
+                'stb' => $row['STB'],
+                'password' => Hash::make($row['password']),
+                'email' => $row['Email'],
+                'identity' => $row['Identitas'],
+                'phone' => $row['Nomor Telp'],
+                'whatsapp' => $row['Whatsapp'],
+                'sex' => $row['Jenis Kelamin'],
+                'role' =>$row['Roles'],
+                'status' => $row['Status'],
+                'grade' => $row['Grade'],
+                // 'orang_tua' =>$sheet->getCell( 'K' . $row )->getValue(),
+            ]);
+            $role = Role::where('name'. $row['role'])->first();
+            $user->assignRole($role);
+        }
+        return redirect()->route('users.index')->with('success', 'Data uploaded successfully.');
+    }
+    
 }

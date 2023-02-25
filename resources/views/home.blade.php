@@ -75,13 +75,28 @@
                 </div>
             </div>
         </div>
-<!--         <div class="col-xl-3 col-md-6 mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Total Surat</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-surat">-</div>
+                            </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-danger shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Permintaan Surat Hari Ini</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-suratDateNow">-</div>
                             </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -96,7 +111,7 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Surat Yang Belum Disetujui</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">-</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-suratPending">-</div>
                             </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -104,7 +119,7 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 </div>
 @push('scripts')
@@ -115,6 +130,11 @@
                 $( "#total-orang-tua" ).html(res.data.total_orang_tua);
                 $( "#total-waliasuh" ).html(res.data.total_waliasuh);
                 $( "#total-pembina" ).html(res.data.total_pembina);
+            });
+            $.get( "{{ url('/dashboard/totalSurat') }}").done(function( res ) {
+                $( "#total-surat" ).html(res.data.total_surat);
+                $( "#total-suratPending" ).html(res.data.total_suratPending);
+                $( "#total-suratDateNow" ).html(res.data.total_suratDateNow);
             });
         });
     </script>

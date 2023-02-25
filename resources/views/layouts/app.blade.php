@@ -97,6 +97,7 @@
                         @if(auth()->user()->hasPermissionTo('kategori-surat-izin-list'))<a class="collapse-item" href="{{route('permission.index')}}">Kategori Surat</a>@endif
                         @if(auth()->user()->hasPermissionTo('grade-list'))<a class="collapse-item" href="{{route('grade.index')}}">Kategori Grade</a>@endif
                         @if(auth()->user()->hasPermissionTo('data-keluarga-asuh-list'))<a class="collapse-item" href="{{route('keluarga-asuh.index')}}">Data Keluarga Asuh Taruna</a>@endif
+                        @if(auth()->user()->hasPermissionTo('materi-wbs-list'))<a class="collapse-item" href="{{route('materi-wbs.index')}}">Materi WBS</a>@endif
                         </div>
                     </div>
                 </li>

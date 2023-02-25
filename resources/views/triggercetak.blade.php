@@ -8,6 +8,6 @@
 <script>
 setTimeout(() => {
   
-  PDFObject.embed("https://salto.tokodagingdepok.com/cetaksurat/LwsCNe", "#example1");
+  PDFObject.embed("https://salto.poltekip.ac.id/cetaksurat/LwsCNe", "#example1");
 }, 3000);
 </script>

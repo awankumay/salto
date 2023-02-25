@@ -20,9 +20,9 @@ header("Content-disposition: attachment;filename=Laporan-absensi-".$data['judul'
             <tr>
                 <td>{{$body['no']}}</td>
                 <td>{{$body['nama']}}</td>
-                <td>{{$body['stb']}}</td>
-                <td>{{$body['in']}}</td>
-                <td>{{$body['out']}}</td>
+                <td>{{$body['jenis_izin']}}</td>
+                <td>{{$body['status_izin']}}</td>
+                <td>{{$body['create_date']}}</td>
             </tr>
 			@endforeach
            

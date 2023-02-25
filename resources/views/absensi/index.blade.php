@@ -86,10 +86,10 @@
                 </div>
             </div>
             <div class="export-btn">
-                <a class="btn btn-default btn-sm btn-no-focus" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                <a class="btn btn-default btn-sm btn-no-focus" data-toggle="collapse" href="#collapseExample2" role="button" aria-expanded="false" aria-controls="collapseExample2">
                     <i class="fas fa-file"> Export </i>
                 </a>
-                <div class="collapse" id="collapseExample">
+                <div class="collapse" id="collapseExample2">
                 {!! Form::open(array('route' => ['exportdata'],'method'=>'POST', 'enctype' => 'multipart/form-data')) !!}
                         <div class="form-group col-md-4">
                             <strong>Tanggal 1</strong>
