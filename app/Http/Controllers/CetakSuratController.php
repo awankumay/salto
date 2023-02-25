@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\User;
+use App\Grade;
 use App\SuratIzin;
 use App\IzinSakit;
 use App\Prestasi;
@@ -66,6 +67,7 @@ class CetakSuratController extends Controller
                     $getData    = $this->hukdisdetail($params);
                     $data       = array(
                                     'name'=>$getData['nama_taruna'],
+                                    'no_stb'=>$getData['stb'],
                                     'category_name'=>'DATA HUKUMAN DISIPILIN',
                                     'tanggal_cetak'=>\Carbon\Carbon::parse($getData['date_approve_1'])->isoFormat('D MMMM Y'),
                                     'user_approve_1' =>$getData['user_approve_1'],
@@ -155,6 +157,11 @@ class CetakSuratController extends Controller
         }
         $getCategory = Permission::where('id', $getSurat->id_category)->first();
         $getUser = User::find($request->id_user);
+        $getGrade = Grade::join('users','grade_table.id','=','users.grade')
+        ->select('users.name','users.stb','grade_table.grade')
+        ->where('users.id','=',$getUser->id)
+        ->first();
+        // dd($getGrade->grade);
         $roleName = $getUser->getRoleNames()[0];
         $author = User::find($getSurat->id_user);
         $permission = [];
@@ -173,16 +180,33 @@ class CetakSuratController extends Controller
                 $getSuratDetail = IzinSakit::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
-                        'id_category'=>$getSurat->id_category,
+                        'header_keperluan'=>'',
+                        'header_tujuan'=>'',
+                        'header_diagnosa'=>'Diagnosa',
+                        'header_keluhan'=>'Keluhan',
+                        // 'header_rekomendasi'=>'Rekomendasi',
+                        'header_dokter'=>'Dokter',
+                        'header_traning'=>'',
+                        'header_pelatih'=>'',
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keluhan'=>$getSuratDetail->keluhan,
+                        'diagnosa'=>$getSuratDetail->diagnosa,
+                        'rekomendasi'=>$getSuratDetail->rekomendasi,
+                        'dokter'=>$getSuratDetail->dokter,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
+                        'id_category'=>$getSurat->id_category,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
                         'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
                         'user_approve_1' =>$getSurat->user_approve_1,
                         'date_approve_1' =>$getSurat->date_approve_1,
                         'user_disposisi'=>$getSurat->user_disposisi,
                         'date_disposisi'=>$getSurat->date_disposisi,
-                        'header'=>['No', 'Nama', 'STB', 'Keluhan', 'Diagnosa', 'Rekomendasi', 'Dokter', 'Tanggal'],
-                        'body'=>['1', $author->name, $author->stb, $getSuratDetail->keluhan, $getSuratDetail->diagnosa, 
+                        'header'=>['Nama', 'STB', 'Keluhan', 'Diagnosa', 'Rekomendasi', 'Dokter', 'Tanggal'],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->keluhan, $getSuratDetail->diagnosa, 
                                     $getSuratDetail->rekomendasi, $getSuratDetail->dokter, date_format(date_create($getSurat->start), 'd-m-Y H:i').' sd '.date_format(date_create($getSurat->end), 'd-m-Y H:i')],
                         'template'=>1
                     );
@@ -194,6 +218,20 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keluhan'=>'',
+                        'diagnosa'=>'',
+                        'header_keperluan'=>'Keperluan',
+                        'header_tujuan'=>'',
+                        'header_diagnosa'=>'Diagnosa',
+                        'header_keluhan'=>'Keluhan',
+                        'header_dokter'=>'',
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
                         'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
@@ -213,7 +251,23 @@ class CetakSuratController extends Controller
                 $getSuratDetail = TrainingCenter::where('id_surat', $id)->where('id_user', $getSurat->id_user)->first();
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
+                        'keluhan'=>'',
+                        'diagnosa'=>'',
+                        'header_keperluan'=>'',
+                        'header_tujuan'=>'',
+                        'header_diagnosa'=>'',
+                        'header_keluhan'=>'',
+                        'header_dokter'=>'',
+                        'training'=>$getSuratDetail->nm_tc,
+                        'pelatih'=>$getSuratDetail->pelatih,
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
                         'tanggal_cetak'=>!empty($getSurat->date_approve_2) ? \Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y') : \Carbon\Carbon::parse($getSurat->date_approve_1)->isoFormat('D MMMM Y'),
@@ -235,12 +289,19 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
                         'tanggal_cetak'=>\Carbon\Carbon::parse($getSurat->date_approve_2)->isoFormat('D MMMM Y'),
                         'header'=>['Nama', 'No.STB', 'Keperluan', 'Tujuan', 'Tanggal Awal', 'Tanggal Akhir'],
-                        'body'=>[$author->name, $author->stb, $getSuratDetail->Keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
+                        'body'=>[$author->name, $author->stb, $getSuratDetail->keperluan, $getSuratDetail->tujuan, date_format(date_create($getSurat->start), 'd-m-Y'), date_format(date_create($getSurat->end), 'd-m-Y')],
                         'template'=>2,
                         'id_surat_cetak'=>$getSurat->id+1
                     );
@@ -251,6 +312,13 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
@@ -267,6 +335,13 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
@@ -283,6 +358,13 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
@@ -298,6 +380,13 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
@@ -313,6 +402,20 @@ class CetakSuratController extends Controller
                 if(!empty($getSurat) && !empty($getSuratDetail)){
                     $data = array(
                         'name'=>$author->name,
+                        'no_stb'=>$author->stb,
+                        'grade'=>$author->grade,
+                        'keluhan'=>'',
+                        'diagnosa'=>'',
+                        'header_keperluan'=>'Keperluan',
+                        'header_tujuan'=>'Tujuan',
+                        'header_diagnosa'=>'Diagnosa',
+                        'header_keluhan'=>'Keluhan',
+                        'header_dokter'=>'',
+                        'keperluan'=>$getSuratDetail->keperluan,
+                        'tujuan'=>$getSuratDetail->tujuan,
+                        'grade'=>$getGrade->grade,
+                        'start'=>$getSurat->start,
+                        'end'=>$getSurat->end,
                         'id_category'=>$getSurat->id_category,
                         'created_at'=>$getSurat->created_at,
                         'category_name'=>'SURAT '.strtoupper($getCategory->nama_menu),
