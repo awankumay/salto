@@ -272,8 +272,8 @@
 			{{-- <img src="jauhar.png"  alt="Logo" />  --}}
 			<b>TTD</b>
 			<br><br>
-			<br><b><u>MASUDI, Bc.IP., S.Pd</u></b><br>
-			NIP. 196811181992031001<br>
+			<br><b><u>PUTRANTO PRI HARDOKO, A.Md.I.P, S.H</u></b><br>
+			NIP. 198304272001121001<br>
 		</div>
 	  </div>
 	{{-- End Template 1 --}}
